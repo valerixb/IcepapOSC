@@ -16,7 +16,9 @@ class _AxisTime(pg.AxisItem):
     spacing - Not used.
     """
     def tickStrings(self, values, scale, spacing):
-        """We override this function to have the X-axis labels display our way."""
+        """
+        We override this function to have the X-axis labels display our way.
+        """
         strings = []
         for x in values:
             try:
@@ -29,41 +31,45 @@ class _AxisTime(pg.AxisItem):
 class CurveItem:  # Todo: Move to its own file?
     """Represents a curve to be plotted in a diagram."""
 
-    SignalAppearance = namedtuple('SignalAppearance', ['pen_color', 'pen_width', 'pen_style'])
+    SignalAppearance = namedtuple('SignalAppearance',
+                                  ['pen_color', 'pen_width', 'pen_style'])
 
-    colors = [SignalAppearance(QtGui.QColor(255, 255, 0), 1, QtCore.Qt.SolidLine),
-              SignalAppearance(QtGui.QColor(255, 0, 0), 1, QtCore.Qt.SolidLine),
-              SignalAppearance(QtGui.QColor(0, 255, 0), 1, QtCore.Qt.SolidLine),
-              SignalAppearance(QtGui.QColor(255, 255, 255), 1, QtCore.Qt.SolidLine),
-              SignalAppearance(QtGui.QColor(51, 153, 255), 1, QtCore.Qt.SolidLine),
-              SignalAppearance(QtGui.QColor(0, 255, 255), 1, QtCore.Qt.SolidLine),
-              SignalAppearance(QtGui.QColor(255, 0, 255), 1, QtCore.Qt.SolidLine),
-              SignalAppearance(QtGui.QColor(204, 153, 102), 1, QtCore.Qt.SolidLine),
-              SignalAppearance(QtGui.QColor(0, 0, 255), 1, QtCore.Qt.SolidLine),
-              SignalAppearance(QtGui.QColor(0, 255, 0), 1, QtCore.Qt.SolidLine),
-              SignalAppearance(QtGui.QColor(255, 204, 0), 1, QtCore.Qt.SolidLine),
-              SignalAppearance(QtGui.QColor(153, 255, 153), 2, QtCore.Qt.DotLine),
-              SignalAppearance(QtGui.QColor(255, 170, 0), 2, QtCore.Qt.DashLine),
-              SignalAppearance(QtGui.QColor(255, 0, 0), 2, QtCore.Qt.DashLine),
-              SignalAppearance(QtGui.QColor(0, 255, 255), 1, QtCore.Qt.DotLine),
-              SignalAppearance(QtGui.QColor(255, 170, 255), 1, QtCore.Qt.DashLine),
-              SignalAppearance(QtGui.QColor(127, 255, 127), 1, QtCore.Qt.DashLine),
-              SignalAppearance(QtGui.QColor(255, 255, 127), 1, QtCore.Qt.DashLine),
-              SignalAppearance(QtGui.QColor(255, 0, 0), 2, QtCore.Qt.DotLine),
-              SignalAppearance(QtGui.QColor(255, 0, 0), 1, QtCore.Qt.DashLine),
-              SignalAppearance(QtGui.QColor(0, 255, 0), 2, QtCore.Qt.DotLine),
-              SignalAppearance(QtGui.QColor(255, 255, 255), 2, QtCore.Qt.SolidLine),
-              SignalAppearance(QtGui.QColor(51, 153, 255), 1, QtCore.Qt.DashLine),
-              SignalAppearance(QtGui.QColor(255, 0, 255), 1, QtCore.Qt.DashLine),
-              SignalAppearance(QtGui.QColor(255, 153, 204), 1, QtCore.Qt.DashLine),
-              SignalAppearance(QtGui.QColor(204, 153, 102), 1, QtCore.Qt.DashLine),
-              SignalAppearance(QtGui.QColor(255, 204, 0), 1, QtCore.Qt.DashLine),
-              SignalAppearance(QtGui.QColor(255, 0, 255), 1, QtCore.Qt.DashLine),
-              SignalAppearance(QtGui.QColor(255, 153, 204), 1, QtCore.Qt.DashLine),
-              SignalAppearance(QtGui.QColor(204, 153, 102), 1, QtCore.Qt.DashLine),
-              SignalAppearance(QtGui.QColor(255, 204, 0), 1, QtCore.Qt.DashLine)]
+    colors = [
+        SignalAppearance(QtGui.QColor(255, 255, 0), 1, QtCore.Qt.SolidLine),
+        SignalAppearance(QtGui.QColor(255, 0, 0), 1, QtCore.Qt.SolidLine),
+        SignalAppearance(QtGui.QColor(0, 255, 0), 1, QtCore.Qt.SolidLine),
+        SignalAppearance(QtGui.QColor(255, 255, 255), 1, QtCore.Qt.SolidLine),
+        SignalAppearance(QtGui.QColor(51, 153, 255), 1, QtCore.Qt.SolidLine),
+        SignalAppearance(QtGui.QColor(0, 255, 255), 1, QtCore.Qt.SolidLine),
+        SignalAppearance(QtGui.QColor(255, 0, 255), 1, QtCore.Qt.SolidLine),
+        SignalAppearance(QtGui.QColor(204, 153, 102), 1, QtCore.Qt.SolidLine),
+        SignalAppearance(QtGui.QColor(0, 0, 255), 1, QtCore.Qt.SolidLine),
+        SignalAppearance(QtGui.QColor(0, 255, 0), 1, QtCore.Qt.SolidLine),
+        SignalAppearance(QtGui.QColor(255, 204, 0), 1, QtCore.Qt.SolidLine),
+        SignalAppearance(QtGui.QColor(153, 255, 153), 2, QtCore.Qt.DotLine),
+        SignalAppearance(QtGui.QColor(255, 170, 0), 2, QtCore.Qt.DashLine),
+        SignalAppearance(QtGui.QColor(255, 0, 0), 2, QtCore.Qt.DashLine),
+        SignalAppearance(QtGui.QColor(0, 255, 255), 1, QtCore.Qt.DotLine),
+        SignalAppearance(QtGui.QColor(255, 170, 255), 1, QtCore.Qt.DashLine),
+        SignalAppearance(QtGui.QColor(127, 255, 127), 1, QtCore.Qt.DashLine),
+        SignalAppearance(QtGui.QColor(255, 255, 127), 1, QtCore.Qt.DashLine),
+        SignalAppearance(QtGui.QColor(255, 0, 0), 2, QtCore.Qt.DotLine),
+        SignalAppearance(QtGui.QColor(255, 0, 0), 1, QtCore.Qt.DashLine),
+        SignalAppearance(QtGui.QColor(0, 255, 0), 2, QtCore.Qt.DotLine),
+        SignalAppearance(QtGui.QColor(255, 255, 255), 2, QtCore.Qt.SolidLine),
+        SignalAppearance(QtGui.QColor(51, 153, 255), 1, QtCore.Qt.DashLine),
+        SignalAppearance(QtGui.QColor(255, 0, 255), 1, QtCore.Qt.DashLine),
+        SignalAppearance(QtGui.QColor(255, 153, 204), 1, QtCore.Qt.DashLine),
+        SignalAppearance(QtGui.QColor(204, 153, 102), 1, QtCore.Qt.DashLine),
+        SignalAppearance(QtGui.QColor(255, 204, 0), 1, QtCore.Qt.DashLine),
+        SignalAppearance(QtGui.QColor(255, 0, 255), 1, QtCore.Qt.DashLine),
+        SignalAppearance(QtGui.QColor(255, 153, 204), 1, QtCore.Qt.DashLine),
+        SignalAppearance(QtGui.QColor(204, 153, 102), 1, QtCore.Qt.DashLine),
+        SignalAppearance(QtGui.QColor(255, 204, 0), 1, QtCore.Qt.DashLine)
+    ]
 
-    def __init__(self, subscription_id, driver_addr, sig_name, y_axis, color_idx):
+    def __init__(self, subscription_id, driver_addr, sig_name, y_axis,
+                 color_idx):
         """
         Initializes an instance of class CurveItem.
 
@@ -81,7 +87,9 @@ class CurveItem:  # Todo: Move to its own file?
         self.val_max = 0
         col_item = self.colors[color_idx]
         self.color = col_item.pen_color
-        self.pen = {'color': col_item.pen_color, 'width': col_item.pen_width, 'style': col_item.pen_style}
+        self.pen = {'color': col_item.pen_color,
+                    'width': col_item.pen_width,
+                    'style': col_item.pen_style}
         self.curve = None
         self.lock = RLock()
         self.signature = ''
@@ -89,12 +97,16 @@ class CurveItem:  # Todo: Move to its own file?
 
     def update_signature(self):
         """Sets the new value of the signature string."""
-        self.signature = '{}:{}:{}'.format(self.driver_addr, self.signal_name, self.y_axis)
+        self.signature = '{}:{}:{}'.format(self.driver_addr,
+                                           self.signal_name,
+                                           self.y_axis)
 
     def create_curve(self):
         """Creates a new plot item."""
         with self.lock:
-            self.curve = pg.PlotCurveItem(x=self.array_time, y=self.array_val, pen=self.pen)
+            self.curve = pg.PlotCurveItem(x=self.array_time,
+                                          y=self.array_val,
+                                          pen=self.pen)
         return self.curve
 
     def update_curve(self, time_min, time_max):
@@ -102,17 +114,20 @@ class CurveItem:  # Todo: Move to its own file?
         with self.lock:
             idx_min = self._get_time_index(time_min)
             idx_max = self._get_time_index(time_max)
-            self.curve.setData(x=self.array_time[idx_min:idx_max], y=self.array_val[idx_min:idx_max])
+            self.curve.setData(x=self.array_time[idx_min:idx_max],
+                               y=self.array_val[idx_min:idx_max])
 
     def in_range(self, t):
         """
         Check to see if time is within range of collected data.
 
         t - Time value.
-        Return: True if time is within range of collected data. Otherwise False.
+        Return: True if time is within range of collected data.
+                Otherwise False.
         """
         with self.lock:
-            if self.array_time and self.array_time[0] < t < self.array_time[-1]:
+            if self.array_time and \
+                    self.array_time[0] < t < self.array_time[-1]:
                 return True
         return False
 
@@ -169,7 +184,9 @@ class CurveItem:  # Todo: Move to its own file?
                 return 0
             elif time_val > time_max:
                 return len(self.array_time)
-            idx = int(((time_val - time_min) / (time_max - time_min)) * len(self.array_time))
+            delta_t = time_max - time_min
+            t = time_val - time_min
+            idx = int((t / delta_t) * len(self.array_time))
             while self.array_time[idx] > time_val:
                 idx -= 1
             while self.array_time[idx] < time_val:
@@ -208,13 +225,15 @@ class OscillaWindow(QtGui.QMainWindow):
 
         self.plot_widget = pg.PlotWidget()
         self._plot_item = self.plot_widget.getPlotItem()
-        self.view_boxes = [self.plot_widget.getViewBox(), pg.ViewBox(), pg.ViewBox()]
+        self.view_boxes = [self.plot_widget.getViewBox(),
+                           pg.ViewBox(), pg.ViewBox()]
         self.ui.vloCurves.setDirection(QtGui.QBoxLayout.BottomToTop)
         self.ui.vloCurves.addWidget(self.plot_widget)
 
         # Set up the X-axis.
         self._plot_item.getAxis('bottom').hide()  # Hide the original x-axis.
-        self._axisTime = _AxisTime(orientation='bottom')  # Create a new X-axis with human readable time labels.
+        # Create a new X-axis with human readable time labels.
+        self._axisTime = _AxisTime(orientation='bottom')
         self._axisTime.linkToView(self.view_boxes[0])
         self._plot_item.layout.removeItem(self._plot_item.getAxis('bottom'))
         self._plot_item.layout.addItem(self._axisTime, 3, 1)
@@ -226,7 +245,8 @@ class OscillaWindow(QtGui.QMainWindow):
         self._plot_item.scene().addItem(self.view_boxes[1])
         self._plot_item.scene().addItem(self.view_boxes[2])
         ax3 = pg.AxisItem(orientation='right', linkView=self.view_boxes[2])
-        self.axes = [self._plot_item.getAxis('left'), self._plot_item.getAxis('right'), ax3]
+        self.axes = [self._plot_item.getAxis('left'),
+                     self._plot_item.getAxis('right'), ax3]
         self.axes[1].linkToView(self.view_boxes[1])
         self.view_boxes[1].setXLink(self.view_boxes[0])
         self.view_boxes[2].setXLink(self.view_boxes[0])
@@ -250,7 +270,8 @@ class OscillaWindow(QtGui.QMainWindow):
         self._update_button_status()
 
         self._connect_signals()
-        self.proxy = pg.SignalProxy(self.plot_widget.scene().sigMouseMoved, rateLimit=60, slot=self._mouse_moved)
+        self.proxy = pg.SignalProxy(self.plot_widget.scene().sigMouseMoved,
+                                    rateLimit=60, slot=self._mouse_moved)
 
     def _fill_combo_box_driver_ids(self, selected_driver):
         driver_ids = self.collector.get_available_drivers()
@@ -265,7 +286,8 @@ class OscillaWindow(QtGui.QMainWindow):
         signals = self.collector.get_available_signals()
         num_colors = len(CurveItem.colors)
         if num_colors < len(signals):
-            msg = 'Internal error!\nNew signals added.\nAdd more colors and pens.'
+            msg = 'Internal error!\nNew signals added.\nAdd ' \
+                  'more colors and pens.'
             print(msg)
             QtGui.QMessageBox.warning(None, 'Available Signals', msg)
             for i in range(num_colors):
@@ -301,8 +323,10 @@ class OscillaWindow(QtGui.QMainWindow):
         """Updates the geometry of the view boxes."""
         self.view_boxes[1].setGeometry(self.view_boxes[0].sceneBoundingRect())
         self.view_boxes[2].setGeometry(self.view_boxes[0].sceneBoundingRect())
-        self.view_boxes[1].linkedViewChanged(self.view_boxes[0], self.view_boxes[1].XAxis)
-        self.view_boxes[2].linkedViewChanged(self.view_boxes[0], self.view_boxes[2].XAxis)
+        self.view_boxes[1].linkedViewChanged(self.view_boxes[0],
+                                             self.view_boxes[1].XAxis)
+        self.view_boxes[2].linkedViewChanged(self.view_boxes[0],
+                                             self.view_boxes[2].XAxis)
 
     def _update_button_status(self):
         val = self.ui.lvActiveSig.count() == 0
@@ -313,7 +337,8 @@ class OscillaWindow(QtGui.QMainWindow):
     def _update_plot_axes_labels(self):
         txt = ['', '', '']
         for ci in self.curve_items:
-            t = "<span style='font-size: 8pt; color: {};'>{}</span>".format(ci.color.name(), ci.signature)
+            t = "<span style='font-size: 8pt; " \
+                "color: {};'>{}</span>".format(ci.color.name(), ci.signature)
             txt[ci.y_axis - 1] += t
         for i in range(0, len(self.axes)):
             self.axes[i].setLabel(txt[i])
@@ -352,20 +377,24 @@ class OscillaWindow(QtGui.QMainWindow):
         y_axis      - Y axis to plot against.
         """
         try:
-            subscription_id = self.collector.subscribe(driver_addr, signal_name)
+            subscription_id = self.collector.subscribe(driver_addr,
+                                                       signal_name)
         except Exception as e:
-            msg = 'Failed to subscribe to signal {} from driver {}.\n{}'.format(signal_name, driver_addr, e)
+            msg = 'Failed to subscribe to signal {} ' \
+                  'from driver {}.\n{}'.format(signal_name, driver_addr, e)
             print(msg)
             QtGui.QMessageBox.critical(None, 'Add Curve', msg)
             return
         try:
             color_idx = self.collector.get_signal_index(signal_name)
         except ValueError as e:
-            msg = 'Internal error. Failed to retrieve index for signal {}.\n{}'.format(signal_name, e)
+            msg = 'Internal error. Failed to retrieve index ' \
+                  'for signal {}.\n{}'.format(signal_name, e)
             print(msg)
             QtGui.QMessageBox.critical(None, 'Add Curve', msg)
             return
-        ci = CurveItem(subscription_id, driver_addr, signal_name, y_axis, color_idx)
+        ci = CurveItem(subscription_id, driver_addr, signal_name,
+                       y_axis, color_idx)
         self._add_curve(ci)
         self.curve_items.append(ci)
         self.collector.start(subscription_id)
@@ -432,20 +461,24 @@ class OscillaWindow(QtGui.QMainWindow):
             mouse_point = self.view_boxes[0].mapSceneToView(pos)
             time_value = mouse_point.x()
             try:
-                pretty_time = time.strftime("%H:%M:%S", time.gmtime(time_value))
+                pretty_time = time.strftime("%H:%M:%S",
+                                            time.gmtime(time_value))
             except ValueError:  # Time out of range.
                 return
             txtmax = ''
             txtnow = ''
             txtmin = ''
             for ci in self.curve_items:
-                txt1 = "<span style='font-size: 8pt; color: {};'>|".format(ci.color.name())
+                txt1 = "<span style='font-size: 8pt; " \
+                       "color: {};'>|".format(ci.color.name())
                 if ci.in_range(time_value):
                     txtmax += "{}{}</span>".format(txt1, ci.val_max)
                     txtnow += "{}{}</span>".format(txt1, ci.get_y(time_value))
                     txtmin += "{}{}</span>".format(txt1, ci.val_min)
-            txtnow += "|<span style='font-size: 8pt; color: white;'>{}</span>".format(pretty_time)
-            self.plot_widget.setTitle("<br>{}<br>{}<br>{}".format(txtmax, txtnow, txtmin))
+            txtnow += "|<span style='font-size: 8pt; " \
+                      "color: white;'>{}</span>".format(pretty_time)
+            self.plot_widget.setTitle("<br>{}<br>{}"
+                                      "<br>{}".format(txtmax, txtnow, txtmin))
             self.vertical_line.setPos(mouse_point.x())
 
     def _remove_curve_plot(self, ci):
@@ -490,7 +523,9 @@ class OscillaWindow(QtGui.QMainWindow):
             t = ci.start_time()
             if 0 < t < time_start:
                 time_start = t
-        self.view_boxes[0].setXRange(time_start, self.collector.get_current_time(), padding=0)
+        self.view_boxes[0].setXRange(time_start,
+                                     self.collector.get_current_time(),
+                                     padding=0)
 
     def _view_last_30_seconds(self):
         """Adjust X axis to view the last 30 seconds."""
@@ -539,7 +574,8 @@ class OscillaWindow(QtGui.QMainWindow):
         now_in_range = self.now <= x_max
         self.now = self.collector.get_current_time()
         if now_in_range:
-            self.view_boxes[0].setXRange(self.now - (x_max - x_min), self.now, padding=0)
+            self.view_boxes[0].setXRange(self.now - (x_max - x_min),
+                                         self.now, padding=0)
         self.ui.btnNow.setDisabled(now_in_range)
 
         # Update the curves.

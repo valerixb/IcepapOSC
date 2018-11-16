@@ -55,7 +55,8 @@ class _Channel:
         elif tgtenc == 'INPOS' or (tgtenc == 'NONE' and shftenc == 'INPOS'):
             nstep = cfg['INPNSTEP']
             nturn = cfg['INPNTURN']
-        self.measure_resolution = (float(nstep) / float(nturn)) / (float(axisnstep) / float(axisnturn))
+        self.measure_resolution = (float(nstep) / float(nturn)) / \
+                                  (float(axisnstep) / float(axisnturn))
 
 
 class Collector:
@@ -66,42 +67,46 @@ class Collector:
 
         host - The IcePAP system host name.
         port - The IcePAP system port number.
-        callback - A callback function used for sending collected signal data back to the caller.
+        callback - A callback function used for sending collected signal
+                   data back to the caller.
                    cb_func(subscription_id, value_list)
-                       subscription_id - The subscription id retained when subscribing for a signal.
+                       subscription_id - The subscription id retained when
+                       subscribing for a signal.
                        value_list - A list of tuples (time_stamp, signal_value)
         """
-        self.sig_getters = OrderedDict([('PosAxis', self._getter_pos_axis),
-                                        ('PosTgtenc', self._getter_pos_tgtenc),
-                                        ('PosShftenc', self._getter_pos_shftenc),
-                                        ('PosEncin', self._getter_pos_encin),
-                                        ('PosAbsenc', self._getter_pos_absenc),
-                                        ('PosInpos', self._getter_pos_inpos),
-                                        ('PosMotor', self._getter_pos_motor),
-                                        ('PosCtrlenc', self._getter_pos_ctrlenc),
-                                        ('PosMeasure', self._getter_pos_measure),
-                                        ('DifAxMeasure', self._getter_dif_ax_measure),
-                                        ('DifAxMotor', self._getter_dif_ax_motor),
-                                        ('DifAxTgtenc', self._getter_dif_ax_tgtenc),
-                                        ('DifAxShftenc', self._getter_dif_ax_shftenc),
-                                        ('DifAxCtrlenc', self._getter_dif_ax_ctrlenc),
-                                        ('EncEncin', self._getter_enc_encin),
-                                        ('EncAbsenc', self._getter_enc_absenc),
-                                        ('EncTgtenc', self._getter_enc_tgtenc),
-                                        ('EncInpos', self._getter_enc_inpos),
-                                        ('StatReady', self._getter_stat_ready),
-                                        ('StatMoving', self._getter_stat_moving),
-                                        ('StatSettling', self._getter_stat_settling),
-                                        ('StatOutofwin', self._getter_stat_outofwin),
-                                        ('StatStopcode', self._getter_stat_stopcode),
-                                        ('StatWarning', self._getter_stat_warning),
-                                        ('StatLim+', self._getter_stat_limit_positive),
-                                        ('StatLim-', self._getter_stat_limit_negative),
-                                        ('StatHome', self._getter_stat_home),
-                                        ('MeasI', self._getter_meas_i),
-                                        ('MeasIa', self._getter_meas_ia),
-                                        ('MeasIb', self._getter_meas_ib),
-                                        ('MeasVm', self._getter_meas_vm)])
+        self.sig_getters = OrderedDict(
+            [('PosAxis', self._getter_pos_axis),
+             ('PosTgtenc', self._getter_pos_tgtenc),
+             ('PosShftenc', self._getter_pos_shftenc),
+             ('PosEncin', self._getter_pos_encin),
+             ('PosAbsenc', self._getter_pos_absenc),
+             ('PosInpos', self._getter_pos_inpos),
+             ('PosMotor', self._getter_pos_motor),
+             ('PosCtrlenc', self._getter_pos_ctrlenc),
+             ('PosMeasure', self._getter_pos_measure),
+             ('DifAxMeasure', self._getter_dif_ax_measure),
+             ('DifAxMotor', self._getter_dif_ax_motor),
+             ('DifAxTgtenc', self._getter_dif_ax_tgtenc),
+             ('DifAxShftenc', self._getter_dif_ax_shftenc),
+             ('DifAxCtrlenc', self._getter_dif_ax_ctrlenc),
+             ('EncEncin', self._getter_enc_encin),
+             ('EncAbsenc', self._getter_enc_absenc),
+             ('EncTgtenc', self._getter_enc_tgtenc),
+             ('EncInpos', self._getter_enc_inpos),
+             ('StatReady', self._getter_stat_ready),
+             ('StatMoving', self._getter_stat_moving),
+             ('StatSettling', self._getter_stat_settling),
+             ('StatOutofwin', self._getter_stat_outofwin),
+             ('StatStopcode', self._getter_stat_stopcode),
+             ('StatWarning', self._getter_stat_warning),
+             ('StatLim+', self._getter_stat_limit_positive),
+             ('StatLim-', self._getter_stat_limit_negative),
+             ('StatHome', self._getter_stat_home),
+             ('MeasI', self._getter_meas_i),
+             ('MeasIa', self._getter_meas_ia),
+             ('MeasIb', self._getter_meas_ib),
+             ('MeasVm', self._getter_meas_vm)]
+        )
         self.host = host
         self.port = port
         self.cb = callback
@@ -115,10 +120,12 @@ class Collector:
         try:
             self.icepap_system = EthIcePAPController(self.host, self.port)
         except Exception as e:
-            msg = 'Failed to instantiate master controller.\nHost: {}\nPort: {}\n{}'.format(self.host, self.port, e)
+            msg = 'Failed to instantiate master controller.\nHost: ' \
+                  '{}\nPort: {}\n{}'.format(self.host, self.port, e)
             raise Exception(msg)
         if not self.icepap_system:
-            msg = 'IcePAP system {} has no active drivers! Aborting.'.format(self.host)
+            msg = 'IcePAP system {} has no active drivers! ' \
+                  'Aborting.'.format(self.host)
             raise Exception(msg)
 
         self.tick_interval = 50  # [milliseconds]
@@ -170,7 +177,8 @@ class Collector:
         """
         for ch in self.channels_subscribed.values():
             if ch.equals(icepap_addr, signal_name):
-                msg = 'Channel already exists.\nAddr: {}\nSignal: {}'.format(icepap_addr, signal_name)
+                msg = 'Channel already exists.\nAddr: ' \
+                      '{}\nSignal: {}'.format(icepap_addr, signal_name)
                 raise Exception(msg)
         channel = _Channel(icepap_addr, signal_name)
         sn = QString(signal_name)
@@ -181,9 +189,11 @@ class Collector:
             try:
                 cfg = self.icepap_system[icepap_addr].get_cfg()
             except RuntimeError as e:
-                msg = 'Failed to retrieve configuration parameters for driver {}\n{}.'.format(icepap_addr, e)
+                msg = 'Failed to retrieve configuration parameters ' \
+                      'for driver {}\n{}.'.format(icepap_addr, e)
                 raise Exception(msg)
-            if (cond_1 and cfg['TGTENC'].upper() == 'NONE') or (cond_2 and cfg['SHFTENC'].upper() == 'NONE'):
+            if (cond_1 and cfg['TGTENC'].upper() == 'NONE') or \
+                    (cond_2 and cfg['SHFTENC'].upper() == 'NONE'):
                 msg = 'Signal {} is not mapped/valid.'.format(sn)
                 raise Exception(msg)
             if cond_3:
@@ -198,8 +208,10 @@ class Collector:
 
         subscription_id - The given subscription id.
         """
-        if subscription_id in self.channels_subscribed.keys() and subscription_id not in self.channels.keys():
-            self.channels[subscription_id] = self.channels_subscribed[subscription_id]
+        if subscription_id in self.channels_subscribed.keys() and \
+                subscription_id not in self.channels.keys():
+            self.channels[subscription_id] = \
+                self.channels_subscribed[subscription_id]
 
     def unsubscribe(self, subscription_id):
         """
@@ -215,9 +227,11 @@ class Collector:
         for subscription_id, channel in self.channels.iteritems():
             self.current_channel = subscription_id
             try:
-                val = self.sig_getters[channel.sig_name](channel.icepap_address)
+                addr = channel.icepap_address
+                val = self.sig_getters[channel.sig_name](addr)
             except RuntimeError as e:
-                msg = 'Failed to collect data for signal {}\n{}'.format(channel.sig_name, e)
+                msg = 'Failed to collect data for signal ' \
+                      '{}\n{}'.format(channel.sig_name, e)
                 print(msg)
                 continue
             tv = (time.time(), val)
@@ -252,10 +266,12 @@ class Collector:
         return self.icepap_system[addr].pos_ctrlenc
 
     def _getter_pos_measure(self, addr):
-        return self.icepap_system.get_fpos(self.icepap_system[addr].addr, 'MEASURE')[0]
+        return self.icepap_system.get_fpos(self.icepap_system[addr].addr,
+                                           'MEASURE')[0]
 
     def _getter_dif_ax_measure(self, addr):
-        pos_measure = self._getter_pos_measure(addr) / self.channels[self.current_channel].measure_resolution
+        pos_measure = self._getter_pos_measure(addr) / \
+                      self.channels[self.current_channel].measure_resolution
         return self._getter_pos_axis(addr) - pos_measure
 
     def _getter_dif_ax_motor(self, addr):
