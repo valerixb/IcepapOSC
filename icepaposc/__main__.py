@@ -20,18 +20,46 @@
 import sys
 from PyQt4 import QtGui
 from mainwindow import OscillaWindow
+import argparse
+from __init__ import version
 
 
-def main(host, port):
+def get_parser():
+    desc = 'IcePAP Oscilloscope Application, base on ethernet communication\n'
+    desc += 'Version: {}.\n'.format(version)
+    epi = 'Documentation: https://alba-synchrotron.github.io/pyIcePAP-doc/\n'
+    epi += 'Copyright 2017:\n' \
+           '   MAX IV Laboratory, Lund, Sweden\n' \
+           '   CELLS / ALBA Synchrotron, Bellaterra, Spain.'
+    fmt = argparse.RawTextHelpFormatter
+    parse = argparse.ArgumentParser(description=desc,
+                                    formatter_class=fmt,
+                                    epilog=epi)
+    ver = '%(prog)s {0}'.format(version)
+
+    parse.add_argument('--version', action='version', version=ver)
+
+    parse.add_argument('host', help='IcePAP Host')
+    parse.add_argument('-p', '--port', default=5000, help='IcePAP port')
+    parse.add_argument('-t', '--timeout', default=3, help='Socket timeout')
+
+    # TODO: Allow to pass the axes preselected and type of graph
+    # parse.add_argument('axes', nargs='*', help='Axes to save, default all',
+    #                    type=int, default=[])
+    # save_cmd.add_argument('-d', '--debug', action='store_true',
+    #                       help='Activate log level DEBUG')
+
+    return parse
+
+
+def main():
+    args = get_parser().parse_args()
+
     app = QtGui.QApplication(sys.argv)
-    oscilla_window = OscillaWindow(host, port)
+    oscilla_window = OscillaWindow(args.host, args.port)
     oscilla_window.show()
     sys.exit(app.exec_())
 
 
 if __name__ == "__main__":
-    if len(sys.argv) == 3:
-        main(sys.argv[1], int(sys.argv[2]))
-    else:
-        print('Usage: oscilla <host> <port>')
-        print('Example: oscilla w-kitslab-icepap-11 5000')
+    main()
