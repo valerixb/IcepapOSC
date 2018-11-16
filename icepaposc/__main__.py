@@ -19,7 +19,7 @@
 
 import sys
 from PyQt4 import QtGui
-from widgets import OscillaWindow
+from mainwindow import OscillaWindow
 
 
 def main(host, port):
