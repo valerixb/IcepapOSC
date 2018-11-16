@@ -16,3 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with IcePAPTrend. If not, see <http://www.gnu.org/licenses/>.
 # -----------------------------------------------------------------------------
+
+# The version is updated automatically with bumpversion
+# Do not update manually
+version = '0.1.0'
