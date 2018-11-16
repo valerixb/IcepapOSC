@@ -1,4 +1,4 @@
-# Guidelines for Contributing to IcePAPTrend
+# Guidelines for Contributing to IcepapOCS
 
 The pyIcePAP repository uses [Github Flow][]. For the contributions, we use 
 the [Fork & Pull Model][]:
@@ -7,12 +7,12 @@ the [Fork & Pull Model][]:
 2. the contributor commits changes to a branch based on the. 
    `master` branch and pushes it to the forked repository.
 3. the contributor creates a [Pull Request][] against the `master` 
-   branch of the official IcePAPTrend repository.
+   branch of the official IcepapOCS repository.
 4. anybody interested may review and comment on the Pull Request, and 
    suggest changes to it (even doing Pull Requests against the Pull
    Request branch). At this point more changes can be committed on the 
    requestor's branch until the result is satisfactory.
-5. once the proposed code is considered ready by an appointed IcePAPTrend 
+5. once the proposed code is considered ready by an appointed IcepapOCS 
    integrator, the integrator merges the pull request into `master`, 
    updates the changelog file and the version according to the pull request 
    type (feature or patch).
@@ -20,7 +20,7 @@ the [Fork & Pull Model][]:
    
 ## Important considerations:
 
-In general, the contributions to IcePAPTrend should consider following:
+In general, the contributions to IcepapOCS should consider following:
 
 - The code must comply with the next conventions:
     * In general, we try to follow the standard Python style conventions as
@@ -40,12 +40,12 @@ In general, the contributions to IcePAPTrend should consider following:
     * document all code using Sphinx_ extension to reStructuredText_.
 
 The following code can serve as a template for writing new python modules to
-IcePAPTrend:
+IcepapOCS:
 
 ``` 
 # -----------------------------------------------------------------------------
-# This file is part of IcePAPTrend link: 
-#        https://github.com/ALBA-Synchrotron/IcePAPTrend
+# This file is part of IcepapOCS link: 
+#        https://github.com/ALBA-Synchrotron/IcepapOCS
 #
 # Copyright 2017: 
 #       MAX IV Laboratory, Lund, Sweden
@@ -56,10 +56,10 @@ IcePAPTrend:
 # See LICENSE.txt for more info.
 #
 # You should have received a copy of the GNU General Public License
-# along with IcePAPTrend. If not, see <http://www.gnu.org/licenses/>.
+# along with IcepapOCS. If not, see <http://www.gnu.org/licenses/>.
 # -----------------------------------------------------------------------------
 
-"""A :mod:`IcePAPTrend` module written for template purposes only"""
+"""A :mod:`IcepapOCS` module written for template purposes only"""
 
 __all__ = ["IcePAPDemo"]
 
@@ -75,7 +75,7 @@ if __name__ == "__main__":
     main()
     
 ```
-- [IcePAPTrend travis-ci][] will check it for each Pull Request (PR) using
+- [IcepapOCS travis-ci][] will check it for each Pull Request (PR) using
   the latest version of [flake8 available on PyPI]travis[]. 
   
   In case the check fails, please correct the errors and commit
@@ -117,6 +117,6 @@ if __name__ == "__main__":
 [tag_issue_closing]: https://help.github.com/articles/closing-issues-via-commit-messages/
 [Sardana coding conventions]: http://www.sardana-controls.org/devel/guide_coding.html
 [LGPL]: http://www.gnu.org/licenses/lgpl.html
-[IcePAPTrend travis-ci]: https://travis-ci.org/ALBA-Synchrotron/IcePAPTrend
+[IcepapOCS travis-ci]: https://travis-ci.org/ALBA-Synchrotron/IcepapOCS
 [flake8 available on PyPI]: https://pypi.org/project/flake8
 [Style Guide for Python Code]: http://www.python.org/peps/pep-0008.html

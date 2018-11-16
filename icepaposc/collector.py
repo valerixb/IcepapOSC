@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 
 # -----------------------------------------------------------------------------
-# This file is part of IcePAPTrend link:
-#        https://github.com/ALBA-Synchrotron/IcePAPTrend
+# This file is part of IcepapOCS link:
+#        https://github.com/ALBA-Synchrotron/IcepapOCS
 #
 # Copyright 2017:
 #       MAX IV Laboratory, Lund, Sweden
@@ -14,7 +14,7 @@
 # See LICENSE.txt for more info.
 #
 # You should have received a copy of the GNU General Public License
-# along with IcePAPTrend. If not, see <http://www.gnu.org/licenses/>.
+# along with IcepapOCS. If not, see <http://www.gnu.org/licenses/>.
 # -----------------------------------------------------------------------------
 
 from PyQt4.QtCore import QTimer
