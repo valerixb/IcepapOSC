@@ -42,5 +42,6 @@ class DialogOscillaSettings(QtGui.QDialog):
 
     def _update_gui_rate(self):
         self.ui.leGuiUpdateRate.setText(
-            str(self.ui.sbSampleRate.value() * self.ui.sbDumpRate.value())
+            str(self.ui.sbSampleRate.value()
+                * self.ui.sbDumpRate.value())
         )
