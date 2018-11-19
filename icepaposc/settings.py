@@ -26,7 +26,7 @@ class DialogOscillaSettings(QtGui.QDialog):
     def _set_dump_rate(self):
         self._update_gui_rate()
 
-    #def _set_default_x_axis_len(self):
+    # def _set_default_x_axis_len(self):
     #    msg = 'Freetext field does not work with pyIcePAP API v2.'
     #    print(msg)
     #    MessageDialogs.showErrorMessage(None, 'Freetest Box', msg)
