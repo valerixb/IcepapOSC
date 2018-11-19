@@ -16,7 +16,8 @@ __version = '0.1.0'
 package_list = ['*ui']
 
 # TODO: fill the long description
-long_description = """ Python library """
+long_description = """ Python application to monitor and tune IcePAP 
+based systems. """
 
 # TODO: Include documentation.
 

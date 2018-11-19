@@ -1,6 +1,6 @@
 # IcepapOSC
 
-IcepapOSC is a python module and application to monitor IcePAP based systems.
+IcepapOSC is a python module and application to monitor and tune IcePAP based systems.
 
 To install it on the system: 
 
