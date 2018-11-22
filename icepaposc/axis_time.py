@@ -17,3 +17,25 @@
 # along with IcepapOCS. If not, see <http://www.gnu.org/licenses/>.
 # -----------------------------------------------------------------------------
 
+from pyqtgraph import AxisItem
+import time
+
+
+class AxisTime(AxisItem):
+    """
+    Formats axis labels to human readable time.
+    values  - List of time values (Format: Seconds since 1970).
+    scale   - Not used.
+    spacing - Not used.
+    """
+    def tickStrings(self, values, scale, spacing):
+        """
+        We override this function to have the X-axis labels display our way.
+        """
+        strings = []
+        for x in values:
+            try:
+                strings.append(time.strftime("%H:%M:%S", time.gmtime(x)))
+            except ValueError:  # Time out of range.
+                strings.append('')
+        return strings

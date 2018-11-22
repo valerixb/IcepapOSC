@@ -21,61 +21,8 @@ from PyQt4.QtCore import QTimer
 from PyQt4.QtCore import QString
 from collections import OrderedDict
 from pyIcePAP import EthIcePAPController
+from channel import Channel
 import time
-
-
-class _Channel:
-    """A container class holding information for a driver signal."""
-
-    def __init__(self, address, signal_name):
-        """
-        Initializes an instance of class _Channel.
-
-        address     - IcePAP driver id.
-        signal_name - Signal name.
-        """
-        self.icepap_address = address
-        self.sig_name = signal_name
-        self.measure_resolution = 1.
-        self.collected_samples = []
-
-    def equals(self, icepap_addr, signal_name):
-        """
-        Checks for equality.
-
-        icepap_addr - IcePAP address.
-        signal_name - Signal name.
-        Return: True if equal. False otherwise.
-        """
-        if icepap_addr != self.icepap_address:
-            return False
-        if signal_name != self.sig_name:
-            return False
-        return True
-
-    def set_measure_resolution(self, cfg):
-        """
-        Set measure resolution.
-
-        cfg - Config info extracted from IcePAP.
-        """
-        tgtenc = cfg['TGTENC'].upper()
-        shftenc = cfg['SHFTENC'].upper()
-        axisnstep = cfg['ANSTEP']
-        axisnturn = cfg['ANTURN']
-        nstep = axisnstep
-        nturn = axisnturn
-        if tgtenc == 'ABSENC' or (tgtenc == 'NONE' and shftenc == 'ABSENC'):
-            nstep = cfg['ABSNSTEP']
-            nturn = cfg['ABSNTURN']
-        elif tgtenc == 'ENCIN' or (tgtenc == 'NONE' and shftenc == 'ENCIN'):
-            nstep = cfg['EINNSTEP']
-            nturn = cfg['EINNTURN']
-        elif tgtenc == 'INPOS' or (tgtenc == 'NONE' and shftenc == 'INPOS'):
-            nstep = cfg['INPNSTEP']
-            nturn = cfg['INPNTURN']
-        self.measure_resolution = (float(nstep) / float(nturn)) / \
-                                  (float(axisnstep) / float(axisnturn))
 
 
 class Collector:
@@ -90,8 +37,9 @@ class Collector:
                    data back to the caller.
                    cb_func(subscription_id, value_list)
                        subscription_id - The subscription id retained when
-                       subscribing for a signal.
-                       value_list      - A list of tuples (time_stamp, signal_value)
+                                         subscribing for a signal.
+                       value_list      - A list of tuples
+                                         (time_stamp, signal_value)
         """
         self.sig_getters = OrderedDict(
             [('PosAxis', self._getter_pos_axis),
@@ -203,7 +151,7 @@ class Collector:
                 msg = 'Channel already exists.\nAddr: ' \
                       '{}\nSignal: {}'.format(icepap_addr, signal_name)
                 raise Exception(msg)
-        channel = _Channel(icepap_addr, signal_name)
+        channel = Channel(icepap_addr, signal_name)
         sn = QString(signal_name)
         cond_1 = sn.endsWith('Tgtenc')
         cond_2 = sn.endsWith('Shftenc')

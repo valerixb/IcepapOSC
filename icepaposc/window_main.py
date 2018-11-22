@@ -21,198 +21,12 @@ from PyQt4 import QtGui
 from PyQt4 import QtCore
 from ui.ui_window_main import Ui_WindowMain
 from collector import Collector
-from collections import namedtuple
-from threading import RLock
 from dialog_settings import DialogSettings
 from settings import Settings
+from axis_time import AxisTime
+from curve_item import CurveItem
 import pyqtgraph as pg
 import time
-
-
-class _AxisTime(pg.AxisItem):
-    """
-    Formats axis labels to human readable time.
-    values  - List of time values (Format: Seconds since 1970).
-    scale   - Not used.
-    spacing - Not used.
-    """
-    def tickStrings(self, values, scale, spacing):
-        """
-        We override this function to have the X-axis labels display our way.
-        """
-        strings = []
-        for x in values:
-            try:
-                strings.append(time.strftime("%H:%M:%S", time.gmtime(x)))
-            except ValueError:  # Time out of range.
-                strings.append('')
-        return strings
-
-
-class CurveItem:  # Todo: Move to its own file?
-    """Represents a curve to be plotted in a diagram."""
-
-    SignalAppearance = namedtuple('SignalAppearance',
-                                  ['pen_color', 'pen_width', 'pen_style'])
-
-    colors = [
-        SignalAppearance(QtGui.QColor(255, 255, 0), 1, QtCore.Qt.SolidLine),
-        SignalAppearance(QtGui.QColor(255, 0, 0), 1, QtCore.Qt.SolidLine),
-        SignalAppearance(QtGui.QColor(0, 255, 0), 1, QtCore.Qt.SolidLine),
-        SignalAppearance(QtGui.QColor(255, 255, 255), 1, QtCore.Qt.SolidLine),
-        SignalAppearance(QtGui.QColor(51, 153, 255), 1, QtCore.Qt.SolidLine),
-        SignalAppearance(QtGui.QColor(0, 255, 255), 1, QtCore.Qt.SolidLine),
-        SignalAppearance(QtGui.QColor(255, 0, 255), 1, QtCore.Qt.SolidLine),
-        SignalAppearance(QtGui.QColor(204, 153, 102), 1, QtCore.Qt.SolidLine),
-        SignalAppearance(QtGui.QColor(0, 0, 255), 1, QtCore.Qt.SolidLine),
-        SignalAppearance(QtGui.QColor(0, 255, 0), 1, QtCore.Qt.SolidLine),
-        SignalAppearance(QtGui.QColor(255, 204, 0), 1, QtCore.Qt.SolidLine),
-        SignalAppearance(QtGui.QColor(153, 255, 153), 2, QtCore.Qt.DotLine),
-        SignalAppearance(QtGui.QColor(255, 170, 0), 2, QtCore.Qt.DashLine),
-        SignalAppearance(QtGui.QColor(255, 0, 0), 2, QtCore.Qt.DashLine),
-        SignalAppearance(QtGui.QColor(0, 255, 255), 1, QtCore.Qt.DotLine),
-        SignalAppearance(QtGui.QColor(255, 170, 255), 1, QtCore.Qt.DashLine),
-        SignalAppearance(QtGui.QColor(127, 255, 127), 1, QtCore.Qt.DashLine),
-        SignalAppearance(QtGui.QColor(255, 255, 127), 1, QtCore.Qt.DashLine),
-        SignalAppearance(QtGui.QColor(255, 0, 0), 2, QtCore.Qt.DotLine),
-        SignalAppearance(QtGui.QColor(255, 0, 0), 1, QtCore.Qt.DashLine),
-        SignalAppearance(QtGui.QColor(0, 255, 0), 2, QtCore.Qt.DotLine),
-        SignalAppearance(QtGui.QColor(255, 255, 255), 2, QtCore.Qt.SolidLine),
-        SignalAppearance(QtGui.QColor(51, 153, 255), 1, QtCore.Qt.DashLine),
-        SignalAppearance(QtGui.QColor(255, 0, 255), 1, QtCore.Qt.DashLine),
-        SignalAppearance(QtGui.QColor(255, 153, 204), 1, QtCore.Qt.DashLine),
-        SignalAppearance(QtGui.QColor(204, 153, 102), 1, QtCore.Qt.DashLine),
-        SignalAppearance(QtGui.QColor(255, 204, 0), 1, QtCore.Qt.DashLine),
-        SignalAppearance(QtGui.QColor(255, 0, 255), 1, QtCore.Qt.DashLine),
-        SignalAppearance(QtGui.QColor(255, 153, 204), 1, QtCore.Qt.DashLine),
-        SignalAppearance(QtGui.QColor(204, 153, 102), 1, QtCore.Qt.DashLine),
-        SignalAppearance(QtGui.QColor(255, 204, 0), 1, QtCore.Qt.DashLine)
-    ]
-
-    def __init__(self, subscription_id, driver_addr, sig_name, y_axis,
-                 color_idx):
-        """
-        Initializes an instance of class CurveItem.
-
-        driver_addr - IcePAP driver address.
-        sig_name    - Signal name.
-        y_axis      - Y axis to plot against.
-        """
-        self.subscription_id = subscription_id
-        self.driver_addr = driver_addr
-        self.signal_name = sig_name
-        self.y_axis = y_axis
-        self.array_time = []
-        self.array_val = []
-        self.val_min = 0
-        self.val_max = 0
-        col_item = self.colors[color_idx]
-        self.color = col_item.pen_color
-        self.pen = {'color': col_item.pen_color,
-                    'width': col_item.pen_width,
-                    'style': col_item.pen_style}
-        self.curve = None
-        self.lock = RLock()
-        self.signature = ''
-        self.update_signature()
-
-    def update_signature(self):
-        """Sets the new value of the signature string."""
-        self.signature = '{}:{}:{}'.format(self.driver_addr,
-                                           self.signal_name,
-                                           self.y_axis)
-
-    def create_curve(self):
-        """Creates a new plot item."""
-        with self.lock:
-            self.curve = pg.PlotCurveItem(x=self.array_time,
-                                          y=self.array_val,
-                                          pen=self.pen)
-        return self.curve
-
-    def update_curve(self, time_min, time_max):
-        """Updates the curve with recent collected data."""
-        with self.lock:
-            idx_min = self._get_time_index(time_min)
-            idx_max = self._get_time_index(time_max)
-            self.curve.setData(x=self.array_time[idx_min:idx_max],
-                               y=self.array_val[idx_min:idx_max])
-
-    def in_range(self, t):
-        """
-        Check to see if time is within range of collected data.
-
-        t - Time value.
-        Return: True if time is within range of collected data.
-                Otherwise False.
-        """
-        with self.lock:
-            if self.array_time and \
-                    self.array_time[0] < t < self.array_time[-1]:
-                return True
-        return False
-
-    def start_time(self):
-        """
-        Get time for first data sample.
-
-        Return: Time of the first collected data sample. -1 if none.
-        """
-        with self.lock:
-            if self.array_time:
-                return self.array_time[0]
-        return -1
-
-    def collect(self, new_data):
-        """Store new collected data."""
-        with self.lock:
-            if not self.array_val:
-                self.val_min = self.val_max = new_data[0][1]
-            for t, v in new_data:
-                self.array_time.append(t)
-                self.array_val.append(v)
-                if v > self.val_max:
-                    self.val_max = v
-                elif v < self.val_min:
-                    self.val_min = v
-
-    def get_y(self, time_val):
-        """
-        Retrieve the signal value corresponding to the provided time value.
-
-        t_val - Time value.
-        Return: Signal value corresponding to an adjacent sample in time.
-        """
-        with self.lock:
-            idx = self._get_time_index(time_val)
-            return self.array_val[idx]
-
-    def _get_time_index(self, time_val):
-        """
-        Retrieve the sample index corresponding to the provided time value.
-
-        t_val - Time value.
-        Return: Index of a sample adjacent to the provided time value.
-        """
-        with self.lock:
-            if not self.array_time:
-                return -1
-            if len(self.array_time) == 1:
-                return 0
-            time_min = self.array_time[0]
-            time_max = self.array_time[-1]
-            if time_val < time_min:
-                return 0
-            elif time_val > time_max:
-                return len(self.array_time)
-            delta_t = time_max - time_min
-            t = time_val - time_min
-            idx = int((t / delta_t) * len(self.array_time))
-            while self.array_time[idx] > time_val:
-                idx -= 1
-            while self.array_time[idx] < time_val:
-                idx += 1
-            return idx
 
 
 class WindowMain(QtGui.QMainWindow):
@@ -256,7 +70,7 @@ class WindowMain(QtGui.QMainWindow):
         # Set up the X-axis.
         self._plot_item.getAxis('bottom').hide()  # Hide the original x-axis.
         # Create a new X-axis with human readable time labels.
-        self._axisTime = _AxisTime(orientation='bottom')
+        self._axisTime = AxisTime(orientation='bottom')
         self._axisTime.linkToView(self.view_boxes[0])
         self._plot_item.layout.removeItem(self._plot_item.getAxis('bottom'))
         self._plot_item.layout.addItem(self._axisTime, 3, 1)
@@ -327,9 +141,9 @@ class WindowMain(QtGui.QMainWindow):
         self.ui.btnShift.clicked.connect(self._shift_button_clicked)
         self.ui.btnRemoveSel.clicked.connect(self._remove_selected_signal)
         self.ui.btnRemoveAll.clicked.connect(self._remove_all_signals)
-        self.ui.btnCLoop.clicked.connect(self._setup_signal_set_closed_loop)
-        self.ui.btnCurrents.clicked.connect(self._setup_signal_set_currents)
-        self.ui.btnTarget.clicked.connect(self._setup_signal_set_target)
+        self.ui.btnCLoop.clicked.connect(self._signals_closed_loop)
+        self.ui.btnCurrents.clicked.connect(self._signals_currents)
+        self.ui.btnTarget.clicked.connect(self._signals_target)
         self.ui.btnSeeAll.clicked.connect(self._view_all_data)
         self.ui.btnResetX.clicked.connect(self._reset_x)
         self.ui.btnResetY.clicked.connect(self._enable_auto_range_y)
@@ -337,9 +151,9 @@ class WindowMain(QtGui.QMainWindow):
         self.ui.btnNow.clicked.connect(self._goto_now)
         self.ui.actionSettings.triggered.connect(self._display_settings_dlg)
         self.ui.actionExit.triggered.connect(self.close)
-        self.ui.actionClosed_Loop.triggered.connect(self._setup_signal_set_closed_loop)
-        self.ui.actionCurrents.triggered.connect(self._setup_signal_set_currents)
-        self.ui.actionTarget.triggered.connect(self._setup_signal_set_target)
+        self.ui.actionClosed_Loop.triggered.connect(self._signals_closed_loop)
+        self.ui.actionCurrents.triggered.connect(self._signals_currents)
+        self.ui.actionTarget.triggered.connect(self._signals_target)
         self.view_boxes[0].sigResized.connect(self._update_views)
 
     def closeEvent(self, event):
@@ -500,13 +314,16 @@ class WindowMain(QtGui.QMainWindow):
             txtmin = ''
             text_size = 10
             for ci in self.curve_items:
-                txt1 = "<span style='font-size: {}pt; color: {};'>|".format(text_size, ci.color.name())
+                tmp = "<span style='font-size: {}pt; color: {};'>|"
+                tmp = tmp.format(text_size, ci.color.name())
                 if ci.in_range(time_value):
-                    txtmax += "{}{}</span>".format(txt1, ci.val_max)
-                    txtnow += "{}{}</span>".format(txt1, ci.get_y(time_value))
-                    txtmin += "{}{}</span>".format(txt1, ci.val_min)
-            txtnow += "|<span style='font-size: {}pt; color: white;'>{}</span>".format(text_size, pretty_time)
-            self.plot_widget.setTitle("<br>{}<br>{}<br>{}".format(txtmax, txtnow, txtmin))
+                    txtmax += "{}{}</span>".format(tmp, ci.val_max)
+                    txtnow += "{}{}</span>".format(tmp, ci.get_y(time_value))
+                    txtmin += "{}{}</span>".format(tmp, ci.val_min)
+            tmp = "|<span style='font-size: {}pt; color: white;'>{}</span>"
+            txtnow += tmp.format(text_size, pretty_time)
+            title = "<br>{}<br>{}<br>{}".format(txtmax, txtnow, txtmin)
+            self.plot_widget.setTitle(title)
             self.vertical_line.setPos(mouse_point.x())
 
     def _remove_curve_plot(self, ci):
@@ -517,7 +334,7 @@ class WindowMain(QtGui.QMainWindow):
         """
         self.view_boxes[ci.y_axis - 1].removeItem(ci.curve)
 
-    def _setup_signal_set_closed_loop(self):
+    def _signals_closed_loop(self):
         """Display a specific set of curves."""
         self._remove_all_signals()
         drv_addr = int(self.ui.cbDrivers.currentText())
@@ -529,7 +346,7 @@ class WindowMain(QtGui.QMainWindow):
         self._add_signal(drv_addr, 'StatSettling', 3)
         self._add_signal(drv_addr, 'StatOutofwin', 3)
 
-    def _setup_signal_set_currents(self):
+    def _signals_currents(self):
         """Display a specific set of curves."""
         self._remove_all_signals()
         drv_addr = int(self.ui.cbDrivers.currentText())
@@ -537,7 +354,7 @@ class WindowMain(QtGui.QMainWindow):
         self._add_signal(drv_addr, 'MeasI', 2)
         self._add_signal(drv_addr, 'MeasVm', 3)
 
-    def _setup_signal_set_target(self):
+    def _signals_target(self):
         """Display a specific set of curves."""
         self._remove_all_signals()
         drv_addr = int(self.ui.cbDrivers.currentText())
@@ -556,9 +373,13 @@ class WindowMain(QtGui.QMainWindow):
                                      padding=0)
 
     def _reset_x(self):
-        """Reset the length of the X axis to the initial number of seconds (setting)."""
+        """
+        Reset the length of the X axis to
+        the initial number of seconds (setting).
+        """
         now = self.collector.get_current_time()
-        self.view_boxes[0].setXRange(now - self.settings.default_x_axis_length, now, padding=0)
+        start = now - self.settings.default_x_axis_length
+        self.view_boxes[0].setXRange(start, now, padding=0)
 
     def _enable_auto_range_y(self):
         self.view_boxes[0].enableAutoRange(axis=self.view_boxes[0].YAxis)
@@ -583,7 +404,7 @@ class WindowMain(QtGui.QMainWindow):
 
     def _display_settings_dlg(self):
         dlg = DialogSettings(self, self.settings)
-        dlg.show()
+        dlg.show()  # Todo: Make the dialog modal but movable relative to ancestor.
         self.collector.tick_interval = self.settings.sample_rate
         self.collector.sample_buf_len = self.settings.dump_rate
 
