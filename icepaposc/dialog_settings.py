@@ -27,6 +27,7 @@ class DialogSettings(QDialog):
     def _connect_signals(self):
         self.ui.sbSampleRate.valueChanged.connect(self._sample_rate_changed)
         self.ui.sbDumpRate.valueChanged.connect(self._dump_rate_changed)
+        self.ui.sbLenAxisX.valueChanged.connect(self._x_axis_length_changed)
         self.apply_button.clicked.connect(self._apply)
 
     def _sample_rate_changed(self):
@@ -35,6 +36,9 @@ class DialogSettings(QDialog):
 
     def _dump_rate_changed(self):
         self._update_gui_rate()
+        self._check_button_state()
+
+    def _x_axis_length_changed(self):
         self._check_button_state()
 
     def _check_button_state(self):

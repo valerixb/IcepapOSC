@@ -386,7 +386,7 @@ class WindowMain(QtGui.QMainWindow):
         self.ui.rbAxis3.setChecked(True)
 
     def settings_updated(self):
-        pass
+        self._reset_x()
 
     def _add_button_clicked(self):
         addr = int(self.ui.cbDrivers.currentText())
