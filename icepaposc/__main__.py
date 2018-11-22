@@ -18,8 +18,8 @@
 # -----------------------------------------------------------------------------
 
 import sys
-from PyQt4 import QtGui
-from mainwindow import OscillaWindow
+from PyQt4.QtGui import QApplication
+from window_main import WindowMain
 import argparse
 from __init__ import version
 
@@ -55,9 +55,9 @@ def get_parser():
 def main():
     args = get_parser().parse_args()
 
-    app = QtGui.QApplication(sys.argv)
-    oscilla_window = OscillaWindow(args.host, args.port)
-    oscilla_window.show()
+    app = QApplication(sys.argv)
+    win = WindowMain(args.host, args.port)
+    win.show()
     sys.exit(app.exec_())
 
 

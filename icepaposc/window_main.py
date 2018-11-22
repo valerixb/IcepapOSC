@@ -19,11 +19,12 @@
 
 from PyQt4 import QtGui
 from PyQt4 import QtCore
-from ui.main_window import Ui_OscillaWindow
+from ui.ui_window_main import Ui_WindowMain
 from collector import Collector
 from collections import namedtuple
 from threading import RLock
-from settings import DialogOscillaSettings
+from dialog_settings import DialogSettings
+from settings import Settings
 import pyqtgraph as pg
 import time
 
@@ -214,17 +215,21 @@ class CurveItem:  # Todo: Move to its own file?
             return idx
 
 
-class OscillaWindow(QtGui.QMainWindow):
+class WindowMain(QtGui.QMainWindow):
     """A dialog for plotting IcePAP signals."""
 
     def __init__(self, host, port, selected_driver=None):
         """
-        Initializes an instance of class OscillaWindow.
+        Initializes an instance of class WindowMain.
 
         host - IcePAP system address.
         port - IcePAP system port number.
         """
         QtGui.QMainWindow.__init__(self, None)
+        self.ui = Ui_WindowMain()
+        self.setAttribute(QtCore.Qt.WA_DeleteOnClose, True)
+        self.ui.setupUi(self)
+        self.setWindowTitle('Oscilloscope  |  ' + host)
 
         try:
             self.collector = Collector(host, port, self.callback_collect)
@@ -237,16 +242,14 @@ class OscillaWindow(QtGui.QMainWindow):
         self.subscriptions = {}
         self.curve_items = []
         self._paused = False
+        self.settings = Settings(self, self.collector)
 
-        self.ui = Ui_OscillaWindow()
-        self.setAttribute(QtCore.Qt.WA_DeleteOnClose, True)
-        self.ui.setupUi(self)
-        self.setWindowTitle('Oscilla  |  ' + host)
-
+        # Set up the plot area.
         self.plot_widget = pg.PlotWidget()
         self._plot_item = self.plot_widget.getPlotItem()
         self.view_boxes = [self.plot_widget.getViewBox(),
-                           pg.ViewBox(), pg.ViewBox()]
+                           pg.ViewBox(),
+                           pg.ViewBox()]
         self.ui.vloCurves.setDirection(QtGui.QBoxLayout.BottomToTop)
         self.ui.vloCurves.addWidget(self.plot_widget)
 
@@ -258,7 +261,9 @@ class OscillaWindow(QtGui.QMainWindow):
         self._plot_item.layout.removeItem(self._plot_item.getAxis('bottom'))
         self._plot_item.layout.addItem(self._axisTime, 3, 1)
         self.now = self.collector.get_current_time()
-        self.default_len_x_axis = 30
+        self.view_boxes[0].disableAutoRange(axis=self.view_boxes[0].XAxis)
+        self.view_boxes[1].disableAutoRange(axis=self.view_boxes[1].XAxis)
+        self.view_boxes[2].disableAutoRange(axis=self.view_boxes[2].XAxis)
         self._reset_x()
 
         # Set up the three Y-axes.
@@ -273,23 +278,19 @@ class OscillaWindow(QtGui.QMainWindow):
         self.view_boxes[2].setXLink(self.view_boxes[0])
         self._plot_item.layout.addItem(self.axes[2], 2, 3)
         self._plot_item.hideButtons()
-
-        self.view_boxes[0].disableAutoRange(axis=self.view_boxes[0].XAxis)
-        self.view_boxes[1].disableAutoRange(axis=self.view_boxes[1].XAxis)
-        self.view_boxes[2].disableAutoRange(axis=self.view_boxes[2].XAxis)
         self._enable_auto_range_y()
 
-        self.label = pg.LabelItem(justify='right')
-        self.view_boxes[0].addItem(self.label)
-
+        # Set up the crosshair vertical line.
         self.vertical_line = pg.InfiniteLine(angle=90, movable=False)
         self.view_boxes[0].addItem(self.vertical_line, ignoreBounds=True)
 
+        # Initialize comboboxes and buttons.
         self._fill_combo_box_driver_ids(selected_driver)
         self._fill_combo_box_signals()
         self._select_axis_1()
         self._update_button_status()
 
+        # Set up signalling connections.
         self._connect_signals()
         self.proxy = pg.SignalProxy(self.plot_widget.scene().sigMouseMoved,
                                     rateLimit=60, slot=self._mouse_moved)
@@ -383,6 +384,9 @@ class OscillaWindow(QtGui.QMainWindow):
         self.ui.rbAxis1.setChecked(False)
         self.ui.rbAxis2.setChecked(False)
         self.ui.rbAxis3.setChecked(True)
+
+    def settings_updated(self):
+        pass
 
     def _add_button_clicked(self):
         addr = int(self.ui.cbDrivers.currentText())
@@ -554,7 +558,7 @@ class OscillaWindow(QtGui.QMainWindow):
     def _reset_x(self):
         """Reset the length of the X axis to the initial number of seconds (setting)."""
         now = self.collector.get_current_time()
-        self.view_boxes[0].setXRange(now - self.default_len_x_axis, now, padding=0)
+        self.view_boxes[0].setXRange(now - self.settings.default_x_axis_length, now, padding=0)
 
     def _enable_auto_range_y(self):
         self.view_boxes[0].enableAutoRange(axis=self.view_boxes[0].YAxis)
@@ -578,8 +582,10 @@ class OscillaWindow(QtGui.QMainWindow):
         self.view_boxes[0].setXRange(now - (x_max - x_min), now, padding=0)
 
     def _display_settings_dlg(self):
-        dlg = DialogOscillaSettings(self)
+        dlg = DialogSettings(self, self.settings)
         dlg.show()
+        self.collector.tick_interval = self.settings.sample_rate
+        self.collector.sample_buf_len = self.settings.dump_rate
 
     def callback_collect(self, subscription_id, value_list):
         """
