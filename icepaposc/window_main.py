@@ -199,9 +199,6 @@ class WindowMain(QtGui.QMainWindow):
         self.ui.rbAxis2.setChecked(False)
         self.ui.rbAxis3.setChecked(True)
 
-    def settings_updated(self):
-        self._reset_x()
-
     def _add_button_clicked(self):
         addr = int(self.ui.cbDrivers.currentText())
         my_signal_name = str(self.ui.cbSignals.currentText())
@@ -402,11 +399,16 @@ class WindowMain(QtGui.QMainWindow):
         x_max = self.view_boxes[0].viewRange()[0][1]
         self.view_boxes[0].setXRange(now - (x_max - x_min), now, padding=0)
 
+    def enable_action_settings(self):
+        self.ui.actionSettings.setEnabled(True)
+
     def _display_settings_dlg(self):
+        self.ui.actionSettings.setEnabled(False)
         dlg = DialogSettings(self, self.settings)
-        dlg.show()  # Todo: Make the dialog modal but movable relative to ancestor.
-        self.collector.tick_interval = self.settings.sample_rate
-        self.collector.sample_buf_len = self.settings.dump_rate
+        dlg.show()
+
+    def settings_updated(self):
+        self._reset_x()
 
     def callback_collect(self, subscription_id, value_list):
         """

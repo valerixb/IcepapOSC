@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'dialog_settings.ui'
 #
-# Created: Thu Nov 22 07:53:47 2018
+# Created: Fri Nov 23 06:42:47 2018
 #      by: PyQt4 UI code generator 4.10.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -118,9 +118,9 @@ class Ui_DialogSettings(object):
     def retranslateUi(self, DialogSettings):
         DialogSettings.setWindowTitle(_translate("DialogSettings", "Oscilloscope Settings", None))
         self.gbSampling.setTitle(_translate("DialogSettings", "Data Collection", None))
-        self.labelGuiRate.setText(_translate("DialogSettings", "Resulting GUI Update Rate [ms]", None))
+        self.labelGuiRate.setText(_translate("DialogSettings", "GUI Update Rate [ms]", None))
         self.labelSampleRate.setText(_translate("DialogSettings", "Sample Rate [ms]", None))
-        self.labelDumpRate.setText(_translate("DialogSettings", "GUI Dump Rate [samples/dump]", None))
+        self.labelDumpRate.setText(_translate("DialogSettings", "Dump Rate [samples/dump]", None))
         self.gbXAxis.setTitle(_translate("DialogSettings", "X-axis", None))
         self.labelXAxisLength.setText(_translate("DialogSettings", "Default Length [sec]", None))
 

@@ -24,7 +24,7 @@
       <item row="2" column="1">
        <widget class="QLabel" name="labelGuiRate">
         <property name="text">
-         <string>Resulting GUI Update Rate [ms]</string>
+         <string>GUI Update Rate [ms]</string>
         </property>
        </widget>
       </item>
@@ -104,7 +104,7 @@
       <item row="1" column="1">
        <widget class="QLabel" name="labelDumpRate">
         <property name="text">
-         <string>GUI Dump Rate [samples/dump]</string>
+         <string>Dump Rate [samples/dump]</string>
         </property>
        </widget>
       </item>

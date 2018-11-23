@@ -17,6 +17,7 @@
 # along with IcepapOCS. If not, see <http://www.gnu.org/licenses/>.
 # -----------------------------------------------------------------------------
 
+
 class Settings:
     """Application settings."""
 
@@ -42,3 +43,6 @@ class Settings:
         self.collector.tick_interval = self.sample_rate
         self.collector.sample_buf_len = self.dump_rate
         self.gui.settings_updated()
+
+    def reactivate_gui_settings_action(self):
+        self.gui.enable_action_settings()

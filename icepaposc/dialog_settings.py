@@ -30,6 +30,7 @@ class DialogSettings(QDialog):
         self.ui.setupUi(self)
         self.settings = settings
         self.apply_button = self.ui.bbApplyClose.button(QDialogButtonBox.Apply)
+        self.close_button = self.ui.bbApplyClose.button(QDialogButtonBox.Close)
         self._connect_signals()
         self._update_gui_rate()
         self.ui.sbSampleRate.setMinimum(self.settings.sample_rate_min)
@@ -48,6 +49,7 @@ class DialogSettings(QDialog):
         self.ui.sbDumpRate.valueChanged.connect(self._dump_rate_changed)
         self.ui.sbLenAxisX.valueChanged.connect(self._x_axis_length_changed)
         self.apply_button.clicked.connect(self._apply)
+        self.close_button.clicked.connect(self.close)
 
     def _sample_rate_changed(self):
         self._update_gui_rate()
@@ -76,3 +78,7 @@ class DialogSettings(QDialog):
         self.settings.default_x_axis_length = self.ui.sbLenAxisX.value()
         self.settings.announce_update()
         self.apply_button.setDisabled(True)
+
+    def closeEvent(self, event):
+        self.settings.reactivate_gui_settings_action()
+        event.accept()
