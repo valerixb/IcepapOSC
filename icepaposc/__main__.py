@@ -56,7 +56,7 @@ def main():
     args = get_parser().parse_args()
 
     app = QApplication(sys.argv)
-    win = WindowMain(args.host, args.port)
+    win = WindowMain(args.host, int(args.port), int(args.timeout))
     win.show()
     sys.exit(app.exec_())
 

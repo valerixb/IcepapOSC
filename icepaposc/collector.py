@@ -27,7 +27,7 @@ import time
 
 class Collector:
 
-    def __init__(self, host, port, callback):
+    def __init__(self, host, port, timeout, callback):
         """
         Initializes an instance of class Collector.
 
@@ -85,7 +85,9 @@ class Collector:
         self.sig_list = self.sig_getters.keys()
 
         try:
-            self.icepap_system = EthIcePAPController(self.host, self.port)
+            self.icepap_system = EthIcePAPController(self.host,
+                                                     self.port,
+                                                     timeout)
         except Exception as e:
             msg = 'Failed to instantiate master controller.\nHost: ' \
                   '{}\nPort: {}\n{}'.format(self.host, self.port, e)
