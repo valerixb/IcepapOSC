@@ -18,7 +18,7 @@
 # -----------------------------------------------------------------------------
 
 from PyQt4 import QtGui
-from PyQt4 import QtCore
+from PyQt4.QtCore import Qt
 from ui.ui_window_main import Ui_WindowMain
 from collector import Collector
 from dialog_settings import DialogSettings
@@ -32,7 +32,7 @@ import time
 class WindowMain(QtGui.QMainWindow):
     """A dialog for plotting IcePAP signals."""
 
-    def __init__(self, host, port, timeout, selected_driver=None):
+    def __init__(self, host, port=5000, timeout=3, selected_driver=None):
         """
         Initializes an instance of class WindowMain.
 
@@ -41,12 +41,15 @@ class WindowMain(QtGui.QMainWindow):
         """
         QtGui.QMainWindow.__init__(self, None)
         self.ui = Ui_WindowMain()
-        self.setAttribute(QtCore.Qt.WA_DeleteOnClose, True)
+        self.setAttribute(Qt.WA_DeleteOnClose, True)
         self.ui.setupUi(self)
         self.setWindowTitle('Oscilloscope  |  ' + host)
 
         try:
-            self.collector = Collector(host, port, timeout, self.callback_collect)
+            self.collector = Collector(host,
+                                       port,
+                                       timeout,
+                                       self.callback_collect)
         except Exception as e:
             msg = 'Failed to create main window.\n{}'.format(e)
             print(msg)
