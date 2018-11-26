@@ -21,77 +21,25 @@ from PyQt4.QtCore import QTimer
 from PyQt4.QtCore import QString
 from collections import OrderedDict
 from pyIcePAP import EthIcePAPController
+from channel import Channel
 import time
-
-
-class _Channel:
-    """A container class holding information for a driver signal."""
-
-    def __init__(self, address, signal_name):
-        """
-        Initializes an instance of class _Channel.
-
-        address - IcePAP driver id.
-        signal_name - Signal name.
-        """
-        self.icepap_address = address
-        self.sig_name = signal_name
-        self.measure_resolution = 1.
-        self.collected_samples = []
-
-    def equals(self, icepap_addr, signal_name):
-        """
-        Checks for equality.
-
-        icepap_addr - IcePAP address.
-        signal_name - Signal name.
-        Return: True if equal. False otherwise.
-        """
-        if icepap_addr != self.icepap_address:
-            return False
-        if signal_name != self.sig_name:
-            return False
-        return True
-
-    def set_measure_resolution(self, cfg):
-        """
-        Set measure resolution.
-
-        cfg - Config info extracted from IcePAP.
-        """
-        tgtenc = cfg['TGTENC'].upper()
-        shftenc = cfg['SHFTENC'].upper()
-        axisnstep = cfg['ANSTEP']
-        axisnturn = cfg['ANTURN']
-        nstep = axisnstep
-        nturn = axisnturn
-        if tgtenc == 'ABSENC' or (tgtenc == 'NONE' and shftenc == 'ABSENC'):
-            nstep = cfg['ABSNSTEP']
-            nturn = cfg['ABSNTURN']
-        elif tgtenc == 'ENCIN' or (tgtenc == 'NONE' and shftenc == 'ENCIN'):
-            nstep = cfg['EINNSTEP']
-            nturn = cfg['EINNTURN']
-        elif tgtenc == 'INPOS' or (tgtenc == 'NONE' and shftenc == 'INPOS'):
-            nstep = cfg['INPNSTEP']
-            nturn = cfg['INPNTURN']
-        self.measure_resolution = (float(nstep) / float(nturn)) / \
-                                  (float(axisnstep) / float(axisnturn))
 
 
 class Collector:
 
-    def __init__(self, host, port, callback):
+    def __init__(self, host, port, timeout, callback):
         """
-        Initializes an instance of class _Channel.
+        Initializes an instance of class Collector.
 
-        host - The IcePAP system host name.
-        port - The IcePAP system port number.
+        host     - The IcePAP system host name.
+        port     - The IcePAP system port number.
         callback - A callback function used for sending collected signal
                    data back to the caller.
                    cb_func(subscription_id, value_list)
                        subscription_id - The subscription id retained when
-                       subscribing for a signal.
-                       value_list - A list of tuples (time_stamp, signal_value)
+                                         subscribing for a signal.
+                       value_list      - A list of tuples
+                                         (time_stamp, signal_value)
         """
         self.sig_getters = OrderedDict(
             [('PosAxis', self._getter_pos_axis),
@@ -137,7 +85,9 @@ class Collector:
         self.sig_list = self.sig_getters.keys()
 
         try:
-            self.icepap_system = EthIcePAPController(self.host, self.port)
+            self.icepap_system = EthIcePAPController(self.host,
+                                                     self.port,
+                                                     timeout)
         except Exception as e:
             msg = 'Failed to instantiate master controller.\nHost: ' \
                   '{}\nPort: {}\n{}'.format(self.host, self.port, e)
@@ -147,8 +97,12 @@ class Collector:
                   'Aborting.'.format(self.host)
             raise Exception(msg)
 
+        self.tick_interval_min = 10  # [milliseconds]
+        self.tick_interval_max = 1000  # [milliseconds]
         self.tick_interval = 50  # [milliseconds]
-        self.max_buf_len = 2
+        self.sample_buf_len_min = 1
+        self.sample_buf_len_max = 100
+        self.sample_buf_len = 2
         self.ticker = QTimer()
         self.ticker.timeout.connect(self._tick)
         self.ticker.start(self.tick_interval)
@@ -199,7 +153,7 @@ class Collector:
                 msg = 'Channel already exists.\nAddr: ' \
                       '{}\nSignal: {}'.format(icepap_addr, signal_name)
                 raise Exception(msg)
-        channel = _Channel(icepap_addr, signal_name)
+        channel = Channel(icepap_addr, signal_name)
         sn = QString(signal_name)
         cond_1 = sn.endsWith('Tgtenc')
         cond_2 = sn.endsWith('Shftenc')
@@ -255,7 +209,7 @@ class Collector:
                 continue
             tv = (time.time(), val)
             channel.collected_samples.append(tv)
-            if len(channel.collected_samples) >= self.max_buf_len:
+            if len(channel.collected_samples) >= self.sample_buf_len:
                 self.cb(subscription_id, channel.collected_samples)
                 channel.collected_samples = []
         self.ticker.start(self.tick_interval)
