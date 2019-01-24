@@ -21,12 +21,12 @@
 class Settings:
     """Application settings."""
 
-    def __init__(self, gui, collector):
+    def __init__(self, parent, collector):
         """Initializes an instance of class Settings."""
+        self.parent = parent
+        self.collector = collector
 
         # Settings held by the collector side.
-        self.gui = gui
-        self.collector = collector
         self.sample_rate_min = collector.tick_interval_min
         self.sample_rate_max = collector.tick_interval_max
         self.sample_rate = collector.tick_interval
@@ -42,7 +42,4 @@ class Settings:
     def announce_update(self):
         self.collector.tick_interval = self.sample_rate
         self.collector.sample_buf_len = self.dump_rate
-        self.gui.settings_updated()
-
-    def reactivate_gui_settings_action(self):
-        self.gui.enable_action_settings()
+        self.parent.settings_updated()

@@ -26,6 +26,7 @@ import time
 
 
 class Collector:
+    """Feeds a subscriber with collected IcePAP signal data."""
 
     def __init__(self, host, port, timeout, callback):
         """
@@ -33,6 +34,7 @@ class Collector:
 
         host     - The IcePAP system host name.
         port     - The IcePAP system port number.
+        timeout  - Socket timeout.
         callback - A callback function used for sending collected signal
                    data back to the caller.
                    cb_func(subscription_id, value_list)

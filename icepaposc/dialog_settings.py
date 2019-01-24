@@ -26,6 +26,7 @@ class DialogSettings(QDialog):
 
     def __init__(self, parent, settings):
         QDialog.__init__(self, parent)
+        self.parent = parent
         self.ui = Ui_DialogSettings()
         self.ui.setupUi(self)
         self.settings = settings
@@ -79,6 +80,7 @@ class DialogSettings(QDialog):
         self.settings.announce_update()
         self.apply_button.setDisabled(True)
 
-    def closeEvent(self, event):
-        self.settings.reactivate_gui_settings_action()
-        event.accept()
+    def done(self, r):
+        """Overload of QDialog.done()."""
+        self.parent.enable_action()
+        QDialog.done(self, r)
