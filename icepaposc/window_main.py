@@ -36,8 +36,10 @@ class WindowMain(QtGui.QMainWindow):
         """
         Initializes an instance of class WindowMain.
 
-        host - IcePAP system address.
-        port - IcePAP system port number.
+        host            - IcePAP system address.
+        port            - IcePAP system port number.
+        timeout         - Socket timeout.
+        selected_driver - The driver to display in combobox.
         """
         QtGui.QMainWindow.__init__(self, None)
         self.ui = Ui_WindowMain()
@@ -71,9 +73,8 @@ class WindowMain(QtGui.QMainWindow):
         self.ui.vloCurves.addWidget(self.plot_widget)
 
         # Set up the X-axis.
-        self._plot_item.getAxis('bottom').hide()  # Hide the original x-axis.
-        # Create a new X-axis with human readable time labels.
-        self._axisTime = AxisTime(orientation='bottom')
+        self._plot_item.getAxis('bottom').hide()  # Hide the original X-axis.
+        self._axisTime = AxisTime(orientation='bottom')  # Create new X-axis.
         self._axisTime.linkToView(self.view_boxes[0])
         self._plot_item.layout.removeItem(self._plot_item.getAxis('bottom'))
         self._plot_item.layout.addItem(self._axisTime, 3, 1)
@@ -110,7 +111,8 @@ class WindowMain(QtGui.QMainWindow):
         # Set up signalling connections.
         self._connect_signals()
         self.proxy = pg.SignalProxy(self.plot_widget.scene().sigMouseMoved,
-                                    rateLimit=60, slot=self._mouse_moved)
+                                    rateLimit=60,
+                                    slot=self._mouse_moved)
 
     def _fill_combo_box_driver_ids(self, selected_driver):
         driver_ids = self.collector.get_available_drivers()
@@ -160,6 +162,7 @@ class WindowMain(QtGui.QMainWindow):
         self.view_boxes[0].sigResized.connect(self._update_views)
 
     def closeEvent(self, event):
+        """Overloads (QMainWindow) QWidget.closeEvent()."""
         self._remove_all_signals()
         event.accept()
 
@@ -402,15 +405,17 @@ class WindowMain(QtGui.QMainWindow):
         x_max = self.view_boxes[0].viewRange()[0][1]
         self.view_boxes[0].setXRange(now - (x_max - x_min), now, padding=0)
 
-    def enable_action_settings(self):
-        self.ui.actionSettings.setEnabled(True)
+    def enable_action(self, enable=True):
+        """Enables or disables menu item File|Settings."""
+        self.ui.actionSettings.setEnabled(enable)
 
     def _display_settings_dlg(self):
-        self.ui.actionSettings.setEnabled(False)
+        self.enable_action(False)
         dlg = DialogSettings(self, self.settings)
         dlg.show()
 
     def settings_updated(self):
+        """Settings have been changed."""
         self._reset_x()
 
     def callback_collect(self, subscription_id, value_list):
@@ -435,7 +440,8 @@ class WindowMain(QtGui.QMainWindow):
         self.now = self.collector.get_current_time()
         if now_in_range:
             self.view_boxes[0].setXRange(self.now - (x_max - x_min),
-                                         self.now, padding=0)
+                                         self.now,
+                                         padding=0)
         self.ui.btnNow.setDisabled(now_in_range)
 
         # Update the curves.
