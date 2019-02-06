@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Fixed
 - Fix bug in setting and adjusted dialogs.
 - Remove the possibility to open two settings dialogs. 
+- Do not allow to open more than one setting dialog
 
 ## [0.1.0] 
 
