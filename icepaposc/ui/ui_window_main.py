@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'window_main.ui'
 #
-# Created: Wed Nov 21 08:12:32 2018
+# Created: Thu May  9 10:31:06 2019
 #      by: PyQt4 UI code generator 4.10.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -217,6 +217,9 @@ class Ui_WindowMain(object):
         self.hloCurveButtons.setObjectName(_fromUtf8("hloCurveButtons"))
         spacerItem1 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.hloCurveButtons.addItem(spacerItem1)
+        self.btnClear = QtGui.QPushButton(self.centralwidget)
+        self.btnClear.setObjectName(_fromUtf8("btnClear"))
+        self.hloCurveButtons.addWidget(self.btnClear)
         self.btnSeeAll = QtGui.QPushButton(self.centralwidget)
         self.btnSeeAll.setObjectName(_fromUtf8("btnSeeAll"))
         self.hloCurveButtons.addWidget(self.btnSeeAll)
@@ -239,7 +242,7 @@ class Ui_WindowMain(object):
         self.gridLayout.addLayout(self.hloAll, 0, 0, 1, 1)
         WindowMain.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(WindowMain)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 892, 20))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 892, 28))
         self.menubar.setObjectName(_fromUtf8("menubar"))
         self.menuFile = QtGui.QMenu(self.menubar)
         self.menuFile.setObjectName(_fromUtf8("menuFile"))
@@ -289,6 +292,7 @@ class Ui_WindowMain(object):
         self.btnCLoop.setText(_translate("WindowMain", "* Closed Loop *", None))
         self.btnCurrents.setText(_translate("WindowMain", "* Currents *", None))
         self.btnTarget.setText(_translate("WindowMain", "* Target *", None))
+        self.btnClear.setText(_translate("WindowMain", "Clear", None))
         self.btnSeeAll.setText(_translate("WindowMain", "All Data", None))
         self.btnSeeAll.setShortcut(_translate("WindowMain", "Ctrl+S", None))
         self.btnPause.setText(_translate("WindowMain", "Pause", None))
