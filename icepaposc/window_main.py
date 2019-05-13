@@ -149,6 +149,7 @@ class WindowMain(QtGui.QMainWindow):
         self.ui.btnCLoop.clicked.connect(self._signals_closed_loop)
         self.ui.btnCurrents.clicked.connect(self._signals_currents)
         self.ui.btnTarget.clicked.connect(self._signals_target)
+        self.ui.btnClear.clicked.connect(self._clear_all)
         self.ui.btnSeeAll.clicked.connect(self._view_all_data)
         self.ui.btnResetX.clicked.connect(self._reset_x)
         self.ui.btnResetY.clicked.connect(self._enable_auto_range_y)
@@ -364,6 +365,11 @@ class WindowMain(QtGui.QMainWindow):
         self._add_signal(drv_addr, 'PosAxis', 1)
         self._add_signal(drv_addr, 'EncTgtenc', 2)
 
+    def _clear_all(self):
+        """Clear all the displayed curves."""
+        for ci in self.curve_items:
+            ci.clear()
+
     def _view_all_data(self):
         """Adjust X axis to view all collected data."""
         time_start = self.collector.get_current_time()
@@ -397,6 +403,7 @@ class WindowMain(QtGui.QMainWindow):
         else:
             self._paused = True
             self.ui.btnPause.setText('Run')
+        self.ui.btnClear.setDisabled(self._paused)
 
     def _goto_now(self):
         """Pan X axis to display newest values."""

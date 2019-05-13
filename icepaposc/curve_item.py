@@ -162,6 +162,10 @@ class CurveItem:
             idx = self._get_time_index(time_val)
             return self.array_val[idx]
 
+    def clear(self):
+        self.array_time[:] = []
+        self.array_val[:] = []
+
     def _get_time_index(self, time_val):
         """
         Retrieve the sample index corresponding to the provided time value.

@@ -462,6 +462,13 @@
            </spacer>
           </item>
           <item>
+           <widget class="QPushButton" name="btnClear">
+            <property name="text">
+             <string>Clear</string>
+            </property>
+           </widget>
+          </item>
+          <item>
            <widget class="QPushButton" name="btnSeeAll">
             <property name="text">
              <string>All Data</string>
@@ -526,7 +533,7 @@
      <x>0</x>
      <y>0</y>
      <width>892</width>
-     <height>20</height>
+     <height>28</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
