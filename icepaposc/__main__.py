@@ -40,8 +40,12 @@ def get_parser():
     parse.add_argument('--version', action='version', version=ver)
 
     parse.add_argument('host', help='IcePAP Host')
-    parse.add_argument('-p', '--port', default=5000, help='IcePAP port')
-    parse.add_argument('-t', '--timeout', default=3, help='Socket timeout')
+    parse.add_argument('-p', '--port', type=int, default=5000,
+                       help='IcePAP port')
+    parse.add_argument('-t', '--timeout', type=int, default=3,
+                       help='Socket timeout')
+    parse.add_argument('-s', '--sig', nargs='*', default=[],
+                       help='Preselected signals')
 
     # TODO: Allow to pass the axes preselected and type of graph
     # parse.add_argument('axes', nargs='*', help='Axes to save, default all',
@@ -56,7 +60,7 @@ def main():
     args = get_parser().parse_args()
 
     app = QApplication(sys.argv)
-    win = WindowMain(args.host, int(args.port), int(args.timeout))
+    win = WindowMain(args.host, args.port, args.timeout, args.sig)
     win.show()
     sys.exit(app.exec_())
 

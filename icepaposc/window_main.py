@@ -32,7 +32,7 @@ import time
 class WindowMain(QtGui.QMainWindow):
     """A dialog for plotting IcePAP signals."""
 
-    def __init__(self, host, port=5000, timeout=3, selected_driver=None):
+    def __init__(self, host, port, timeout, siglist, selected_driver=None):
         """
         Initializes an instance of class WindowMain.
 
@@ -113,6 +113,16 @@ class WindowMain(QtGui.QMainWindow):
         self.proxy = pg.SignalProxy(self.plot_widget.scene().sigMouseMoved,
                                     rateLimit=60,
                                     slot=self._mouse_moved)
+
+        # Add any predefined signals.
+        for sig in siglist:
+            lst = sig.split(':')
+            if len(lst) != 3:
+                msg = 'Bad format of predefined signal {}\n'.format(sig)
+                print(msg)
+                QtGui.QMessageBox.critical(None, 'Bad Parameter', msg)
+                return
+            self._add_signal(int(lst[0]), lst[1], int(lst[2]))
 
     def _fill_combo_box_driver_ids(self, selected_driver):
         driver_ids = self.collector.get_available_drivers()
