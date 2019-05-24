@@ -39,6 +39,9 @@ class WindowMain(QtGui.QMainWindow):
         host            - IcePAP system address.
         port            - IcePAP system port number.
         timeout         - Socket timeout.
+        siglist         - List of predefined signals.
+                            Element Syntax: <driver>:<signal name>:<Y-axis>
+                            Example: 1:PosAxis:1 1:MeasI:2 1:MeasVm:3
         selected_driver - The driver to display in combobox.
         """
         QtGui.QMainWindow.__init__(self, None)
