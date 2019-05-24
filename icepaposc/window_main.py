@@ -42,7 +42,7 @@ class WindowMain(QtGui.QMainWindow):
         siglist         - List of predefined signals.
                             Element Syntax: <driver>:<signal name>:<Y-axis>
                             Example: ["1:PosAxis:1", "1:MeasI:2", "1:MeasVm:3"]
-        selected_driver - The driver to display in combobox.
+        selected_driver - The driver to display in combobox at startup.
         """
         QtGui.QMainWindow.__init__(self, None)
         self.ui = Ui_WindowMain()
@@ -123,7 +123,7 @@ class WindowMain(QtGui.QMainWindow):
             if len(lst) != 3:
                 msg = 'Bad format of predefined signal {}\n'.format(sig)
                 print(msg)
-                QtGui.QMessageBox.critical(None, 'Bad Parameter', msg)
+                QtGui.QMessageBox.critical(None, 'Bad Signal Syntax', msg)
                 return
             self._add_signal(int(lst[0]), lst[1], int(lst[2]))
 
