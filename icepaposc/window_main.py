@@ -400,7 +400,7 @@ class WindowMain(QtGui.QMainWindow):
         the initial number of seconds (setting).
         """
         now = self.collector.get_current_time()
-        start = now - self.settings.default_x_axis_length
+        start = now - self.settings.default_x_axis_len
         self.view_boxes[0].setXRange(start, now, padding=0)
 
     def _enable_auto_range_y(self):

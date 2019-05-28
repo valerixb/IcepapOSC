@@ -26,7 +26,7 @@ class Settings:
         self.parent = parent
         self.collector = collector
 
-        # Settings held by the collector side.
+        # Settings for collector.
         self.sample_rate_min = collector.tick_interval_min
         self.sample_rate_max = collector.tick_interval_max
         self.sample_rate = collector.tick_interval
@@ -34,10 +34,13 @@ class Settings:
         self.dump_rate_max = collector.sample_buf_len_max
         self.dump_rate = collector.sample_buf_len
 
-        # Settings held by the GUI side.
+        # Settings for GUI.
         self.default_x_axis_length_min = 5  # [Seconds]
         self.default_x_axis_length_max = 3600  # [Seconds]
-        self.default_x_axis_length = 30  # [Seconds]
+        self.default_x_axis_len = 30  # [Seconds]
+
+        # Settings for data storage.
+        self.data_folder = ""
 
     def announce_update(self):
         self.collector.tick_interval = self.sample_rate

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'dialog_settings.ui'
 #
-# Created: Fri Nov 23 06:42:47 2018
+# Created: Tue May 28 10:40:38 2019
 #      by: PyQt4 UI code generator 4.10.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -26,15 +26,13 @@ except AttributeError:
 class Ui_DialogSettings(object):
     def setupUi(self, DialogSettings):
         DialogSettings.setObjectName(_fromUtf8("DialogSettings"))
-        DialogSettings.setModal(False)
+        DialogSettings.resize(559, 292)
         self.verticalLayout_2 = QtGui.QVBoxLayout(DialogSettings)
         self.verticalLayout_2.setObjectName(_fromUtf8("verticalLayout_2"))
+        self.hl1 = QtGui.QHBoxLayout()
+        self.hl1.setObjectName(_fromUtf8("hl1"))
         self.gbSampling = QtGui.QGroupBox(DialogSettings)
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Preferred)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.gbSampling.sizePolicy().hasHeightForWidth())
-        self.gbSampling.setSizePolicy(sizePolicy)
+        self.gbSampling.setChecked(False)
         self.gbSampling.setObjectName(_fromUtf8("gbSampling"))
         self.glDataCollection = QtGui.QGridLayout(self.gbSampling)
         self.glDataCollection.setObjectName(_fromUtf8("glDataCollection"))
@@ -79,14 +77,8 @@ class Ui_DialogSettings(object):
         self.labelDumpRate = QtGui.QLabel(self.gbSampling)
         self.labelDumpRate.setObjectName(_fromUtf8("labelDumpRate"))
         self.glDataCollection.addWidget(self.labelDumpRate, 1, 1, 1, 1)
-        self.verticalLayout_2.addWidget(self.gbSampling)
+        self.hl1.addWidget(self.gbSampling)
         self.gbXAxis = QtGui.QGroupBox(DialogSettings)
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Preferred)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.gbXAxis.sizePolicy().hasHeightForWidth())
-        self.gbXAxis.setSizePolicy(sizePolicy)
-        self.gbXAxis.setMaximumSize(QtCore.QSize(16777215, 170))
         self.gbXAxis.setObjectName(_fromUtf8("gbXAxis"))
         self.glXAxis = QtGui.QGridLayout(self.gbXAxis)
         self.glXAxis.setObjectName(_fromUtf8("glXAxis"))
@@ -103,10 +95,34 @@ class Ui_DialogSettings(object):
         self.sbLenAxisX.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
         self.sbLenAxisX.setObjectName(_fromUtf8("sbLenAxisX"))
         self.glXAxis.addWidget(self.sbLenAxisX, 0, 1, 1, 1)
-        self.verticalLayout_2.addWidget(self.gbXAxis)
+        self.hl1.addWidget(self.gbXAxis)
+        self.verticalLayout_2.addLayout(self.hl1)
+        self.hl2 = QtGui.QHBoxLayout()
+        self.hl2.setObjectName(_fromUtf8("hl2"))
+        self.gbDataFolder = QtGui.QGroupBox(DialogSettings)
+        self.gbDataFolder.setMinimumSize(QtCore.QSize(0, 86))
+        self.gbDataFolder.setObjectName(_fromUtf8("gbDataFolder"))
+        self.gridLayout = QtGui.QGridLayout(self.gbDataFolder)
+        self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
+        self.leDataFolder = QtGui.QLineEdit(self.gbDataFolder)
+        self.leDataFolder.setMinimumSize(QtCore.QSize(200, 0))
+        self.leDataFolder.setObjectName(_fromUtf8("leDataFolder"))
+        self.gridLayout.addWidget(self.leDataFolder, 0, 0, 1, 1)
+        self.btnOpenFolderDlg = QtGui.QPushButton(self.gbDataFolder)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.btnOpenFolderDlg.sizePolicy().hasHeightForWidth())
+        self.btnOpenFolderDlg.setSizePolicy(sizePolicy)
+        self.btnOpenFolderDlg.setMaximumSize(QtCore.QSize(32, 32))
+        self.btnOpenFolderDlg.setObjectName(_fromUtf8("btnOpenFolderDlg"))
+        self.gridLayout.addWidget(self.btnOpenFolderDlg, 0, 1, 1, 1)
+        self.hl2.addWidget(self.gbDataFolder)
+        self.verticalLayout_2.addLayout(self.hl2)
         self.bbApplyClose = QtGui.QDialogButtonBox(DialogSettings)
         self.bbApplyClose.setOrientation(QtCore.Qt.Horizontal)
         self.bbApplyClose.setStandardButtons(QtGui.QDialogButtonBox.Apply|QtGui.QDialogButtonBox.Close)
+        self.bbApplyClose.setCenterButtons(True)
         self.bbApplyClose.setObjectName(_fromUtf8("bbApplyClose"))
         self.verticalLayout_2.addWidget(self.bbApplyClose)
 
@@ -116,11 +132,13 @@ class Ui_DialogSettings(object):
         QtCore.QMetaObject.connectSlotsByName(DialogSettings)
 
     def retranslateUi(self, DialogSettings):
-        DialogSettings.setWindowTitle(_translate("DialogSettings", "Oscilloscope Settings", None))
+        DialogSettings.setWindowTitle(_translate("DialogSettings", "IcePapOSC Settings", None))
         self.gbSampling.setTitle(_translate("DialogSettings", "Data Collection", None))
         self.labelGuiRate.setText(_translate("DialogSettings", "GUI Update Rate [ms]", None))
         self.labelSampleRate.setText(_translate("DialogSettings", "Sample Rate [ms]", None))
         self.labelDumpRate.setText(_translate("DialogSettings", "Dump Rate [samples/dump]", None))
         self.gbXAxis.setTitle(_translate("DialogSettings", "X-axis", None))
         self.labelXAxisLength.setText(_translate("DialogSettings", "Default Length [sec]", None))
+        self.gbDataFolder.setTitle(_translate("DialogSettings", "Folder for Saved Data (filename: IcePapOSC_<date>_<time>.osc)", None))
+        self.btnOpenFolderDlg.setText(_translate("DialogSettings", "...", None))
 
