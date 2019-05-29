@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'window_main.ui'
 #
-# Created: Thu May  9 10:31:06 2019
+# Created: Wed May 29 11:59:40 2019
 #      by: PyQt4 UI code generator 4.10.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -264,7 +264,10 @@ class Ui_WindowMain(object):
         self.actionTarget.setObjectName(_fromUtf8("actionTarget"))
         self.actionAdd_Signals = QtGui.QAction(WindowMain)
         self.actionAdd_Signals.setObjectName(_fromUtf8("actionAdd_Signals"))
+        self.actionSave_to_File = QtGui.QAction(WindowMain)
+        self.actionSave_to_File.setObjectName(_fromUtf8("actionSave_to_File"))
         self.menuFile.addAction(self.actionAdd_Signals)
+        self.menuFile.addAction(self.actionSave_to_File)
         self.menuFile.addAction(self.actionSettings)
         self.menuFile.addAction(self.actionExit)
         self.menuSignal_Sets.addAction(self.actionClosed_Loop)
@@ -309,4 +312,6 @@ class Ui_WindowMain(object):
         self.actionTarget.setText(_translate("WindowMain", "Target", None))
         self.actionAdd_Signals.setText(_translate("WindowMain", "Add Signals", None))
         self.actionAdd_Signals.setShortcut(_translate("WindowMain", "Ctrl+A", None))
+        self.actionSave_to_File.setText(_translate("WindowMain", "Save to File", None))
+        self.actionSave_to_File.setShortcut(_translate("WindowMain", "Ctrl+F", None))
 

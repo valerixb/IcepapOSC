@@ -168,6 +168,7 @@ class WindowMain(QtGui.QMainWindow):
         self.ui.btnResetY.clicked.connect(self._enable_auto_range_y)
         self.ui.btnPause.clicked.connect(self._pause_x_axis)
         self.ui.btnNow.clicked.connect(self._goto_now)
+        self.ui.actionSave_to_File.triggered.connect(self._save_to_file)
         self.ui.actionSettings.triggered.connect(self._display_settings_dlg)
         self.ui.actionExit.triggered.connect(self.close)
         self.ui.actionClosed_Loop.triggered.connect(self._signals_closed_loop)
@@ -428,6 +429,9 @@ class WindowMain(QtGui.QMainWindow):
     def enable_action(self, enable=True):
         """Enables or disables menu item File|Settings."""
         self.ui.actionSettings.setEnabled(enable)
+
+    def _save_to_file(self):
+        pass
 
     def _display_settings_dlg(self):
         self.enable_action(False)
