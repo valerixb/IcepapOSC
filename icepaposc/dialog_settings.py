@@ -20,7 +20,9 @@
 from PyQt4.QtGui import QDialog
 from PyQt4.QtGui import QDialogButtonBox
 from PyQt4.QtGui import QFileDialog
+from PyQt4.QtGui import QMessageBox
 from ui.ui_dialog_settings import Ui_DialogSettings
+import os
 
 
 class DialogSettings(QDialog):
@@ -52,22 +54,22 @@ class DialogSettings(QDialog):
         self.ui.sbDumpRate.valueChanged.connect(self._dump_rate_changed)
         self.ui.sbLenAxisX.valueChanged.connect(self._x_axis_length_changed)
         self.ui.btnOpenFolderDlg.clicked.connect(self._launch_folder_dialog)
-        self.ui.leDataFolder.editingFinished.connect(self._new_data_folder)
+        self.ui.leDataFolder.textChanged.connect(self._set_apply_state)
         self.apply_button.clicked.connect(self._apply)
         self.close_button.clicked.connect(self.close)
 
     def _sample_rate_changed(self):
         self._update_gui_rate()
-        self._check_button_state()
+        self._set_apply_state()
 
     def _dump_rate_changed(self):
         self._update_gui_rate()
-        self._check_button_state()
+        self._set_apply_state()
 
     def _x_axis_length_changed(self):
-        self._check_button_state()
+        self._set_apply_state()
 
-    def _check_button_state(self):
+    def _set_apply_state(self):
         eq = self.ui.sbSampleRate.value() == self.settings.sample_rate and \
            self.ui.sbDumpRate.value() == self.settings.dump_rate and \
            self.ui.sbLenAxisX.value() == self.settings.default_x_axis_len and \
@@ -81,18 +83,46 @@ class DialogSettings(QDialog):
     def _launch_folder_dialog(self):
         folder_name = QFileDialog.getExistingDirectory()
         self.ui.leDataFolder.setText(folder_name)
-        self._check_button_state()
-
-    def _new_data_folder(self):
-        self._check_button_state()
+        self._set_apply_state()
 
     def _apply(self):
+        data_folder = self.ui.leDataFolder.text()
+        if not self._is_valid_folder(data_folder):
+            return
         self.settings.sample_rate = self.ui.sbSampleRate.value()
         self.settings.dump_rate = self.ui.sbDumpRate.value()
         self.settings.default_x_axis_len = self.ui.sbLenAxisX.value()
-        self.settings.data_folder = self.ui.leDataFolder.text()
+        self.settings.data_folder = data_folder
         self.settings.announce_update()
         self.apply_button.setDisabled(True)
+
+    @staticmethod
+    def _is_valid_folder(folder):
+        # Make sure path exists.
+        if not os.path.exists(folder):
+            msg = 'Folder does not exist: {}\n'.format(folder)
+            print(msg)
+            QMessageBox.critical(None, 'Set Data Folder', msg)
+            return False
+        # Create a dummy file name (hopefully unique for our test).
+        fn = folder + '/IcePapOSCfolderTest.txt'
+        # Create the dummy file for reading and writing.
+        try:
+            open(fn, "w+")
+        except Exception as e:
+            msg = 'Failed to create test file: {}\n{}'.format(fn, e)
+            print(msg)
+            QMessageBox.critical(None, 'Bad Folder', msg)
+            return False
+        # Delete the dummy file.
+        try:
+            os.remove(fn)
+        except OSError as e:
+            msg = 'Failed to remove test file: {}\n{}'.format(fn, e)
+            print(msg)
+            QMessageBox.critical(None, 'Remove Test File', msg)
+            return False
+        return True
 
     def done(self, r):
         """Overload of QDialog.done()."""

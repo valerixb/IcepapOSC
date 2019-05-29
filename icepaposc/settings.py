@@ -18,6 +18,9 @@
 # -----------------------------------------------------------------------------
 
 
+from os.path import expanduser
+
+
 class Settings:
     """Application settings."""
 
@@ -40,7 +43,7 @@ class Settings:
         self.default_x_axis_len = 30  # [Seconds]
 
         # Settings for data storage.
-        self.data_folder = ""
+        self.data_folder = expanduser("~")  # Home directory
 
     def announce_update(self):
         self.collector.tick_interval = self.sample_rate

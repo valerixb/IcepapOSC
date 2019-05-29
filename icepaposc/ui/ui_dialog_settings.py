@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'dialog_settings.ui'
 #
-# Created: Tue May 28 10:40:38 2019
+# Created: Wed May 29 08:55:21 2019
 #      by: PyQt4 UI code generator 4.10.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -115,6 +115,7 @@ class Ui_DialogSettings(object):
         sizePolicy.setHeightForWidth(self.btnOpenFolderDlg.sizePolicy().hasHeightForWidth())
         self.btnOpenFolderDlg.setSizePolicy(sizePolicy)
         self.btnOpenFolderDlg.setMaximumSize(QtCore.QSize(32, 32))
+        self.btnOpenFolderDlg.setAutoDefault(False)
         self.btnOpenFolderDlg.setObjectName(_fromUtf8("btnOpenFolderDlg"))
         self.gridLayout.addWidget(self.btnOpenFolderDlg, 0, 1, 1, 1)
         self.hl2.addWidget(self.gbDataFolder)
