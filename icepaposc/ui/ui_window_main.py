@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'window_main.ui'
 #
-# Created: Wed May 29 11:59:40 2019
+# Created: Mon Jun 17 14:22:10 2019
 #      by: PyQt4 UI code generator 4.10.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -235,6 +235,9 @@ class Ui_WindowMain(object):
         self.btnNow = QtGui.QPushButton(self.centralwidget)
         self.btnNow.setObjectName(_fromUtf8("btnNow"))
         self.hloCurveButtons.addWidget(self.btnNow)
+        self.btnSave = QtGui.QPushButton(self.centralwidget)
+        self.btnSave.setObjectName(_fromUtf8("btnSave"))
+        self.hloCurveButtons.addWidget(self.btnSave)
         spacerItem2 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.hloCurveButtons.addItem(spacerItem2)
         self.vloCurves.addLayout(self.hloCurveButtons)
@@ -302,6 +305,7 @@ class Ui_WindowMain(object):
         self.btnResetY.setText(_translate("WindowMain", "Reset Y", None))
         self.btnResetX.setText(_translate("WindowMain", "Reset X", None))
         self.btnNow.setText(_translate("WindowMain", "Now", None))
+        self.btnSave.setText(_translate("WindowMain", "Save", None))
         self.menuFile.setTitle(_translate("WindowMain", "File", None))
         self.menuSignal_Sets.setTitle(_translate("WindowMain", "Signal Sets", None))
         self.actionExit.setText(_translate("WindowMain", "Exit", None))

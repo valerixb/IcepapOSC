@@ -19,6 +19,7 @@
 
 from PyQt4 import QtGui
 from PyQt4.QtCore import Qt
+from PyQt4.QtGui import QFileDialog
 from ui.ui_window_main import Ui_WindowMain
 from collector import Collector
 from dialog_settings import DialogSettings
@@ -26,6 +27,7 @@ from settings import Settings
 from axis_time import AxisTime
 from curve_item import CurveItem
 import pyqtgraph as pg
+import pandas as pd
 import time
 
 
@@ -168,6 +170,7 @@ class WindowMain(QtGui.QMainWindow):
         self.ui.btnResetY.clicked.connect(self._enable_auto_range_y)
         self.ui.btnPause.clicked.connect(self._pause_x_axis)
         self.ui.btnNow.clicked.connect(self._goto_now)
+        self.ui.btnSave.clicked.connect(self._save_to_file)
         self.ui.actionSave_to_File.triggered.connect(self._save_to_file)
         self.ui.actionSettings.triggered.connect(self._display_settings_dlg)
         self.ui.actionExit.triggered.connect(self.close)
@@ -431,7 +434,24 @@ class WindowMain(QtGui.QMainWindow):
         self.ui.actionSettings.setEnabled(enable)
 
     def _save_to_file(self):
-        pass
+        if not self.curve_items:
+            return
+        fn = QFileDialog.getSaveFileName(filter="*.csv")
+        if not fn:
+            return
+        try:
+            open(fn, "w+")
+        except Exception as e:
+            msg = 'Failed to open/create file: {}\n{}'.format(fn, e)
+            print(msg)
+            QtGui.QMessageBox.critical(None, 'File Open Failed', msg)
+            return
+        self._create_csv_file(fn)
+
+    def _create_csv_file(self, file_name):
+        for ci in self.curve_items:
+            pass
+        df.to_csv(file_name)
 
     def _display_settings_dlg(self):
         self.enable_action(False)
