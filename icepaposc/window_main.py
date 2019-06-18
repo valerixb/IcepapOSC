@@ -32,14 +32,17 @@ import time
 class WindowMain(QtGui.QMainWindow):
     """A dialog for plotting IcePAP signals."""
 
-    def __init__(self, host, port=5000, timeout=3, selected_driver=None):
+    def __init__(self, host, port, timeout, siglist, selected_driver=None):
         """
         Initializes an instance of class WindowMain.
 
         host            - IcePAP system address.
         port            - IcePAP system port number.
         timeout         - Socket timeout.
-        selected_driver - The driver to display in combobox.
+        siglist         - List of predefined signals.
+                            Element Syntax: <driver>:<signal name>:<Y-axis>
+                            Example: ["1:PosAxis:1", "1:MeasI:2", "1:MeasVm:3"]
+        selected_driver - The driver to display in combobox at startup.
         """
         QtGui.QMainWindow.__init__(self, None)
         self.ui = Ui_WindowMain()
@@ -113,6 +116,18 @@ class WindowMain(QtGui.QMainWindow):
         self.proxy = pg.SignalProxy(self.plot_widget.scene().sigMouseMoved,
                                     rateLimit=60,
                                     slot=self._mouse_moved)
+
+        # Add any predefined signals.
+        for sig in siglist:
+            lst = sig.split(':')
+            if len(lst) != 3:
+                msg = 'Bad format of predefined signal "{}".\n' \
+                      'It should be: ' \
+                      '<driver>:<signal name>:<Y-axis>'.format(sig)
+                print(msg)
+                QtGui.QMessageBox.critical(None, 'Bad Signal Syntax', msg)
+                return
+            self._add_signal(int(lst[0]), lst[1], int(lst[2]))
 
     def _fill_combo_box_driver_ids(self, selected_driver):
         driver_ids = self.collector.get_available_drivers()
