@@ -45,7 +45,8 @@ def get_parser():
     parse.add_argument('-t', '--timeout', type=int, default=3,
                        help='Socket timeout')
     parse.add_argument('-s', '--sig', nargs='*', default=[],
-                       help='Preselected signals')
+                       help='Preselected signals '
+                            '<driver>:<signal name>:<Y-axis>')
 
     # TODO: Allow to pass the axes preselected and type of graph
     # parse.add_argument('axes', nargs='*', help='Axes to save, default all',
