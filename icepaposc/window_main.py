@@ -121,7 +121,9 @@ class WindowMain(QtGui.QMainWindow):
         for sig in siglist:
             lst = sig.split(':')
             if len(lst) != 3:
-                msg = 'Bad format of predefined signal {}\n'.format(sig)
+                msg = 'Bad format of predefined signal "{}".\n' \
+                      'It should be: ' \
+                      '<driver>:<signal name>:<Y-axis>'.format(sig)
                 print(msg)
                 QtGui.QMessageBox.critical(None, 'Bad Signal Syntax', msg)
                 return
