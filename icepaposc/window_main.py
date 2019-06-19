@@ -17,9 +17,12 @@
 # along with IcepapOCS. If not, see <http://www.gnu.org/licenses/>.
 # -----------------------------------------------------------------------------
 
-from PyQt4 import QtGui
-from PyQt4.QtCore import Qt
+from PyQt4.QtGui import QMainWindow
 from PyQt4.QtGui import QFileDialog
+from PyQt4.QtGui import QMessageBox
+from PyQt4.QtGui import QBoxLayout
+from PyQt4.QtGui import QColor
+from PyQt4.QtCore import Qt
 from ui.ui_window_main import Ui_WindowMain
 from collector import Collector
 from dialog_settings import DialogSettings
@@ -27,11 +30,13 @@ from settings import Settings
 from axis_time import AxisTime
 from curve_item import CurveItem
 import pyqtgraph as pg
+import numpy as np
 import pandas as pd
+import collections
 import time
 
 
-class WindowMain(QtGui.QMainWindow):
+class WindowMain(QMainWindow):
     """A dialog for plotting IcePAP signals."""
 
     def __init__(self, host, port, timeout, siglist, selected_driver=None):
@@ -46,7 +51,7 @@ class WindowMain(QtGui.QMainWindow):
                             Example: ["1:PosAxis:1", "1:MeasI:2", "1:MeasVm:3"]
         selected_driver - The driver to display in combobox at startup.
         """
-        QtGui.QMainWindow.__init__(self, None)
+        QMainWindow.__init__(self, None)
         self.ui = Ui_WindowMain()
         self.setAttribute(Qt.WA_DeleteOnClose, True)
         self.ui.setupUi(self)
@@ -60,7 +65,7 @@ class WindowMain(QtGui.QMainWindow):
         except Exception as e:
             msg = 'Failed to create main window.\n{}'.format(e)
             print(msg)
-            QtGui.QMessageBox.critical(None, 'Create Main Window', msg)
+            QMessageBox.critical(None, 'Create Main Window', msg)
             return
 
         self.subscriptions = {}
@@ -74,7 +79,7 @@ class WindowMain(QtGui.QMainWindow):
         self.view_boxes = [self.plot_widget.getViewBox(),
                            pg.ViewBox(),
                            pg.ViewBox()]
-        self.ui.vloCurves.setDirection(QtGui.QBoxLayout.BottomToTop)
+        self.ui.vloCurves.setDirection(QBoxLayout.BottomToTop)
         self.ui.vloCurves.addWidget(self.plot_widget)
 
         # Set up the X-axis.
@@ -127,7 +132,7 @@ class WindowMain(QtGui.QMainWindow):
                       'It should be: ' \
                       '<driver>:<signal name>:<Y-axis>'.format(sig)
                 print(msg)
-                QtGui.QMessageBox.critical(None, 'Bad Signal Syntax', msg)
+                QMessageBox.critical(None, 'Bad Signal Syntax', msg)
                 return
             self._add_signal(int(lst[0]), lst[1], int(lst[2]))
 
@@ -147,7 +152,7 @@ class WindowMain(QtGui.QMainWindow):
             msg = 'Internal error!\nNew signals added.\nAdd ' \
                   'more colors and pens.'
             print(msg)
-            QtGui.QMessageBox.warning(None, 'Available Signals', msg)
+            QMessageBox.warning(None, 'Available Signals', msg)
             for i in range(num_colors):
                 self.ui.cbSignals.addItem(signals[i])
         else:
@@ -250,7 +255,7 @@ class WindowMain(QtGui.QMainWindow):
             msg = 'Failed to subscribe to signal {} ' \
                   'from driver {}.\n{}'.format(signal_name, driver_addr, e)
             print(msg)
-            QtGui.QMessageBox.critical(None, 'Add Curve', msg)
+            QMessageBox.critical(None, 'Add Curve', msg)
             return
         try:
             color_idx = self.collector.get_signal_index(signal_name)
@@ -258,7 +263,7 @@ class WindowMain(QtGui.QMainWindow):
             msg = 'Internal error. Failed to retrieve index ' \
                   'for signal {}.\n{}'.format(signal_name, e)
             print(msg)
-            QtGui.QMessageBox.critical(None, 'Add Curve', msg)
+            QMessageBox.critical(None, 'Add Curve', msg)
             return
         ci = CurveItem(subscription_id, driver_addr, signal_name,
                        y_axis, color_idx)
@@ -269,7 +274,7 @@ class WindowMain(QtGui.QMainWindow):
         index = len(self.curve_items) - 1
         self.ui.lvActiveSig.setCurrentRow(index)
         self.ui.lvActiveSig.item(index).setForeground(ci.color)
-        self.ui.lvActiveSig.item(index).setBackground(QtGui.QColor(0, 0, 0))
+        self.ui.lvActiveSig.item(index).setBackground(QColor(0, 0, 0))
         self._update_plot_axes_labels()
         self._update_button_status()
 
@@ -304,7 +309,7 @@ class WindowMain(QtGui.QMainWindow):
         self.ui.lvActiveSig.takeItem(index)
         self.ui.lvActiveSig.insertItem(index, ci.signature)
         self.ui.lvActiveSig.item(index).setForeground(ci.color)
-        self.ui.lvActiveSig.item(index).setBackground(QtGui.QColor(0, 0, 0))
+        self.ui.lvActiveSig.item(index).setBackground(QColor(0, 0, 0))
         self.ui.lvActiveSig.setCurrentRow(index)
         self._update_plot_axes_labels()
 
@@ -441,18 +446,32 @@ class WindowMain(QtGui.QMainWindow):
         fn = QFileDialog.getSaveFileName(filter="*.csv")
         if not fn:
             return
+        if fn[-4:] != ".csv":
+            fn = fn + ".csv"
         try:
             open(fn, "w+")
         except Exception as e:
             msg = 'Failed to open/create file: {}\n{}'.format(fn, e)
             print(msg)
-            QtGui.QMessageBox.critical(None, 'File Open Failed', msg)
+            QMessageBox.critical(None, 'File Open Failed', msg)
             return
         self._create_csv_file(fn)
 
     def _create_csv_file(self, file_name):
+        my_dict = collections.OrderedDict()
         for ci in self.curve_items:
-            pass
+            header = "time-{}-{}".format(ci.driver_addr, ci.signal_name)
+            my_dict[header] = ci.array_time
+            header = "val-{}-{}".format(ci.driver_addr, ci.signal_name)
+            my_dict[header] = ci.array_val
+        key_longest = my_dict.keys()[0]
+        for key in my_dict:
+            if my_dict[key][0] < my_dict[key_longest][0]:
+                key_longest = key
+        for key in my_dict:
+            delta = len(my_dict[key_longest]) - len(my_dict[key])
+            my_dict[key] = delta * [np.nan] + my_dict[key]
+        df = pd.DataFrame(data=my_dict)
         df.to_csv(file_name)
 
     def _display_settings_dlg(self):

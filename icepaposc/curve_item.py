@@ -108,8 +108,8 @@ class CurveItem:
     def update_curve(self, time_min, time_max):
         """Updates the curve with recent collected data."""
         with self.lock:
-            idx_min = self.get_time_index(time_min)
-            idx_max = self.get_time_index(time_max)
+            idx_min = self._get_time_index(time_min)
+            idx_max = self._get_time_index(time_max)
             self.curve.setData(x=self.array_time[idx_min:idx_max],
                                y=self.array_val[idx_min:idx_max])
 
@@ -159,14 +159,14 @@ class CurveItem:
         Return: Signal value corresponding to an adjacent sample in time.
         """
         with self.lock:
-            idx = self.get_time_index(time_val)
+            idx = self._get_time_index(time_val)
             return self.array_val[idx]
 
     def clear(self):
         self.array_time[:] = []
         self.array_val[:] = []
 
-    def get_time_index(self, time_val):
+    def _get_time_index(self, time_val):
         """
         Retrieve the sample index corresponding to the provided time value.
 
