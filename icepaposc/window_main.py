@@ -443,11 +443,12 @@ class WindowMain(QMainWindow):
     def _save_to_file(self):
         if not self.curve_items:
             return
-        fn = QFileDialog.getSaveFileName(filter="*.csv")
+        extension = ".csv"
+        fn = QFileDialog.getSaveFileName(filter=extension)
         if not fn:
             return
-        if fn[-4:] != ".csv":
-            fn = fn + ".csv"
+        if fn[-4:] != extension:
+            fn = fn + extension
         try:
             open(fn, "w+")
         except Exception as e:
