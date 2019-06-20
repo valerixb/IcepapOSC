@@ -31,7 +31,6 @@ from axis_time import AxisTime
 from curve_item import CurveItem
 import pyqtgraph as pg
 import numpy as np
-import pandas as pd
 import collections
 import time
 
@@ -450,15 +449,15 @@ class WindowMain(QMainWindow):
         if fn[-4:] != ".csv":
             fn = fn + ".csv"
         try:
-            open(fn, "w+")
+            f = open(fn, "w+")
         except Exception as e:
             msg = 'Failed to open/create file: {}\n{}'.format(fn, e)
             print(msg)
             QMessageBox.critical(None, 'File Open Failed', msg)
             return
-        self._create_csv_file(fn)
+        self._create_csv_file(f)
 
-    def _create_csv_file(self, file_name):
+    def _create_csv_file(self, csv_file):
         my_dict = collections.OrderedDict()
         for ci in self.curve_items:
             header = "time-{}-{}".format(ci.driver_addr, ci.signal_name)
@@ -472,8 +471,14 @@ class WindowMain(QMainWindow):
         for key in my_dict:
             delta = len(my_dict[key_longest]) - len(my_dict[key])
             my_dict[key] = delta * [np.nan] + my_dict[key]
-        df = pd.DataFrame(data=my_dict)
-        df.to_csv(file_name)
+        for key in my_dict:
+            csv_file.write(",{}".format(key))
+        csv_file.write("\n")
+        for idx in range(0, len(my_dict[key_longest])):
+            line = str(idx)
+            for key in my_dict:
+                line += ",{}".format(my_dict[key][idx])
+            csv_file.write(line + '\n')
 
     def _display_settings_dlg(self):
         self.enable_action(False)
