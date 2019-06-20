@@ -144,7 +144,6 @@ class WindowMain(QMainWindow):
         self.cont_save_time = time.time()
         self.cont_save_ticker.start(self.cont_save_interval)
 
-
     def _fill_combo_box_driver_ids(self, selected_driver):
         driver_ids = self.collector.get_available_drivers()
         for driver_id in driver_ids:
