@@ -23,6 +23,7 @@ from PyQt4.QtGui import QMessageBox
 from PyQt4.QtGui import QBoxLayout
 from PyQt4.QtGui import QColor
 from PyQt4.QtCore import Qt
+from PyQt4.QtCore import QTimer
 from ui.ui_window_main import Ui_WindowMain
 from collector import Collector
 from dialog_settings import DialogSettings
@@ -134,6 +135,15 @@ class WindowMain(QMainWindow):
                 QMessageBox.critical(None, 'Bad Signal Syntax', msg)
                 return
             self._add_signal(int(lst[0]), lst[1], int(lst[2]))
+
+        # Set up continuous saving of collected signal data.
+        self.cont_file_path = self._get_cont_file_path()
+        self.cont_save_ticker = QTimer()
+        self.cont_save_ticker.timeout.connect(self._continuous_save)
+        self.cont_save_interval = 5 * 60 * 1000  # Fixed 5 minutes.
+        self.cont_save_time = time.time()
+        self.cont_save_ticker.start(self.cont_save_interval)
+
 
     def _fill_combo_box_driver_ids(self, selected_driver):
         driver_ids = self.collector.get_available_drivers()
@@ -278,6 +288,7 @@ class WindowMain(QMainWindow):
         self._update_button_status()
 
     def _remove_selected_signal(self):
+        self._continuous_save()
         index = self.ui.lvActiveSig.currentRow()
         ci = self.curve_items[index]
         self.collector.unsubscribe(ci.subscription_id)
@@ -289,6 +300,7 @@ class WindowMain(QMainWindow):
 
     def _remove_all_signals(self):
         """Removes all signals."""
+        self._continuous_save()
         for ci in self.curve_items:
             self.collector.unsubscribe(ci.subscription_id)
             self._remove_curve_plot(ci)
@@ -390,6 +402,7 @@ class WindowMain(QMainWindow):
 
     def _clear_all(self):
         """Clear all the displayed curves."""
+        self._continuous_save()
         for ci in self.curve_items:
             ci.clear()
 
@@ -456,6 +469,7 @@ class WindowMain(QMainWindow):
             QMessageBox.critical(None, 'File Open Failed', msg)
             return
         self._create_csv_file(f)
+        f.close()
 
     def _create_csv_file(self, csv_file):
         my_dict = collections.OrderedDict()
@@ -479,6 +493,51 @@ class WindowMain(QMainWindow):
             for key in my_dict:
                 line += ",{}".format(my_dict[key][idx])
             csv_file.write(line + '\n')
+
+    def _get_cont_file_path(self):
+        time_str = time.strftime("%Y%m%d_%H%M%S", time.localtime())
+        file_name = "IcepapOSC_{}.csv".format(time_str)
+        return self.settings.data_folder + '/' + file_name
+
+    def _continuous_save(self):
+        if not self.curve_items:
+            return
+        self.cont_save_ticker.stop()
+        new_save_time = time.time()
+        fn = self.cont_file_path
+        try:
+            f = open(fn, "w+")
+        except Exception as e:
+            msg = 'Failed to create file: {}\n{}'.format(fn, e)
+            print(msg)
+            QMessageBox.critical(None, 'File Create Failed', msg)
+            return
+        my_dict = collections.OrderedDict()
+        for ci in self.curve_items:
+            start_idx = ci.get_time_index(self.cont_save_time)
+            header = "time-{}-{}".format(ci.driver_addr, ci.signal_name)
+            my_dict[header] = ci.array_time[start_idx:]
+            header = "val-{}-{}".format(ci.driver_addr, ci.signal_name)
+            my_dict[header] = ci.array_val[start_idx:]
+        key_longest = my_dict.keys()[0]
+        for key in my_dict:
+            if my_dict[key][0] < my_dict[key_longest][0]:
+                key_longest = key
+        for key in my_dict:
+            delta = len(my_dict[key_longest]) - len(my_dict[key])
+            my_dict[key] = delta * [np.nan] + my_dict[key]
+        for key in my_dict:
+            f.write(",{}".format(key))
+        f.write("\n")
+        for idx in range(0, len(my_dict[key_longest])):
+            line = str(idx)
+            for key in my_dict:
+                line += ",{}".format(my_dict[key][idx])
+            f.write(line + '\n')
+        f.close()
+        self.cont_file_path = self._get_cont_file_path()
+        self.cont_save_time = new_save_time
+        self.cont_save_ticker.start(self.cont_save_interval)
 
     def _display_settings_dlg(self):
         self.enable_action(False)
