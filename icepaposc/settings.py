@@ -18,34 +18,58 @@
 # -----------------------------------------------------------------------------
 
 
+from os.path import exists
 from os.path import expanduser
+from ConfigParser import SafeConfigParser
 
 
 class Settings:
     """Application settings."""
 
-    def __init__(self, parent, collector):
+    def __init__(self):
         """Initializes an instance of class Settings."""
-        self.parent = parent
-        self.collector = collector
-
-        # Settings for collector.
-        self.sample_rate_min = collector.tick_interval_min
-        self.sample_rate_max = collector.tick_interval_max
-        self.sample_rate = collector.tick_interval
-        self.dump_rate_min = collector.sample_buf_len_min
-        self.dump_rate_max = collector.sample_buf_len_max
-        self.dump_rate = collector.sample_buf_len
-
-        # Settings for GUI.
+        self.conf_file = expanduser("~") + "/IcepapOSC/settings.ini"
+        if not exists(self.conf_file):
+            self._create_file()
+        self.sample_rate_min = 10  # [milliseconds]
+        self.sample_rate_max = 1000  # [milliseconds]
+        self.dump_rate_min = 1
+        self.dump_rate_max = 100
         self.default_x_axis_length_min = 5  # [Seconds]
         self.default_x_axis_length_max = 3600  # [Seconds]
-        self.default_x_axis_len = 30  # [Seconds]
+        self.sample_rate = 0
+        self.dump_rate = 0
+        self.default_x_axis_len = 0
+        self.data_folder = ''
+        self._read_file()
 
-        # Settings for data storage.
-        self.data_folder = expanduser("~")  # Home directory
+    def _create_file(self):
+        conf = SafeConfigParser()
+        conf.add_section('collector')
+        conf.add_section('gui')
+        conf.add_section('data')
+        conf.set('collector', 'tick_interval', '50')  # [milliseconds]
+        conf.set('collector', 'sample_buf_len', '2')
+        conf.set('gui', 'default_x_axis_len', '30')  # [Seconds]
+        conf.set('data', 'unused', expanduser("~"))
+        with open(self.conf_file, 'w') as f:
+            conf.write(f)
 
-    def announce_update(self):
-        self.collector.tick_interval = self.sample_rate
-        self.collector.sample_buf_len = self.dump_rate
-        self.parent.settings_updated()
+    def update(self):
+        """Called when a setting has been changed."""
+        conf = SafeConfigParser()
+        conf.read(self.conf_file)
+        conf.set('collector', 'tick_interval', str(self.sample_rate))
+        conf.set('collector', 'sample_buf_len', str(self.dump_rate))
+        conf.set('gui', 'default_x_axis_len', str(self.default_x_axis_len))
+        conf.set('data', 'unused', str(self.data_folder))
+        with open(self.conf_file, 'w') as f:
+            conf.write(f)
+
+    def _read_file(self):
+        conf = SafeConfigParser()
+        conf.read(self.conf_file)
+        self.sample_rate = conf.getint('collector', 'tick_interval')
+        self.dump_rate = conf.getint('collector', 'sample_buf_len')
+        self.default_x_axis_len = conf.getint('gui', 'default_x_axis_len')
+        self.data_folder = conf.get('data', 'unused')

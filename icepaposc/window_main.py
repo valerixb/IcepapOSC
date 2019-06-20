@@ -56,11 +56,13 @@ class WindowMain(QMainWindow):
         self.setAttribute(Qt.WA_DeleteOnClose, True)
         self.ui.setupUi(self)
         self.setWindowTitle('Oscilloscope  |  ' + host)
+        self.settings = Settings()
 
         try:
             self.collector = Collector(host,
                                        port,
                                        timeout,
+                                       self.settings,
                                        self.callback_collect)
         except Exception as e:
             msg = 'Failed to create main window.\n{}'.format(e)
@@ -71,7 +73,6 @@ class WindowMain(QMainWindow):
         self.subscriptions = {}
         self.curve_items = []
         self._paused = False
-        self.settings = Settings(self, self.collector)
 
         # Set up the plot area.
         self.plot_widget = pg.PlotWidget()

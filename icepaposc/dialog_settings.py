@@ -93,7 +93,7 @@ class DialogSettings(QDialog):
         self.settings.dump_rate = self.ui.sbDumpRate.value()
         self.settings.default_x_axis_len = self.ui.sbLenAxisX.value()
         self.settings.data_folder = data_folder
-        self.settings.announce_update()
+        self.settings.update()
         self.apply_button.setDisabled(True)
 
     @staticmethod
