@@ -501,7 +501,7 @@ class WindowMain(QMainWindow):
         tick_interval = 60000 * self.settings.as_interval
         self.cont_save_ticker.stop()
         new_save_time = time.time()
-        if not self.settings.as_enabled or not self.curve_items:
+        if not self.settings.use_auto_save or not self.curve_items:
             self.cont_file_path = self._get_cont_file_path()
             self.cont_save_time = new_save_time
             self.cont_save_ticker.start(tick_interval)

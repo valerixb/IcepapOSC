@@ -46,11 +46,12 @@ class DialogSettings(QDialog):
         self.ui.sbLenAxisX.setMinimum(self.settings.default_x_axis_len_min)
         self.ui.sbLenAxisX.setMaximum(self.settings.default_x_axis_len_max)
         self.ui.sbLenAxisX.setValue(self.settings.default_x_axis_len)
-        self.ui.cbUseAutoSave.setEnabled(self.settings.as_enabled)
+        self.ui.cbUseAutoSave.setChecked(self.settings.use_auto_save)
         self.ui.sbAutoSaveInterval.setMinimum(self.settings.as_interval_min)
         self.ui.sbAutoSaveInterval.setMaximum(self.settings.as_interval_max)
         self.ui.sbAutoSaveInterval.setValue(self.settings.as_interval)
         self.ui.leDataFolder.setText(self.settings.as_folder)
+        self._as_state_changed()
         self.apply_button.setDisabled(True)
 
     def _connect_signals(self):
@@ -79,7 +80,8 @@ class DialogSettings(QDialog):
         eq = self.ui.sbSampleRate.value() == self.settings.sample_rate and \
            self.ui.sbDumpRate.value() == self.settings.dump_rate and \
            self.ui.sbLenAxisX.value() == self.settings.default_x_axis_len and \
-           self.ui.cbUseAutoSave.isChecked() == self.settings.as_enabled and \
+           self.ui.cbUseAutoSave.isChecked() == \
+           self.settings.use_auto_save and \
            self.ui.sbAutoSaveInterval.value() == \
            self.settings.as_interval and \
            self.ui.leDataFolder.text() == self.settings.as_folder
@@ -111,7 +113,7 @@ class DialogSettings(QDialog):
         self.settings.sample_rate = self.ui.sbSampleRate.value()
         self.settings.dump_rate = self.ui.sbDumpRate.value()
         self.settings.default_x_axis_len = self.ui.sbLenAxisX.value()
-        self.settings.as_enabled = self.ui.cbUseAutoSave.isChecked()
+        self.settings.use_auto_save = self.ui.cbUseAutoSave.isChecked()
         self.settings.as_interval = self.ui.sbAutoSaveInterval.value()
         self.settings.as_folder = auto_save_folder
         self.settings.announce_update()

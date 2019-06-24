@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'dialog_settings.ui'
 #
-# Created: Mon Jun 24 10:10:01 2019
+# Created: Mon Jun 24 10:31:08 2019
 #      by: PyQt4 UI code generator 4.10.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -113,7 +113,6 @@ class Ui_DialogSettings(object):
         self.gridLayout.addWidget(self.leDataFolder, 2, 1, 1, 1)
         self.cbUseAutoSave = QtGui.QCheckBox(self.gbAutoSave)
         self.cbUseAutoSave.setText(_fromUtf8(""))
-        self.cbUseAutoSave.setChecked(True)
         self.cbUseAutoSave.setObjectName(_fromUtf8("cbUseAutoSave"))
         self.gridLayout.addWidget(self.cbUseAutoSave, 0, 1, 1, 1)
         self.btnOpenFolderDlg = QtGui.QPushButton(self.gbAutoSave)

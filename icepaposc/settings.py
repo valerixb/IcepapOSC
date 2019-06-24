@@ -43,11 +43,11 @@ class Settings:
         self.default_x_axis_len = 30  # [Seconds]
 
         # Settings for auto save.
-        self.as_enabled = True
+        self.use_auto_save = False
         self.as_interval_min = 1  # [Minutes]
         self.as_interval_max = 24 * 60  # [Minutes]
         self.as_interval = 5  # [Minutes]
-        self.as_folder = expanduser("~") + "/IcepapOSC"
+        self.as_folder = expanduser("~")
 
     def announce_update(self):
         self.collector.tick_interval = self.sample_rate
