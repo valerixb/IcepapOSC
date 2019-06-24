@@ -38,12 +38,16 @@ class Settings:
         self.dump_rate = collector.sample_buf_len
 
         # Settings for GUI.
-        self.default_x_axis_length_min = 5  # [Seconds]
-        self.default_x_axis_length_max = 3600  # [Seconds]
+        self.default_x_axis_len_min = 5  # [Seconds]
+        self.default_x_axis_len_max = 3600  # [Seconds]
         self.default_x_axis_len = 30  # [Seconds]
 
-        # Settings for data storage.
-        self.data_folder = expanduser("~")  # Home directory
+        # Settings for auto save.
+        self.as_enabled = True
+        self.as_interval_min = 1  # [Minutes]
+        self.as_interval_max = 24 * 60  # [Minutes]
+        self.as_interval = 5  # [Minutes]
+        self.as_folder = expanduser("~") + "/IcepapOSC"
 
     def announce_update(self):
         self.collector.tick_interval = self.sample_rate

@@ -140,9 +140,8 @@ class WindowMain(QMainWindow):
         self.cont_file_path = self._get_cont_file_path()
         self.cont_save_ticker = QTimer()
         self.cont_save_ticker.timeout.connect(self._continuous_save)
-        self.cont_save_interval = 5 * 60 * 1000  # Fixed 5 minutes.
         self.cont_save_time = time.time()
-        self.cont_save_ticker.start(self.cont_save_interval)
+        self.cont_save_ticker.start(60000 * self.settings.as_interval)
 
     def _fill_combo_box_driver_ids(self, selected_driver):
         driver_ids = self.collector.get_available_drivers()
@@ -496,13 +495,17 @@ class WindowMain(QMainWindow):
     def _get_cont_file_path(self):
         time_str = time.strftime("%Y%m%d_%H%M%S", time.localtime())
         file_name = "IcepapOSC_{}.csv".format(time_str)
-        return self.settings.data_folder + '/' + file_name
+        return self.settings.as_folder + '/' + file_name
 
     def _continuous_save(self):
-        if not self.curve_items:
-            return
+        tick_interval = 60000 * self.settings.as_interval
         self.cont_save_ticker.stop()
         new_save_time = time.time()
+        if not self.settings.as_enabled or not self.curve_items:
+            self.cont_file_path = self._get_cont_file_path()
+            self.cont_save_time = new_save_time
+            self.cont_save_ticker.start(tick_interval)
+            return
         fn = self.cont_file_path
         try:
             f = open(fn, "w+")
@@ -518,7 +521,17 @@ class WindowMain(QMainWindow):
             my_dict[header] = ci.array_time[start_idx:]
             header = "val-{}-{}".format(ci.driver_addr, ci.signal_name)
             my_dict[header] = ci.array_val[start_idx:]
-        key_longest = my_dict.keys()[0]
+        key_longest = None
+        for key in my_dict:
+            if my_dict[key]:
+                key_longest = key
+                break
+        if not key_longest:
+            f.close()
+            self.cont_file_path = self._get_cont_file_path()
+            self.cont_save_time = new_save_time
+            self.cont_save_ticker.start(tick_interval)
+            return
         for key in my_dict:
             if my_dict[key][0] < my_dict[key_longest][0]:
                 key_longest = key
@@ -536,7 +549,7 @@ class WindowMain(QMainWindow):
         f.close()
         self.cont_file_path = self._get_cont_file_path()
         self.cont_save_time = new_save_time
-        self.cont_save_ticker.start(self.cont_save_interval)
+        self.cont_save_ticker.start(tick_interval)
 
     def _display_settings_dlg(self):
         self.enable_action(False)
@@ -545,6 +558,7 @@ class WindowMain(QMainWindow):
 
     def settings_updated(self):
         """Settings have been changed."""
+        self._continuous_save()
         self._reset_x()
 
     def callback_collect(self, subscription_id, value_list):
