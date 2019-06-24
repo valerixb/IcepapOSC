@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'dialog_settings.ui'
 #
-# Created: Mon Jun 24 10:31:08 2019
+# Created: Mon Jun 24 11:09:38 2019
 #      by: PyQt4 UI code generator 4.10.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -166,6 +166,6 @@ class Ui_DialogSettings(object):
         self.gbAutoSave.setTitle(_translate("DialogSettings", "Auto Save (filename: IcepapOSC_<date>_<time>.csv)", None))
         self.labelAutoSaveFolder.setText(_translate("DialogSettings", "Folder:", None))
         self.btnOpenFolderDlg.setText(_translate("DialogSettings", "...", None))
-        self.labelAutoSaveInterval.setText(_translate("DialogSettings", "Interval minutes:", None))
+        self.labelAutoSaveInterval.setText(_translate("DialogSettings", "Interval [minutes]:", None))
         self.labelUseAutoSave.setText(_translate("DialogSettings", "Enable:", None))
 

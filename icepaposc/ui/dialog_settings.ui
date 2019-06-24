@@ -234,7 +234,7 @@
         <item row="1" column="0">
          <widget class="QLabel" name="labelAutoSaveInterval">
           <property name="text">
-           <string>Interval minutes:</string>
+           <string>Interval [minutes]:</string>
           </property>
          </widget>
         </item>
