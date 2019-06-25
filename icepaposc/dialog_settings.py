@@ -47,6 +47,7 @@ class DialogSettings(QDialog):
         self.ui.sbLenAxisX.setMaximum(self.settings.default_x_axis_len_max)
         self.ui.sbLenAxisX.setValue(self.settings.default_x_axis_len)
         self.ui.cbUseAutoSave.setChecked(self.settings.use_auto_save)
+        self.ui.cbAppend.setChecked(self.settings.use_append)
         self.ui.sbAutoSaveInterval.setMinimum(self.settings.as_interval_min)
         self.ui.sbAutoSaveInterval.setMaximum(self.settings.as_interval_max)
         self.ui.sbAutoSaveInterval.setValue(self.settings.as_interval)
@@ -59,6 +60,7 @@ class DialogSettings(QDialog):
         self.ui.sbDumpRate.valueChanged.connect(self._dump_rate_changed)
         self.ui.sbLenAxisX.valueChanged.connect(self._x_axis_length_changed)
         self.ui.cbUseAutoSave.stateChanged.connect(self._as_state_changed)
+        self.ui.cbAppend.stateChanged.connect(self._append_changed)
         self.ui.sbAutoSaveInterval.valueChanged.connect(self._as_intvl_changed)
         self.ui.btnOpenFolderDlg.clicked.connect(self._launch_folder_dialog)
         self.ui.leDataFolder.textChanged.connect(self._set_apply_state)
@@ -82,6 +84,7 @@ class DialogSettings(QDialog):
            self.ui.sbLenAxisX.value() == self.settings.default_x_axis_len and \
            self.ui.cbUseAutoSave.isChecked() == \
            self.settings.use_auto_save and \
+           self.ui.cbAppend.isChecked() == self.settings.use_append and \
            self.ui.sbAutoSaveInterval.value() == \
            self.settings.as_interval and \
            self.ui.leDataFolder.text() == self.settings.as_folder
@@ -93,9 +96,13 @@ class DialogSettings(QDialog):
 
     def _as_state_changed(self):
         use = self.ui.cbUseAutoSave.isChecked()
+        self.ui.cbAppend.setEnabled(use)
         self.ui.sbAutoSaveInterval.setEnabled(use)
         self.ui.leDataFolder.setEnabled(use)
         self.ui.btnOpenFolderDlg.setEnabled(use)
+        self._set_apply_state()
+
+    def _append_changed(self):
         self._set_apply_state()
 
     def _as_intvl_changed(self):
@@ -114,6 +121,7 @@ class DialogSettings(QDialog):
         self.settings.dump_rate = self.ui.sbDumpRate.value()
         self.settings.default_x_axis_len = self.ui.sbLenAxisX.value()
         self.settings.use_auto_save = self.ui.cbUseAutoSave.isChecked()
+        self.settings.use_append = self.ui.cbAppend.isChecked()
         self.settings.as_interval = self.ui.sbAutoSaveInterval.value()
         self.settings.as_folder = auto_save_folder
         self.settings.announce_update()

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>559</width>
-    <height>338</height>
+    <height>364</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -29,6 +29,9 @@
          <widget class="QLabel" name="labelGuiRate">
           <property name="text">
            <string>GUI Update Rate [ms]</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
           </property>
          </widget>
         </item>
@@ -84,6 +87,9 @@
           <property name="text">
            <string>Sample Rate [ms]</string>
           </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
          </widget>
         </item>
         <item row="1" column="2">
@@ -110,6 +116,9 @@
           <property name="text">
            <string>Dump Rate [samples/dump]</string>
           </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
          </widget>
         </item>
        </layout>
@@ -125,6 +134,9 @@
          <widget class="QLabel" name="labelXAxisLength">
           <property name="text">
            <string>Default Length [sec]</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
           </property>
          </widget>
         </item>
@@ -166,14 +178,24 @@
         <string>Auto Save (filename: IcepapOSC_&lt;date&gt;_&lt;time&gt;.csv)</string>
        </property>
        <layout class="QGridLayout" name="gridLayout">
-        <item row="2" column="0">
-         <widget class="QLabel" name="labelAutoSaveFolder">
+        <item row="1" column="1">
+         <widget class="QCheckBox" name="cbAppend">
           <property name="text">
-           <string>Folder:</string>
+           <string/>
           </property>
          </widget>
         </item>
-        <item row="2" column="1">
+        <item row="3" column="0">
+         <widget class="QLabel" name="labelAutoSaveFolder">
+          <property name="text">
+           <string>Folder</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="1">
          <widget class="QLineEdit" name="leDataFolder">
           <property name="minimumSize">
            <size>
@@ -190,7 +212,7 @@
           </property>
          </widget>
         </item>
-        <item row="2" column="2">
+        <item row="3" column="2">
          <widget class="QPushButton" name="btnOpenFolderDlg">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -212,7 +234,7 @@
           </property>
          </widget>
         </item>
-        <item row="1" column="1">
+        <item row="2" column="1">
          <widget class="QSpinBox" name="sbAutoSaveInterval">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -231,17 +253,33 @@
           </property>
          </widget>
         </item>
-        <item row="1" column="0">
-         <widget class="QLabel" name="labelAutoSaveInterval">
-          <property name="text">
-           <string>Interval [minutes]:</string>
-          </property>
-         </widget>
-        </item>
         <item row="0" column="0">
          <widget class="QLabel" name="labelUseAutoSave">
           <property name="text">
-           <string>Enable:</string>
+           <string>Enable</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="labelAppend">
+          <property name="text">
+           <string>Use Single File</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0">
+         <widget class="QLabel" name="labelAutoSaveInterval">
+          <property name="text">
+           <string>Interval [minutes]</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
           </property>
          </widget>
         </item>

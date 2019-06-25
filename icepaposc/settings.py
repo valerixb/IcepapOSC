@@ -44,6 +44,7 @@ class Settings:
 
         # Settings for auto save.
         self.use_auto_save = False
+        self.use_append = False
         self.as_interval_min = 1  # [Minutes]
         self.as_interval_max = 24 * 60  # [Minutes]
         self.as_interval = 5  # [Minutes]

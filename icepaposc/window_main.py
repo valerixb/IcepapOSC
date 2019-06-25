@@ -137,11 +137,14 @@ class WindowMain(QMainWindow):
             self._add_signal(int(lst[0]), lst[1], int(lst[2]))
 
         # Set up continuous saving of collected signal data.
-        self.cont_file_path = self._get_cont_file_path()
-        self.cont_save_ticker = QTimer()
-        self.cont_save_ticker.timeout.connect(self._continuous_save)
-        self.cont_save_time = time.time()
-        self.cont_save_ticker.start(60000 * self.settings.as_interval)
+        self._save_ticker = QTimer()
+        self._save_ticker.timeout.connect(self._auto_save)
+        self._save_time = time.time()
+        self._idx = 0
+        self._new_path = True
+        self._file_path = self._get_next_file_path()
+        if self.settings.use_auto_save:
+            self._save_ticker.start(60000 * self.settings.as_interval)
 
     def _fill_combo_box_driver_ids(self, selected_driver):
         driver_ids = self.collector.get_available_drivers()
@@ -286,7 +289,7 @@ class WindowMain(QMainWindow):
         self._update_button_status()
 
     def _remove_selected_signal(self):
-        self._continuous_save()
+        self._auto_save()
         index = self.ui.lvActiveSig.currentRow()
         ci = self.curve_items[index]
         self.collector.unsubscribe(ci.subscription_id)
@@ -298,7 +301,7 @@ class WindowMain(QMainWindow):
 
     def _remove_all_signals(self):
         """Removes all signals."""
-        self._continuous_save()
+        self._auto_save()
         for ci in self.curve_items:
             self.collector.unsubscribe(ci.subscription_id)
             self._remove_curve_plot(ci)
@@ -400,7 +403,7 @@ class WindowMain(QMainWindow):
 
     def _clear_all(self):
         """Clear all the displayed curves."""
-        self._continuous_save()
+        self._auto_save()
         for ci in self.curve_items:
             ci.clear()
 
@@ -492,64 +495,80 @@ class WindowMain(QMainWindow):
                 line += ",{}".format(my_dict[key][idx])
             csv_file.write(line + '\n')
 
-    def _get_cont_file_path(self):
-        time_str = time.strftime("%Y%m%d_%H%M%S", time.localtime())
-        file_name = "IcepapOSC_{}.csv".format(time_str)
-        return self.settings.as_folder + '/' + file_name
+    def _get_next_file_path(self):
+        if self._idx is 0 or self._new_path:
+            time_str = time.strftime("%Y%m%d_%H%M%S", time.localtime())
+            file_name = "IcepapOSC_{}.csv".format(time_str)
+            cfp = self.settings.as_folder + '/' + file_name
+            self._new_path = False
+        else:
+            cfp = self._file_path
+        return cfp
 
-    def _continuous_save(self):
-        tick_interval = 60000 * self.settings.as_interval
-        self.cont_save_ticker.stop()
-        new_save_time = time.time()
-        if not self.settings.use_auto_save or not self.curve_items:
-            self.cont_file_path = self._get_cont_file_path()
-            self.cont_save_time = new_save_time
-            self.cont_save_ticker.start(tick_interval)
+    def _auto_save(self):
+        if not self.settings.use_auto_save:
             return
-        fn = self.cont_file_path
-        try:
-            f = open(fn, "w+")
-        except Exception as e:
-            msg = 'Failed to create file: {}\n{}'.format(fn, e)
-            print(msg)
-            QMessageBox.critical(None, 'File Create Failed', msg)
+
+        # Init.
+        self._save_ticker.stop()
+        new_save_time = time.time()
+        tick_interval = 60000 * self.settings.as_interval
+        if not self.settings.use_append:
+            self._idx = 0
+
+        # Create matrix.
+        if not self.curve_items:
+            self._save_time = new_save_time
+            self._save_ticker.start(tick_interval)
             return
         my_dict = collections.OrderedDict()
         for ci in self.curve_items:
-            start_idx = ci.get_time_index(self.cont_save_time)
+            start_idx = ci.get_time_index(self._save_time)
             header = "time-{}-{}".format(ci.driver_addr, ci.signal_name)
             my_dict[header] = ci.array_time[start_idx:]
             header = "val-{}-{}".format(ci.driver_addr, ci.signal_name)
             my_dict[header] = ci.array_val[start_idx:]
         key_longest = None
-        for key in my_dict:
+        for key in my_dict:  # Find a non-empty list.
             if my_dict[key]:
                 key_longest = key
                 break
         if not key_longest:
-            f.close()
-            self.cont_file_path = self._get_cont_file_path()
-            self.cont_save_time = new_save_time
-            self.cont_save_ticker.start(tick_interval)
+            self._save_time = new_save_time
+            self._save_ticker.start(tick_interval)
             return
-        for key in my_dict:
+        for key in my_dict:  # Find the longest list.
             if my_dict[key][0] < my_dict[key_longest][0]:
                 key_longest = key
-        for key in my_dict:
+        for key in my_dict:  # Fill up the shorter lists with nan.
             delta = len(my_dict[key_longest]) - len(my_dict[key])
             my_dict[key] = delta * [np.nan] + my_dict[key]
-        for key in my_dict:
-            f.write(",{}".format(key))
-        f.write("\n")
-        for idx in range(0, len(my_dict[key_longest])):
-            line = str(idx)
+
+        # Write matrix to file.
+        try:
+            mode = "a+" if self.settings.use_append else "w+"
+            f = open(self._file_path, mode)
+        except Exception as e:
+            msg = 'Failed to open file: {}\n{}'.format(self._file_path, e)
+            print(msg)
+            QMessageBox.critical(None, 'File Open Failed', msg)
+            return
+        if self._idx is 0:
             for key in my_dict:
-                line += ",{}".format(my_dict[key][idx])
+                f.write(",{}".format(key))
+        f.write("\n")
+        for i in range(0, len(my_dict[key_longest])):
+            line = str(self._idx)
+            self._idx += 1
+            for key in my_dict:
+                line += ",{}".format(my_dict[key][i])
             f.write(line + '\n')
         f.close()
-        self.cont_file_path = self._get_cont_file_path()
-        self.cont_save_time = new_save_time
-        self.cont_save_ticker.start(tick_interval)
+
+        # Prepare next write.
+        self._file_path = self._get_next_file_path()
+        self._save_time = new_save_time
+        self._save_ticker.start(tick_interval)
 
     def _display_settings_dlg(self):
         self.enable_action(False)
@@ -558,7 +577,8 @@ class WindowMain(QMainWindow):
 
     def settings_updated(self):
         """Settings have been changed."""
-        self._continuous_save()
+        self._new_path = True
+        self._auto_save()
         self._reset_x()
 
     def callback_collect(self, subscription_id, value_list):
