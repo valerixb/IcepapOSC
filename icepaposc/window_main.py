@@ -141,7 +141,7 @@ class WindowMain(QMainWindow):
         self._save_ticker.timeout.connect(self._auto_save)
         self._save_time = time.time()
         self._idx = 0
-        self._new_path = True
+        self._new_folder = True
         self._file_path = self._get_next_file_path()
         if self.settings.use_auto_save:
             self._save_ticker.start(60000 * self.settings.as_interval)
@@ -496,11 +496,12 @@ class WindowMain(QMainWindow):
             csv_file.write(line + '\n')
 
     def _get_next_file_path(self):
-        if self._idx == 0 or self._new_path:
+        if self._new_folder or not self.settings.use_append:
+            self._new_folder = False
+            self._idx = 0
             time_str = time.strftime("%Y%m%d_%H%M%S", time.localtime())
             file_name = "IcepapOSC_{}.csv".format(time_str)
             cfp = self.settings.as_folder + '/' + file_name
-            self._new_path = False
         else:
             cfp = self._file_path
         return cfp
@@ -513,8 +514,6 @@ class WindowMain(QMainWindow):
         self._save_ticker.stop()
         new_save_time = time.time()
         tick_interval = 60000 * self.settings.as_interval
-        if not self.settings.use_append:
-            self._idx = 0
 
         # Create matrix.
         if not self.curve_items:
@@ -577,7 +576,7 @@ class WindowMain(QMainWindow):
 
     def settings_updated(self):
         """Settings have been changed."""
-        self._new_path = True
+        self._new_folder = True
         self._auto_save()
         self._reset_x()
 
