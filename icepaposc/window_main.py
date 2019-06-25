@@ -496,7 +496,7 @@ class WindowMain(QMainWindow):
             csv_file.write(line + '\n')
 
     def _get_next_file_path(self):
-        if self._idx is 0 or self._new_path:
+        if self._idx == 0 or self._new_path:
             time_str = time.strftime("%Y%m%d_%H%M%S", time.localtime())
             file_name = "IcepapOSC_{}.csv".format(time_str)
             cfp = self.settings.as_folder + '/' + file_name
