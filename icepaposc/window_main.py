@@ -553,7 +553,7 @@ class WindowMain(QMainWindow):
             print(msg)
             QMessageBox.critical(None, 'File Open Failed', msg)
             return
-        if self._idx is 0:
+        if self._idx == 0:
             for key in my_dict:
                 f.write(",{}".format(key))
         f.write("\n")
