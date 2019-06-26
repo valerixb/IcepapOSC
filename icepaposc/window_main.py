@@ -139,12 +139,11 @@ class WindowMain(QMainWindow):
         # Set up continuous saving of collected signal data.
         self._save_ticker = QTimer()
         self._save_ticker.timeout.connect(self._auto_save)
-        self._save_time = time.time()
+        self._save_time = None
         self._idx = 0
-        self._new_folder = True
-        self._file_path = self._get_next_file_path()
-        if self.settings.use_auto_save:
-            self._save_ticker.start(60000 * self.settings.as_interval)
+        self._settings_updated = False
+        self._file_path = None
+        self._old_use_append = False
 
     def _fill_combo_box_driver_ids(self, selected_driver):
         driver_ids = self.collector.get_available_drivers()
@@ -495,31 +494,14 @@ class WindowMain(QMainWindow):
                 line += ",{}".format(my_dict[key][idx])
             csv_file.write(line + '\n')
 
-    def _get_next_file_path(self):
-        if self._new_folder or not self.settings.use_append:
-            self._new_folder = False
-            self._idx = 0
-            time_str = time.strftime("%Y%m%d_%H%M%S", time.localtime())
-            file_name = "IcepapOSC_{}.csv".format(time_str)
-            cfp = self.settings.as_folder + '/' + file_name
-        else:
-            cfp = self._file_path
-        return cfp
-
     def _auto_save(self):
-        if not self.settings.use_auto_save:
+        if not self.curve_items or not self._file_path:
             return
-
-        # Init.
+        if not self._settings_updated and not self.settings.use_auto_save:
+            return
         self._save_ticker.stop()
-        new_save_time = time.time()
-        tick_interval = 60000 * self.settings.as_interval
 
         # Create matrix.
-        if not self.curve_items:
-            self._save_time = new_save_time
-            self._save_ticker.start(tick_interval)
-            return
         my_dict = collections.OrderedDict()
         for ci in self.curve_items:
             start_idx = ci.get_time_index(self._save_time)
@@ -527,15 +509,7 @@ class WindowMain(QMainWindow):
             my_dict[header] = ci.array_time[start_idx:]
             header = "val-{}-{}".format(ci.driver_addr, ci.signal_name)
             my_dict[header] = ci.array_val[start_idx:]
-        key_longest = None
-        for key in my_dict:  # Find a non-empty list.
-            if my_dict[key]:
-                key_longest = key
-                break
-        if not key_longest:
-            self._save_time = new_save_time
-            self._save_ticker.start(tick_interval)
-            return
+        key_longest = my_dict.keys()[0]
         for key in my_dict:  # Find the longest list.
             if my_dict[key][0] < my_dict[key_longest][0]:
                 key_longest = key
@@ -545,8 +519,7 @@ class WindowMain(QMainWindow):
 
         # Write matrix to file.
         try:
-            mode = "a+" if self.settings.use_append else "w+"
-            f = open(self._file_path, mode)
+            f = open(self._file_path, self._get_write_mode())
         except Exception as e:
             msg = 'Failed to open file: {}\n{}'.format(self._file_path, e)
             print(msg)
@@ -564,10 +537,30 @@ class WindowMain(QMainWindow):
             f.write(line + '\n')
         f.close()
 
-        # Prepare next write.
-        self._file_path = self._get_next_file_path()
-        self._save_time = new_save_time
-        self._save_ticker.start(tick_interval)
+        self._prepare_next_auto_save()
+
+    def _prepare_next_auto_save(self):
+        if self.settings.use_auto_save:
+            if not self.settings.use_append or \
+                    not self._file_path or self._settings_updated:
+                self._set_new_file_path()
+            self._save_time = time.time()
+            self._save_ticker.start(60000 * self.settings.as_interval)
+        else:
+            self._save_time = None
+            self._file_path = None
+
+    def _set_new_file_path(self):
+        self._idx = 0
+        time_str = time.strftime("%Y%m%d_%H%M%S", time.localtime())
+        file_name = "IcepapOSC_{}.csv".format(time_str)
+        self._file_path = self.settings.as_folder + '/' + file_name
+
+    def _get_write_mode(self):
+        do_append = self.settings.use_append
+        if self._settings_updated:
+            do_append = self._old_use_append
+        return "a+" if do_append else "w+"
 
     def _display_settings_dlg(self):
         self.enable_action(False)
@@ -576,8 +569,13 @@ class WindowMain(QMainWindow):
 
     def settings_updated(self):
         """Settings have been changed."""
-        self._new_folder = True
-        self._auto_save()
+        self._settings_updated = True
+        if self._file_path:
+            self._auto_save()
+        else:
+            self._prepare_next_auto_save()
+        self._old_use_append = self.settings.use_append
+        self._settings_updated = False
         self._reset_x()
 
     def callback_collect(self, subscription_id, value_list):
