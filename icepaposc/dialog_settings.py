@@ -124,7 +124,8 @@ class DialogSettings(QDialog):
         self.settings.use_append = self.ui.cbAppend.isChecked()
         self.settings.as_interval = self.ui.sbAutoSaveInterval.value()
         self.settings.as_folder = auto_save_folder
-        self.settings.announce_update()
+        self.settings.update()
+        self.parent.settings_updated()
         self.apply_button.setDisabled(True)
 
     @staticmethod
