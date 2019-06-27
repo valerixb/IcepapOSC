@@ -134,7 +134,8 @@ class WindowMain(QMainWindow):
                 print(msg)
                 QMessageBox.critical(None, 'Bad Signal Syntax', msg)
                 return
-            self._add_signal(int(lst[0]), lst[1], int(lst[2]))
+            auto_save = True if sig == siglist[-1] else False
+            self._add_signal(int(lst[0]), lst[1], int(lst[2]), auto_save)
 
         # Set up continuous saving of collected signal data.
         self._save_ticker = QTimer()
@@ -247,9 +248,9 @@ class WindowMain(QMainWindow):
             my_axis = 2
         elif self.ui.rbAxis3.isChecked():
             my_axis = 3
-        self._add_signal(addr, my_signal_name, my_axis)
+        self._add_signal(addr, my_signal_name, my_axis, True)
 
-    def _add_signal(self, driver_addr, signal_name, y_axis):
+    def _add_signal(self, driver_addr, signal_name, y_axis, auto_save=False):
         """
         Adds a new curve to the plot area.
 
@@ -286,9 +287,11 @@ class WindowMain(QMainWindow):
         self.ui.lvActiveSig.item(index).setBackground(QColor(0, 0, 0))
         self._update_plot_axes_labels()
         self._update_button_status()
+        if auto_save:
+            self._auto_save(True)
 
     def _remove_selected_signal(self):
-        self._auto_save()
+        self._auto_save(True)
         index = self.ui.lvActiveSig.currentRow()
         ci = self.curve_items[index]
         self.collector.unsubscribe(ci.subscription_id)
@@ -300,7 +303,7 @@ class WindowMain(QMainWindow):
 
     def _remove_all_signals(self):
         """Removes all signals."""
-        self._auto_save()
+        self._auto_save(True)
         for ci in self.curve_items:
             self.collector.unsubscribe(ci.subscription_id)
             self._remove_curve_plot(ci)
@@ -383,7 +386,7 @@ class WindowMain(QMainWindow):
         self._add_signal(drv_addr, 'StatReady', 3)
         self._add_signal(drv_addr, 'StatMoving', 3)
         self._add_signal(drv_addr, 'StatSettling', 3)
-        self._add_signal(drv_addr, 'StatOutofwin', 3)
+        self._add_signal(drv_addr, 'StatOutofwin', 3, True)
 
     def _signals_currents(self):
         """Display a specific set of curves."""
@@ -391,14 +394,14 @@ class WindowMain(QMainWindow):
         drv_addr = int(self.ui.cbDrivers.currentText())
         self._add_signal(drv_addr, 'PosAxis', 1)
         self._add_signal(drv_addr, 'MeasI', 2)
-        self._add_signal(drv_addr, 'MeasVm', 3)
+        self._add_signal(drv_addr, 'MeasVm', 3, True)
 
     def _signals_target(self):
         """Display a specific set of curves."""
         self._remove_all_signals()
         drv_addr = int(self.ui.cbDrivers.currentText())
         self._add_signal(drv_addr, 'PosAxis', 1)
-        self._add_signal(drv_addr, 'EncTgtenc', 2)
+        self._add_signal(drv_addr, 'EncTgtenc', 2, True)
 
     def _clear_all(self):
         """Clear all the displayed curves."""
@@ -494,7 +497,7 @@ class WindowMain(QMainWindow):
                 line += ",{}".format(my_dict[key][idx])
             csv_file.write(line + '\n')
 
-    def _auto_save(self):
+    def _auto_save(self, use_new_file=False):
         if not self.curve_items or not self._file_path:
             return
         if not self._settings_updated and not self.settings.use_auto_save:
@@ -509,9 +512,16 @@ class WindowMain(QMainWindow):
             my_dict[header] = ci.array_time[start_idx:]
             header = "val-{}-{}".format(ci.driver_addr, ci.signal_name)
             my_dict[header] = ci.array_val[start_idx:]
-        key_longest = my_dict.keys()[0]
+        key_longest = None
+        for key in my_dict:  # Find a non empty list.
+            if my_dict[key]:
+                key_longest = key
+                break
+        if not key_longest:
+            self._prepare_next_auto_save(True)
+            return
         for key in my_dict:  # Find the longest list.
-            if my_dict[key][0] < my_dict[key_longest][0]:
+            if my_dict[key] and my_dict[key][0] < my_dict[key_longest][0]:
                 key_longest = key
         for key in my_dict:  # Fill up the shorter lists with nan.
             delta = len(my_dict[key_longest]) - len(my_dict[key])
@@ -528,7 +538,7 @@ class WindowMain(QMainWindow):
         if self._idx == 0:
             for key in my_dict:
                 f.write(",{}".format(key))
-        f.write("\n")
+            f.write("\n")
         for i in range(0, len(my_dict[key_longest])):
             line = str(self._idx)
             self._idx += 1
@@ -537,11 +547,11 @@ class WindowMain(QMainWindow):
             f.write(line + '\n')
         f.close()
 
-        self._prepare_next_auto_save()
+        self._prepare_next_auto_save(use_new_file)
 
-    def _prepare_next_auto_save(self):
+    def _prepare_next_auto_save(self, use_new_file=False):
         if self.settings.use_auto_save:
-            if not self.settings.use_append or \
+            if use_new_file or not self.settings.use_append or \
                     not self._file_path or self._settings_updated:
                 self._set_new_file_path()
             self._save_time = time.time()
@@ -571,7 +581,7 @@ class WindowMain(QMainWindow):
         """Settings have been changed."""
         self._settings_updated = True
         if self._file_path:
-            self._auto_save()
+            self._auto_save(True)
         else:
             self._prepare_next_auto_save()
         self._old_use_append = self.settings.use_append
