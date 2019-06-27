@@ -110,8 +110,9 @@ class DialogSettings(QDialog):
 
     def _launch_folder_dialog(self):
         folder_name = QFileDialog.getExistingDirectory()
-        self.ui.leDataFolder.setText(folder_name)
-        self._set_apply_state()
+        if folder_name:
+            self.ui.leDataFolder.setText(folder_name)
+            self._set_apply_state()
 
     def _apply(self):
         auto_save_folder = self.ui.leDataFolder.text()
