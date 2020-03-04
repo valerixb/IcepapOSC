@@ -20,6 +20,7 @@ from pyqtgraph import AxisItem
 import time
 import datetime
 
+
 class AxisTime(AxisItem):
     """
     Formats axis labels to human readable time.
