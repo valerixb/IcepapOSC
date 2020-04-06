@@ -27,6 +27,7 @@ from axis_time import AxisTime
 from curve_item import CurveItem
 import pyqtgraph as pg
 import time
+import datetime
 
 
 class WindowMain(QtGui.QMainWindow):
@@ -324,8 +325,8 @@ class WindowMain(QtGui.QMainWindow):
             mouse_point = self.view_boxes[0].mapSceneToView(pos)
             time_value = mouse_point.x()
             try:
-                pretty_time = time.strftime("%H:%M:%S",
-                                            time.gmtime(time_value))
+                date = datetime.datetime.fromtimestamp(time_value)
+                pretty_time = date.strftime("%H:%M:%S.%f")[:-3]
             except ValueError:  # Time out of range.
                 return
             txtmax = ''
