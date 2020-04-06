@@ -37,7 +37,7 @@ class Settings:
         # Settings held by the GUI side.
         self.default_x_axis_length_min = 5  # [Seconds]
         self.default_x_axis_length_max = 3600  # [Seconds]
-        self.default_x_axis_length = 30  # [Seconds]
+        self.default_x_axis_length = 90  # [Seconds]
 
     def announce_update(self):
         self.collector.tick_interval = self.sample_rate
