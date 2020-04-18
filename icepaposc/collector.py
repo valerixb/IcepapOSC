@@ -315,6 +315,5 @@ class Collector:
 
     def _getter_vel_current(self, addr):
         return self.icepap_system[addr].velocity_current
-		
-		
-		
+
+
