@@ -75,7 +75,8 @@ class Collector:
              ('MeasIa', self._getter_meas_ia),
              ('MeasIb', self._getter_meas_ib),
              ('MeasVm', self._getter_meas_vm),
-             ('VelCurrent', self._getter_vel_current)]
+             ('VelCurrent', self._getter_vel_current),
+             ('VelMotor', self._getter_vel_motor)]
         )
         self.host = host
         self.port = port
@@ -316,4 +317,5 @@ class Collector:
     def _getter_vel_current(self, addr):
         return self.icepap_system[addr].velocity_current
 
-
+    def _getter_vel_motor(self, addr):
+        return self.icepap_system[addr].get_velocity(vtype='MOTOR')
