@@ -2,8 +2,7 @@
 
 # Form implementation generated from reading ui file 'window_main.ui'
 #
-# Created: Thu May  9 10:31:06 2019
-#      by: PyQt4 UI code generator 4.10.1
+# Created by: PyQt4 UI code generator 4.12.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -109,6 +108,9 @@ class Ui_WindowMain(object):
         self.btnAdd.setMaximumSize(QtCore.QSize(200, 16777215))
         self.btnAdd.setObjectName(_fromUtf8("btnAdd"))
         self.vloControls.addWidget(self.btnAdd)
+        self.btnESYNC = QtGui.QPushButton(self.centralwidget)
+        self.btnESYNC.setObjectName(_fromUtf8("btnESYNC"))
+        self.vloControls.addWidget(self.btnESYNC)
         self.horizontalLayout = QtGui.QHBoxLayout()
         self.horizontalLayout.setContentsMargins(-1, 0, -1, 0)
         self.horizontalLayout.setObjectName(_fromUtf8("horizontalLayout"))
@@ -242,7 +244,7 @@ class Ui_WindowMain(object):
         self.gridLayout.addLayout(self.hloAll, 0, 0, 1, 1)
         WindowMain.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(WindowMain)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 892, 28))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 892, 29))
         self.menubar.setObjectName(_fromUtf8("menubar"))
         self.menuFile = QtGui.QMenu(self.menubar)
         self.menuFile.setObjectName(_fromUtf8("menuFile"))
@@ -285,6 +287,7 @@ class Ui_WindowMain(object):
         self.rbAxis2.setText(_translate("WindowMain", "2", None))
         self.rbAxis3.setText(_translate("WindowMain", "3", None))
         self.btnAdd.setText(_translate("WindowMain", "Add Signal", None))
+        self.btnESYNC.setText(_translate("WindowMain", "ESYNC axis", None))
         self.labelRemove.setText(_translate("WindowMain", "Remove:", None))
         self.btnRemoveSel.setText(_translate("WindowMain", "Selected", None))
         self.btnRemoveAll.setText(_translate("WindowMain", "All", None))
