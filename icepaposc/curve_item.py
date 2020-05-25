@@ -63,7 +63,8 @@ class CurveItem:
         SignalAppearance(QColor(204, 153, 102), 1, Qt.DashLine),
         SignalAppearance(QColor(255, 204, 0), 1, Qt.DashLine),
         SignalAppearance(QColor(255, 255, 0), 1, Qt.DashLine),
-        SignalAppearance(QColor(0, 255, 255), 1, Qt.DashLine)
+        SignalAppearance(QColor(0, 255, 255), 1, Qt.DashLine),
+        SignalAppearance(QColor(255, 0, 255), 1, Qt.SolidLine)
     ]
 
     def __init__(self, subscription_id, driver_addr, sig_name, y_axis,

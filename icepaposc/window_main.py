@@ -129,6 +129,12 @@ class WindowMain(QtGui.QMainWindow):
                 QtGui.QMessageBox.critical(None, 'Bad Signal Syntax', msg)
                 return
             self._add_signal(int(lst[0]), lst[1], int(lst[2]))
+        
+        # encoder count to motor step conversion factor measurement
+        self.ecpmt_just_enabled = False
+        self.step_ini = 0
+        self.enc_ini = 0
+
 
     def _fill_combo_box_driver_ids(self, selected_driver):
         driver_ids = self.collector.get_available_drivers()
@@ -178,6 +184,7 @@ class WindowMain(QtGui.QMainWindow):
         self.ui.actionCurrents.triggered.connect(self._signals_currents)
         self.ui.actionTarget.triggered.connect(self._signals_target)
         self.view_boxes[0].sigResized.connect(self._update_views)
+        self.ui.chkEctsTurn.stateChanged.connect(self.enableEctsPerTurnCalculation)
 
     def closeEvent(self, event):
         """Overloads (QMainWindow) QWidget.closeEvent()."""
@@ -491,3 +498,31 @@ class WindowMain(QtGui.QMainWindow):
         # Update the curves.
         for ci in self.curve_items:
             ci.update_curve(x_min, x_max)
+
+        # Update encoder count to motor step conversion factor measurement        
+        addr=self.collector.channels[self.collector.current_channel].icepap_address
+        step_now = self.collector.icepap_system[addr].get_pos("AXIS")
+        cfgANSTEP = int(self.collector.icepap_system[addr].get_cfg("ANSTEP")["ANSTEP"])
+        cfgANTURN = int(self.collector.icepap_system[addr].get_cfg("ANTURN")["ANTURN"])
+        #print cfgANSTEP, cfgANTURN
+        enc_sel = str(self.ui.cb_enc_sel.currentText())
+        enc_now = self.collector.icepap_system[addr].get_enc(enc_sel)
+        if self.ecpmt_just_enabled:
+            #print "first"
+            self.step_ini = step_now
+            self.enc_ini = enc_now
+            self.ecpmt_just_enabled = False
+            print self.step_ini, self.enc_ini
+        if self.ui.chkEctsTurn.isChecked():
+            #print "upd"
+            if (step_now - self.step_ini) != 0:
+                enc_cts_per_motor_turn = (enc_now - self.enc_ini) * 1.0 * cfgANSTEP \
+                                         / ((step_now - self.step_ini) * cfgANTURN)
+            else:
+                enc_cts_per_motor_turn = 0
+            #print enc_cts_per_motor_turn
+            self.ui.txtEctsTurn.setText(str(enc_cts_per_motor_turn))
+
+
+    def enableEctsPerTurnCalculation(self):
+        self.ecpmt_just_enabled = True
