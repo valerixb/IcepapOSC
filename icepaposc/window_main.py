@@ -19,6 +19,7 @@
 
 from PyQt4 import QtGui
 from PyQt4.QtCore import Qt
+from PyQt4.QtGui import QFileDialog
 from ui.ui_window_main import Ui_WindowMain
 from collector import Collector
 from dialog_settings import DialogSettings
@@ -178,6 +179,7 @@ class WindowMain(QtGui.QMainWindow):
         self.ui.btnResetY.clicked.connect(self._enable_auto_range_y)
         self.ui.btnPause.clicked.connect(self._pause_x_axis)
         self.ui.btnNow.clicked.connect(self._goto_now)
+        self.ui.actionSave_to_File.triggered.connect(self._save_to_file)
         self.ui.actionSettings.triggered.connect(self._display_settings_dlg)
         self.ui.actionExit.triggered.connect(self.close)
         self.ui.actionClosed_Loop.triggered.connect(self._signals_closed_loop)
@@ -459,6 +461,19 @@ class WindowMain(QtGui.QMainWindow):
     def enable_action(self, enable=True):
         """Enables or disables menu item File|Settings."""
         self.ui.actionSettings.setEnabled(enable)
+
+    def _save_to_file(self):
+        print "save to file...",
+        fname= QFileDialog.getSaveFileName(self)
+        if fname:
+            with open(fname,'w') as f:
+                for ci in self.curve_items:
+                    f.write( str(ci.driver_addr) + " : " + ci.signal_name + "\n" )
+                    f.write( str(len(ci.array_time)) + " entries (time , value)" + "\n" )
+                    for i in range(len(ci.array_time)):
+                        f.write( str(ci.array_time[i]) + " , " + str(ci.array_val[i]) + "\n" )
+                    f.write('\n')
+        print "done."
 
     def _display_settings_dlg(self):
         self.enable_action(False)

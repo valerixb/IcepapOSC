@@ -533,7 +533,6 @@ class Ui_WindowMain(object):
         self.btnVSTATUS.setText(_translate("WindowMain", "VSTATUS", None))
         self.btnClear.setText(_translate("WindowMain", "Clear", None))
         self.btnSeeAll.setText(_translate("WindowMain", "All Data", None))
-        self.btnSeeAll.setShortcut(_translate("WindowMain", "Ctrl+S", None))
         self.btnPause.setText(_translate("WindowMain", "Pause", None))
         self.btnResetY.setText(_translate("WindowMain", "Reset Y", None))
         self.btnResetX.setText(_translate("WindowMain", "Reset X", None))
@@ -564,4 +563,5 @@ class Ui_WindowMain(object):
         self.actionImport_Set.setText(_translate("WindowMain", "Import Set", None))
         self.actionExport_Set.setText(_translate("WindowMain", "Export Set", None))
         self.actionSave_to_File.setText(_translate("WindowMain", "Save to File", None))
+        self.actionSave_to_File.setShortcut(_translate("WindowMain", "Ctrl+S", None))
 
