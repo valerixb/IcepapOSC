@@ -509,6 +509,13 @@ class WindowMain(QtGui.QMainWindow):
                                          self.now,
                                          padding=0)
         self.ui.btnNow.setDisabled(now_in_range)
+        
+        # retrieve POS and ENC affine corrections
+        self.collector.poscorr_a = float(self.ui.txt_poscorr_a.text())
+        #print "POS_a correction : " + str(self.collector.poscorr_a)
+        self.collector.poscorr_b = float(self.ui.txt_poscorr_b.text())
+        self.collector.enccorr_a = float(self.ui.txt_enccorr_a.text())
+        self.collector.enccorr_b = float(self.ui.txt_enccorr_b.text())
 
         # Update the curves.
         for ci in self.curve_items:
