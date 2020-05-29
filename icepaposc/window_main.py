@@ -172,6 +172,8 @@ class WindowMain(QtGui.QMainWindow):
         self.ui.btnRemoveSel.clicked.connect(self._remove_selected_signal)
         self.ui.btnRemoveAll.clicked.connect(self._remove_all_signals)
         self.ui.btnCLoop.clicked.connect(self._signals_closed_loop)
+        self.ui.btnExportSet.clicked.connect(self._export_signal_set)
+        self.ui.btnImportSet.clicked.connect(self._import_signal_set)
         self.ui.btnCurrents.clicked.connect(self._signals_currents)
         self.ui.btnTarget.clicked.connect(self._signals_target)
         self.ui.btnClear.clicked.connect(self._clear_all)
@@ -184,6 +186,8 @@ class WindowMain(QtGui.QMainWindow):
         self.ui.actionSettings.triggered.connect(self._display_settings_dlg)
         self.ui.actionExit.triggered.connect(self.close)
         self.ui.actionClosed_Loop.triggered.connect(self._signals_closed_loop)
+        self.ui.actionExport_Set.triggered.connect(self._export_signal_set)
+        self.ui.actionImport_Set.triggered.connect(self._import_signal_set)
         self.ui.actionCurrents.triggered.connect(self._signals_currents)
         self.ui.actionTarget.triggered.connect(self._signals_target)
         self.view_boxes[0].sigResized.connect(self._update_views)
@@ -425,10 +429,27 @@ class WindowMain(QtGui.QMainWindow):
             t = ci.start_time()
             if 0 < t < time_start:
                 time_start = t
-        self.view_boxes[0].setXRange(time_start,
-                                     self.collector.get_current_time(),
+        self.view_boxes[0].setXRange(time_start, 
+                                     self.collector.get_current_time(), 
                                      padding=0)
 
+    def _import_signal_set(self):
+        fname= QFileDialog.getOpenFileName(self)
+        if fname:
+            self._remove_all_signals()
+            drv_addr = int(self.ui.cbDrivers.currentText())
+            with open(fname,'r') as f:
+                for l in f:
+                    tokens=l.split()
+                    self._add_signal(drv_addr, tokens[0],int(tokens[1]))            
+        
+    def _export_signal_set(self):
+        fname= QFileDialog.getSaveFileName(self)
+        if fname:
+            with open(fname,'w') as f:
+                for ci in self.curve_items:
+                    f.write( ci.signal_name + " " + str(ci.y_axis) + "\n" )
+        
     def _reset_x(self):
         """
         Reset the length of the X axis to
