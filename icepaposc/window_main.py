@@ -29,6 +29,7 @@ from curve_item import CurveItem
 import pyqtgraph as pg
 import time
 import datetime
+from dialogstatusinfo import DialogStatusInfo
 
 
 class WindowMain(QtGui.QMainWindow):
@@ -187,6 +188,7 @@ class WindowMain(QtGui.QMainWindow):
         self.ui.actionTarget.triggered.connect(self._signals_target)
         self.view_boxes[0].sigResized.connect(self._update_views)
         self.ui.chkEctsTurn.stateChanged.connect(self.enableEctsPerTurnCalculation)
+        self.ui.btnSTATUS.clicked.connect(self.addDialogStatus)
 
     def closeEvent(self, event):
         """Overloads (QMainWindow) QWidget.closeEvent()."""
@@ -463,17 +465,59 @@ class WindowMain(QtGui.QMainWindow):
         self.ui.actionSettings.setEnabled(enable)
 
     def _save_to_file(self):
-        print "save to file...",
-        fname= QFileDialog.getSaveFileName(self)
-        if fname:
-            with open(fname,'w') as f:
-                for ci in self.curve_items:
-                    f.write( str(ci.driver_addr) + " : " + ci.signal_name + "\n" )
-                    f.write( str(len(ci.array_time)) + " entries (time , value)" + "\n" )
-                    for i in range(len(ci.array_time)):
-                        f.write( str(ci.array_time[i]) + " , " + str(ci.array_val[i]) + "\n" )
-                    f.write('\n')
-        print "done."
+        #print "save to file...",
+        #fname= QFileDialog.getSaveFileName(self)
+        #if fname:
+        #    with open(fname,'w') as f:
+        #        for ci in self.curve_items:
+        #            f.write( str(ci.driver_addr) + " : " + ci.signal_name + "\n" )
+        #            f.write( str(len(ci.array_time)) + " entries (time , value)" + "\n" )
+        #            for i in range(len(ci.array_time)):
+        #                f.write( str(ci.array_time[i]) + " , " + str(ci.array_val[i]) + "\n" )
+        #            f.write('\n')
+        #print "done."
+
+        # the code below is taken from https://github.com/inki2/IcepapOSC/blob/output_to_file/icepaposc/window_main.py
+        if not self.curve_items:
+            return
+        capt = "Save to csv file"
+        fn = QFileDialog.getSaveFileName(caption=capt, filter="*.csv")
+        if not fn:
+            return
+        if fn[-4:] != ".csv":
+            fn = fn + ".csv"
+        try:
+            f = open(fn, "w+")
+        except Exception as e:
+            msg = 'Failed to open/create file: {}\n{}'.format(fn, e)
+            print(msg)
+            QMessageBox.critical(None, 'File Open Failed', msg)
+            return
+        self._create_csv_file(f)
+        f.close()
+
+    def _create_csv_file(self, csv_file):
+        my_dict = collections.OrderedDict()
+        for ci in self.curve_items:
+            header = "time-{}-{}".format(ci.driver_addr, ci.signal_name)
+            my_dict[header] = ci.array_time
+            header = "val-{}-{}".format(ci.driver_addr, ci.signal_name)
+            my_dict[header] = ci.array_val
+        key_longest = my_dict.keys()[0]
+        for key in my_dict:
+            if my_dict[key][0] < my_dict[key_longest][0]:
+                key_longest = key
+        for key in my_dict:
+            delta = len(my_dict[key_longest]) - len(my_dict[key])
+            my_dict[key] = delta * [np.nan] + my_dict[key]
+        for key in my_dict:
+            csv_file.write(",{}".format(key))
+        csv_file.write("\n")
+        for idx in range(0, len(my_dict[key_longest])):
+            line = str(idx)
+            for key in my_dict:
+                line += ",{}".format(my_dict[key][idx])
+            csv_file.write(line + '\n')
 
     def _display_settings_dlg(self):
         self.enable_action(False)
@@ -548,3 +592,7 @@ class WindowMain(QtGui.QMainWindow):
 
     def enableEctsPerTurnCalculation(self):
         self.ecpmt_just_enabled = True
+
+    def addDialogStatus(self):
+        addr = int(self.ui.cbDrivers.currentText())
+        DialogStatusInfo(self, self.collector.icepap_system,addr)
