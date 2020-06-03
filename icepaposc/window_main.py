@@ -30,6 +30,9 @@ import pyqtgraph as pg
 import time
 import datetime
 from dialogstatusinfo import DialogStatusInfo
+from pyIcePAP.backups import IcePAPBackup
+import os
+
 
 
 class WindowMain(QtGui.QMainWindow):
@@ -68,6 +71,7 @@ class WindowMain(QtGui.QMainWindow):
         self.curve_items = []
         self._paused = False
         self.settings = Settings(self, self.collector)
+        self.backup = IcePAPBackup(host, port, timeout)
 
         # Set up the plot area.
         self.plot_widget = pg.PlotWidget()
@@ -183,6 +187,7 @@ class WindowMain(QtGui.QMainWindow):
         self.ui.btnPause.clicked.connect(self._pause_x_axis)
         self.ui.btnNow.clicked.connect(self._goto_now)
         self.ui.actionSave_to_File.triggered.connect(self._save_to_file)
+        self.ui.actionBackup.triggered.connect(self._icepap_backup)
         self.ui.actionSettings.triggered.connect(self._display_settings_dlg)
         self.ui.actionExit.triggered.connect(self.close)
         self.ui.actionClosed_Loop.triggered.connect(self._signals_closed_loop)
@@ -539,6 +544,13 @@ class WindowMain(QtGui.QMainWindow):
             for key in my_dict:
                 line += ",{}".format(my_dict[key][idx])
             csv_file.write(line + '\n')
+
+    def _icepap_backup(self):
+        default_fname=os.path.expanduser("~/.icepapcms/{}{}.ini".format(str(self.backup._host),datetime.datetime.today().strftime("_%Y%m%d_%H%M%S")))
+        print(default_fname)
+        fname= str(QFileDialog.getSaveFileName(self,"Save Backup",default_fname,"Backup Files (*.ini);;All Files (*)"))
+        if fname:
+            self.backup.do_backup(fname)
 
     def _display_settings_dlg(self):
         self.enable_action(False)
