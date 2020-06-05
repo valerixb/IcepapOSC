@@ -117,6 +117,7 @@ class WindowMain(QtGui.QMainWindow):
         self._fill_combo_box_signals()
         self._select_axis_1()
         self._update_button_status()
+        #self._change_axis_ctrl()
 
         # Set up signalling connections.
         self._connect_signals()
@@ -176,8 +177,8 @@ class WindowMain(QtGui.QMainWindow):
         self.ui.btnRemoveSel.clicked.connect(self._remove_selected_signal)
         self.ui.btnRemoveAll.clicked.connect(self._remove_all_signals)
         self.ui.btnCLoop.clicked.connect(self._signals_closed_loop)
-        self.ui.btnExportSet.clicked.connect(self._export_signal_set)
-        self.ui.btnImportSet.clicked.connect(self._import_signal_set)
+        #self.ui.btnExportSet.clicked.connect(self._export_signal_set)
+        #self.ui.btnImportSet.clicked.connect(self._import_signal_set)
         self.ui.btnCurrents.clicked.connect(self._signals_currents)
         self.ui.btnTarget.clicked.connect(self._signals_target)
         self.ui.btnClear.clicked.connect(self._clear_all)
@@ -198,6 +199,12 @@ class WindowMain(QtGui.QMainWindow):
         self.view_boxes[0].sigResized.connect(self._update_views)
         self.ui.chkEctsTurn.stateChanged.connect(self.enableEctsPerTurnCalculation)
         self.ui.btnSTATUS.clicked.connect(self.addDialogStatus)
+        #self.ui.cbAxisCtrlSelect.currentIndexChanged.connect(self._change_axis_ctrl)
+        self.ui.btnAxisScaleAuto.clicked.connect(self._setAxisAutoscale)
+        self.ui.btnAxisOffsIncrease.clicked.connect(self._AxisOffsPP)
+        self.ui.btnAxisOffsDecrease.clicked.connect(self._AxisOffsMM)
+        self.ui.btnAxisScaleIncrease.clicked.connect(self._AxisScalePP)
+        self.ui.btnAxisScaleDecrease.clicked.connect(self._AxisScaleMM)
 
     def closeEvent(self, event):
         """Overloads (QMainWindow) QWidget.closeEvent()."""
@@ -546,8 +553,7 @@ class WindowMain(QtGui.QMainWindow):
             csv_file.write(line + '\n')
 
     def _icepap_backup(self):
-        default_fname=os.path.expanduser("~/.icepapcms/{}{}.ini".format(str(self.backup._host),datetime.datetime.today().strftime("_%Y%m%d_%H%M%S")))
-        print(default_fname)
+        default_fname=os.path.expanduser("~/.icepapcms/{}_{}.ini".format(str(self.backup._host),datetime.datetime.today().strftime("%Y%m%d_%H%M%S")))
         fname= str(QFileDialog.getSaveFileName(self,"Save Backup",default_fname,"Backup Files (*.ini);;All Files (*)"))
         if fname:
             self.backup.do_backup(fname)
@@ -629,3 +635,70 @@ class WindowMain(QtGui.QMainWindow):
     def addDialogStatus(self):
         addr = int(self.ui.cbDrivers.currentText())
         DialogStatusInfo(self, self.collector.icepap_system,addr)
+
+    #def _change_axis_ctrl(self):
+    #    axis = self.ui.cbAxisCtrlSelect.currentIndex()
+    #    if axis<3:
+    #        # Yn axis
+    #        isauto = self.view_boxes[axis].getState()['autoRange'][1]
+    #    else:
+    #        # X axis
+    #        isauto = self.view_boxes[0].getState()['autoRange'][0]
+    #    self.ui.chkAxisScaleAuto.setChecked(isauto) #please note this triggers a stateChanged signal
+
+    def _setAxisAutoscale(self):
+        axis = self.ui.cbAxisCtrlSelect.currentIndex()
+        if axis<3:
+            # Yn axis
+            self.view_boxes[axis].enableAutoRange(axis=self.view_boxes[axis].YAxis)
+        else:
+            # X axis
+            self._reset_x()
+
+    def _AxisOffsPP(self):
+        self._ChgAxisOffs(+0.1)
+
+    def _AxisOffsMM(self):
+        self._ChgAxisOffs(-0.1)
+
+    def _AxisScalePP(self):
+        self._ChgAxisScale(1/1.25)
+
+    def _AxisScaleMM(self):
+        self._ChgAxisScale(1.25)
+
+    def _ChgAxisOffs(self,offsfact):
+        axis, amin, amax = self._getAxisRange()
+        c = (amin+amax)/2
+        d = (amax-amin)/2
+        c += d*2*offsfact
+        if axis<3:
+            # Yn axis
+            #self.view_boxes[axis].disableAutoRange(axis=self.view_boxes[axis].YAxis)
+            self.view_boxes[axis].setYRange(c-d, c+d, padding=0)
+        else:
+            # X axis
+            self.view_boxes[0].setXRange(c-d, c+d, padding=0)
+
+    def _ChgAxisScale(self,scalefact):
+        axis, amin, amax = self._getAxisRange()
+        c = (amin+amax)/2
+        d = (amax-amin)/2*scalefact
+        if axis<3:
+            # Yn axis
+            #self.view_boxes[axis].disableAutoRange(axis=self.view_boxes[axis].YAxis)
+            self.view_boxes[axis].setYRange(c-d, c+d, padding=0)
+        else:
+            # X axis
+            self.view_boxes[0].setXRange(c-d, c+d, padding=0)
+
+    def _getAxisRange(self):
+        axis = self.ui.cbAxisCtrlSelect.currentIndex()
+        if axis<3:
+            # Yn axis
+            [amin, amax]=self.view_boxes[axis].viewRange()[1]
+        else:
+            # X axis
+            [amin, amax]=self.view_boxes[0].viewRange()[0]
+        return axis, amin, amax
+
