@@ -32,6 +32,7 @@ class Ui_DialogStatusInfo(object):
         sizePolicy.setHeightForWidth(DialogStatusInfo.sizePolicy().hasHeightForWidth())
         DialogStatusInfo.setSizePolicy(sizePolicy)
         DialogStatusInfo.setMinimumSize(QtCore.QSize(50, 0))
+        DialogStatusInfo.setStyleSheet(_fromUtf8("font: 9pt ;"))
         self.verticalLayout_2 = QtGui.QVBoxLayout(DialogStatusInfo)
         self.verticalLayout_2.setObjectName(_fromUtf8("verticalLayout_2"))
         self.verticalLayout = QtGui.QVBoxLayout()

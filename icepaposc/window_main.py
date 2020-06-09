@@ -115,7 +115,7 @@ class WindowMain(QtGui.QMainWindow):
         # Initialize comboboxes and buttons.
         self._fill_combo_box_driver_ids(selected_driver)
         self._fill_combo_box_signals()
-        self._select_axis_1()
+        #self._select_axis_1()
         self._update_button_status()
         #self._change_axis_ctrl()
 
@@ -168,9 +168,10 @@ class WindowMain(QtGui.QMainWindow):
         self.ui.cbSignals.setCurrentIndex(0)
 
     def _connect_signals(self):
-        self.ui.rbAxis1.clicked.connect(self._select_axis_1)
-        self.ui.rbAxis2.clicked.connect(self._select_axis_2)
-        self.ui.rbAxis3.clicked.connect(self._select_axis_3)
+        #self.ui.rbAxis1.clicked.connect(self._select_axis_1)
+        #self.ui.rbAxis2.clicked.connect(self._select_axis_2)
+        #self.ui.rbAxis3.clicked.connect(self._select_axis_3)
+        self.ui.sbAxis.valueChanged.connect(self._select_axis)
         self.ui.btnAdd.clicked.connect(self._add_button_clicked)
         self.ui.btnESYNC.clicked.connect(self._ESYNC_button_clicked)
         self.ui.btnShift.clicked.connect(self._shift_button_clicked)
@@ -235,29 +236,33 @@ class WindowMain(QtGui.QMainWindow):
         for i in range(0, len(self.axes)):
             self.axes[i].setLabel(txt[i])
 
-    def _select_axis_1(self):
-        self.ui.rbAxis1.setChecked(True)
-        self.ui.rbAxis2.setChecked(False)
-        self.ui.rbAxis3.setChecked(False)
+    def _select_axis(self):
+        pass
 
-    def _select_axis_2(self):
-        self.ui.rbAxis1.setChecked(False)
-        self.ui.rbAxis2.setChecked(True)
-        self.ui.rbAxis3.setChecked(False)
-
-    def _select_axis_3(self):
-        self.ui.rbAxis1.setChecked(False)
-        self.ui.rbAxis2.setChecked(False)
-        self.ui.rbAxis3.setChecked(True)
+    #def _select_axis_1(self):
+    #    self.ui.rbAxis1.setChecked(True)
+    #    self.ui.rbAxis2.setChecked(False)
+    #    self.ui.rbAxis3.setChecked(False)
+    #
+    #def _select_axis_2(self):
+    #    self.ui.rbAxis1.setChecked(False)
+    #    self.ui.rbAxis2.setChecked(True)
+    #    self.ui.rbAxis3.setChecked(False)
+    #
+    #def _select_axis_3(self):
+    #    self.ui.rbAxis1.setChecked(False)
+    #    self.ui.rbAxis2.setChecked(False)
+    #    self.ui.rbAxis3.setChecked(True)
 
     def _add_button_clicked(self):
         addr = int(self.ui.cbDrivers.currentText())
         my_signal_name = str(self.ui.cbSignals.currentText())
-        my_axis = 1
-        if self.ui.rbAxis2.isChecked():
-            my_axis = 2
-        elif self.ui.rbAxis3.isChecked():
-            my_axis = 3
+        my_axis = self.ui.sbAxis.value()
+        #my_axis = 1
+        #if self.ui.rbAxis2.isChecked():
+        #    my_axis = 2
+        #elif self.ui.rbAxis3.isChecked():
+        #    my_axis = 3
         self._add_signal(addr, my_signal_name, my_axis)
 
     def _ESYNC_button_clicked(self):

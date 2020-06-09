@@ -2,8 +2,19 @@
 <ui version="4.0">
  <class>DialogSettings</class>
  <widget class="QDialog" name="DialogSettings">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>318</width>
+    <height>258</height>
+   </rect>
+  </property>
   <property name="windowTitle">
    <string>Oscilloscope Settings</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">font: 9pt ;</string>
   </property>
   <property name="modal">
    <bool>false</bool>

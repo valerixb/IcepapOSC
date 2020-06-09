@@ -2,8 +2,7 @@
 
 # Form implementation generated from reading ui file 'dialog_settings.ui'
 #
-# Created: Fri Nov 23 06:42:47 2018
-#      by: PyQt4 UI code generator 4.10.1
+# Created by: PyQt4 UI code generator 4.12.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -26,6 +25,8 @@ except AttributeError:
 class Ui_DialogSettings(object):
     def setupUi(self, DialogSettings):
         DialogSettings.setObjectName(_fromUtf8("DialogSettings"))
+        DialogSettings.resize(318, 258)
+        DialogSettings.setStyleSheet(_fromUtf8("font: 9pt ;"))
         DialogSettings.setModal(False)
         self.verticalLayout_2 = QtGui.QVBoxLayout(DialogSettings)
         self.verticalLayout_2.setObjectName(_fromUtf8("verticalLayout_2"))
