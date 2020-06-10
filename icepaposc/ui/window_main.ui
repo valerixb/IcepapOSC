@@ -67,7 +67,7 @@
         </property>
         <property name="maximumSize">
          <size>
-          <width>140</width>
+          <width>150</width>
           <height>16777215</height>
          </size>
         </property>
@@ -98,12 +98,12 @@
               <widget class="QLabel" name="labelDrivers">
                <property name="maximumSize">
                 <size>
-                 <width>40</width>
+                 <width>100</width>
                  <height>16777215</height>
                 </size>
                </property>
                <property name="text">
-                <string>Driver:</string>
+                <string>Driver</string>
                </property>
               </widget>
              </item>
@@ -116,7 +116,7 @@
                 </size>
                </property>
                <property name="text">
-                <string>Signal:</string>
+                <string>Signal</string>
                </property>
               </widget>
              </item>
@@ -128,9 +128,15 @@
                  <verstretch>0</verstretch>
                 </sizepolicy>
                </property>
+               <property name="minimumSize">
+                <size>
+                 <width>35</width>
+                 <height>0</height>
+                </size>
+               </property>
                <property name="maximumSize">
                 <size>
-                 <width>40</width>
+                 <width>35</width>
                  <height>22</height>
                 </size>
                </property>
@@ -143,6 +149,12 @@
                  <horstretch>0</horstretch>
                  <verstretch>0</verstretch>
                 </sizepolicy>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>90</width>
+                 <height>0</height>
+                </size>
                </property>
                <property name="maximumSize">
                 <size>
@@ -216,7 +228,7 @@
              </property>
              <property name="maximumSize">
               <size>
-               <width>140</width>
+               <width>1000</width>
                <height>22</height>
               </size>
              </property>
@@ -259,7 +271,7 @@
                </property>
                <property name="maximumSize">
                 <size>
-                 <width>55</width>
+                 <width>60</width>
                  <height>22</height>
                 </size>
                </property>
@@ -299,7 +311,7 @@
              </property>
              <property name="maximumSize">
               <size>
-               <width>140</width>
+               <width>1000</width>
                <height>16777215</height>
               </size>
              </property>
@@ -315,7 +327,7 @@
              </property>
              <property name="maximumSize">
               <size>
-               <width>140</width>
+               <width>1000</width>
                <height>22</height>
               </size>
              </property>
@@ -347,7 +359,7 @@
              </property>
              <property name="maximumSize">
               <size>
-               <width>140</width>
+               <width>1000</width>
                <height>22</height>
               </size>
              </property>
@@ -403,7 +415,7 @@
              </property>
              <property name="maximumSize">
               <size>
-               <width>140</width>
+               <width>1000</width>
                <height>22</height>
               </size>
              </property>
@@ -459,7 +471,7 @@
              </property>
              <property name="maximumSize">
               <size>
-               <width>140</width>
+               <width>1000</width>
                <height>22</height>
               </size>
              </property>
@@ -1273,7 +1285,7 @@
              </size>
             </property>
             <property name="text">
-             <string> -</string>
+             <string>+</string>
             </property>
            </widget>
           </item>
@@ -1367,7 +1379,7 @@
              </size>
             </property>
             <property name="text">
-             <string> -</string>
+             <string>+</string>
             </property>
            </widget>
           </item>

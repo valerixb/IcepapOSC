@@ -451,7 +451,7 @@ class WindowMain(QtGui.QMainWindow):
                                      padding=0)
 
     def _import_signal_set(self):
-        fname= QFileDialog.getOpenFileName(self)
+        fname= QFileDialog.getOpenFileName(self,"Import Signal Set", filter="Signal Set Files Files (*.lst);;All Files (*)")
         if fname:
             self._remove_all_signals()
             drv_addr = int(self.ui.cbDrivers.currentText())
@@ -461,7 +461,7 @@ class WindowMain(QtGui.QMainWindow):
                     self._add_signal(drv_addr, tokens[0],int(tokens[1]))            
         
     def _export_signal_set(self):
-        fname= QFileDialog.getSaveFileName(self)
+        fname= QFileDialog.getSaveFileName(self,"Export Signal Set", "SignalSet.lst", filter="Signal Set Files Files (*.lst);;All Files (*)")
         if fname:
             with open(fname,'w') as f:
                 for ci in self.curve_items:
@@ -610,20 +610,26 @@ class WindowMain(QtGui.QMainWindow):
             ci.update_curve(x_min, x_max)
 
         # Update encoder count to motor step conversion factor measurement        
-        addr=self.collector.channels[self.collector.current_channel].icepap_address
-        step_now = self.collector.icepap_system[addr].get_pos("AXIS")
-        cfgANSTEP = int(self.collector.icepap_system[addr].get_cfg("ANSTEP")["ANSTEP"])
-        cfgANTURN = int(self.collector.icepap_system[addr].get_cfg("ANTURN")["ANTURN"])
-        #print cfgANSTEP, cfgANTURN
-        enc_sel = str(self.ui.cb_enc_sel.currentText())
-        enc_now = self.collector.icepap_system[addr].get_enc(enc_sel)
-        if self.ecpmt_just_enabled:
-            #print "first"
-            self.step_ini = step_now
-            self.enc_ini = enc_now
-            self.ecpmt_just_enabled = False
-            print self.step_ini, self.enc_ini
         if self.ui.chkEctsTurn.isChecked():
+            addr=self.collector.channels[self.collector.current_channel].icepap_address
+            step_now = self.collector.icepap_system[addr].get_pos("AXIS")
+            cfgANSTEP = int(self.collector.icepap_system[addr].get_cfg("ANSTEP")["ANSTEP"])
+            cfgANTURN = int(self.collector.icepap_system[addr].get_cfg("ANTURN")["ANTURN"])
+            #print cfgANSTEP, cfgANTURN
+            enc_sel = str(self.ui.cb_enc_sel.currentText())
+            try:
+                enc_now = self.collector.icepap_system[addr].get_enc(enc_sel)
+            except Exception as e:
+                msg = 'Error querying encoder.\n{}'.format(e)
+                print(msg)
+                return
+            if self.ecpmt_just_enabled:
+                #print "first"
+                self.step_ini = step_now
+                self.enc_ini = enc_now
+                self.ecpmt_just_enabled = False
+                print self.step_ini, self.enc_ini
+            #if self.ui.chkEctsTurn.isChecked():
             #print "upd"
             if (step_now - self.step_ini) != 0:
                 enc_cts_per_motor_turn = (enc_now - self.enc_ini) * 1.0 * cfgANSTEP \
@@ -635,7 +641,8 @@ class WindowMain(QtGui.QMainWindow):
 
 
     def enableEctsPerTurnCalculation(self):
-        self.ecpmt_just_enabled = True
+        if self.ui.chkEctsTurn.isChecked():
+            self.ecpmt_just_enabled = True
 
     def addDialogStatus(self):
         addr = int(self.ui.cbDrivers.currentText())

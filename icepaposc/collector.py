@@ -225,48 +225,48 @@ class Collector:
 
     def _getter_pos_axis(self, addr):
         x = self.icepap_system[addr].pos
-        x = x * self.poscorr_a - self.poscorr_b
+        x = x * self.poscorr_a + self.poscorr_b
         return x
 
     def _getter_pos_tgtenc(self, addr):
         x = self.icepap_system[addr].pos_tgtenc
-        x = x * self.poscorr_a - self.poscorr_b
+        x = x * self.poscorr_a + self.poscorr_b
         return x
 
     def _getter_pos_shftenc(self, addr):
         x = self.icepap_system[addr].pos_shftenc
-        x = x * self.poscorr_a - self.poscorr_b
+        x = x * self.poscorr_a + self.poscorr_b
         return x
 
     def _getter_pos_encin(self, addr):
         x = self.icepap_system[addr].pos_encin
-        x = x * self.poscorr_a - self.poscorr_b
+        x = x * self.poscorr_a + self.poscorr_b
         return x
 
     def _getter_pos_absenc(self, addr):
         x = self.icepap_system[addr].pos_absenc
-        x = x * self.poscorr_a - self.poscorr_b
+        x = x * self.poscorr_a + self.poscorr_b
         return x
 
     def _getter_pos_inpos(self, addr):
         x = self.icepap_system[addr].pos_inpos
-        x = x * self.poscorr_a - self.poscorr_b
+        x = x * self.poscorr_a + self.poscorr_b
         return x
 
     def _getter_pos_motor(self, addr):
         x = self.icepap_system[addr].pos_motor
-        x = x * self.poscorr_a - self.poscorr_b
+        x = x * self.poscorr_a + self.poscorr_b
         return x
 
     def _getter_pos_ctrlenc(self, addr):
         x = self.icepap_system[addr].pos_ctrlenc
-        x = x * self.poscorr_a - self.poscorr_b
+        x = x * self.poscorr_a + self.poscorr_b
         return x
 
     def _getter_pos_measure(self, addr):
         x = self.icepap_system.get_fpos(self.icepap_system[addr].addr,
                                            'MEASURE')[0]
-        x = x * self.poscorr_a - self.poscorr_b
+        x = x * self.poscorr_a + self.poscorr_b
         return x
 
     def _getter_dif_ax_measure(self, addr):
@@ -298,22 +298,22 @@ class Collector:
 
     def _getter_enc_encin(self, addr):
         x = self.icepap_system[addr].enc_encin
-        x = x * self.enccorr_a - self.enccorr_b
+        x = x * self.enccorr_a + self.enccorr_b
         return x
 
     def _getter_enc_absenc(self, addr):
         x = self.icepap_system[addr].enc_absenc
-        x = x * self.enccorr_a - self.enccorr_b
+        x = x * self.enccorr_a + self.enccorr_b
         return x
 
     def _getter_enc_tgtenc(self, addr):
         x = self.icepap_system[addr].enc_tgtenc
-        x = x * self.enccorr_a - self.enccorr_b
+        x = x * self.enccorr_a + self.enccorr_b
         return x
 
     def _getter_enc_inpos(self, addr):
         x = self.icepap_system[addr].enc_inpos
-        x = x * self.enccorr_a - self.enccorr_b
+        x = x * self.enccorr_a + self.enccorr_b
         return x
 
     def _getter_stat_ready(self, addr):
