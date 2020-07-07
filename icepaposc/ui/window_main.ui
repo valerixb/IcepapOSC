@@ -33,22 +33,7 @@
    <property name="styleSheet">
     <string notr="true"/>
    </property>
-   <layout class="QVBoxLayout" name="verticalLayout_3">
-    <property name="spacing">
-     <number>4</number>
-    </property>
-    <property name="leftMargin">
-     <number>4</number>
-    </property>
-    <property name="topMargin">
-     <number>4</number>
-    </property>
-    <property name="rightMargin">
-     <number>4</number>
-    </property>
-    <property name="bottomMargin">
-     <number>4</number>
-    </property>
+   <layout class="QVBoxLayout" name="verticalLayout_5">
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout_2">
       <property name="spacing">
@@ -214,6 +199,376 @@
                <property name="maximum">
                 <number>3</number>
                </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QGridLayout" name="gridLayout_7">
+             <item row="0" column="0">
+              <widget class="Square_RadioBtn" name="red_radio">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">color: rgb(255, 0, 0);</string>
+               </property>
+               <property name="text">
+                <string>X</string>
+               </property>
+               <attribute name="buttonGroup">
+                <string notr="true">color_radio_group</string>
+               </attribute>
+              </widget>
+             </item>
+             <item row="0" column="1">
+              <widget class="Square_RadioBtn" name="green_radio">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">color: rgb(0, 255, 0);</string>
+               </property>
+               <property name="text">
+                <string>X</string>
+               </property>
+               <attribute name="buttonGroup">
+                <string notr="true">color_radio_group</string>
+               </attribute>
+              </widget>
+             </item>
+             <item row="0" column="2">
+              <widget class="Square_RadioBtn" name="blue_radio">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">color: rgb(0, 127, 255);</string>
+               </property>
+               <property name="text">
+                <string>X</string>
+               </property>
+               <attribute name="buttonGroup">
+                <string notr="true">color_radio_group</string>
+               </attribute>
+              </widget>
+             </item>
+             <item row="0" column="3">
+              <widget class="Square_RadioBtn" name="cyan_radio">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">color: rgb(0, 255, 255);</string>
+               </property>
+               <property name="text">
+                <string>X</string>
+               </property>
+               <attribute name="buttonGroup">
+                <string notr="true">color_radio_group</string>
+               </attribute>
+              </widget>
+             </item>
+             <item row="0" column="4">
+              <widget class="Square_RadioBtn" name="magenta_radio">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">color: rgb(255, 192, 203);</string>
+               </property>
+               <property name="text">
+                <string>X</string>
+               </property>
+               <attribute name="buttonGroup">
+                <string notr="true">color_radio_group</string>
+               </attribute>
+              </widget>
+             </item>
+             <item row="0" column="5">
+              <widget class="Square_RadioBtn" name="yellow_radio">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">color: rgb(255, 255, 0);</string>
+               </property>
+               <property name="text">
+                <string>X</string>
+               </property>
+               <attribute name="buttonGroup">
+                <string notr="true">color_radio_group</string>
+               </attribute>
+              </widget>
+             </item>
+             <item row="1" column="0">
+              <widget class="Square_RadioBtn" name="darkred_radio">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">color: rgb(128, 0, 0);</string>
+               </property>
+               <property name="text">
+                <string>X</string>
+               </property>
+               <attribute name="buttonGroup">
+                <string notr="true">color_radio_group</string>
+               </attribute>
+              </widget>
+             </item>
+             <item row="1" column="1">
+              <widget class="Square_RadioBtn" name="darkgreen_radio">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">color: rgb(0, 128, 0);</string>
+               </property>
+               <property name="text">
+                <string>X</string>
+               </property>
+               <attribute name="buttonGroup">
+                <string notr="true">color_radio_group</string>
+               </attribute>
+              </widget>
+             </item>
+             <item row="1" column="2">
+              <widget class="Square_RadioBtn" name="darkblue_radio">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">color: rgb(0, 0, 255);</string>
+               </property>
+               <property name="text">
+                <string>X</string>
+               </property>
+               <attribute name="buttonGroup">
+                <string notr="true">color_radio_group</string>
+               </attribute>
+              </widget>
+             </item>
+             <item row="1" column="3">
+              <widget class="Square_RadioBtn" name="dark_cyan_radio">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">color: rgb(0, 127, 127);</string>
+               </property>
+               <property name="text">
+                <string>X</string>
+               </property>
+               <attribute name="buttonGroup">
+                <string notr="true">color_radio_group</string>
+               </attribute>
+              </widget>
+             </item>
+             <item row="1" column="4">
+              <widget class="Square_RadioBtn" name="dark_magenta_radio">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">color: rgb(127, 0, 127);</string>
+               </property>
+               <property name="text">
+                <string>X</string>
+               </property>
+               <attribute name="buttonGroup">
+                <string notr="true">color_radio_group</string>
+               </attribute>
+              </widget>
+             </item>
+             <item row="1" column="5">
+              <widget class="Square_RadioBtn" name="dark_yellow_radio">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">color: rgb(127, 127, 0);</string>
+               </property>
+               <property name="text">
+                <string>X</string>
+               </property>
+               <attribute name="buttonGroup">
+                <string notr="true">color_radio_group</string>
+               </attribute>
+              </widget>
+             </item>
+             <item row="2" column="0">
+              <widget class="Square_RadioBtn" name="solidline_radio">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">color: rgb(255, 0, 0);</string>
+               </property>
+               <property name="text">
+                <string>X</string>
+               </property>
+               <property name="icon">
+                <iconset>
+                 <normaloff>solidline.png</normaloff>solidline.png</iconset>
+               </property>
+               <attribute name="buttonGroup">
+                <string notr="true">linestyle_radio_group</string>
+               </attribute>
+              </widget>
+             </item>
+             <item row="2" column="1">
+              <widget class="Square_RadioBtn" name="dottedline_radio">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">color: rgb(255, 0, 0);</string>
+               </property>
+               <property name="text">
+                <string>X</string>
+               </property>
+               <property name="icon">
+                <iconset>
+                 <normaloff>dottedline.png</normaloff>dottedline.png</iconset>
+               </property>
+               <attribute name="buttonGroup">
+                <string notr="true">linestyle_radio_group</string>
+               </attribute>
+              </widget>
+             </item>
+             <item row="2" column="2">
+              <widget class="Square_RadioBtn" name="nomarker_radio">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">color: rgb(255, 0, 0);</string>
+               </property>
+               <property name="text">
+                <string/>
+               </property>
+               <property name="icon">
+                <iconset>
+                 <normaloff>dot.png</normaloff>dot.png</iconset>
+               </property>
+               <attribute name="buttonGroup">
+                <string notr="true">marker_radio_group</string>
+               </attribute>
+              </widget>
+             </item>
+             <item row="2" column="3">
+              <widget class="Square_RadioBtn" name="circlemarker_radio">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">color: rgb(255, 0, 0);</string>
+               </property>
+               <property name="text">
+                <string>o</string>
+               </property>
+               <property name="icon">
+                <iconset>
+                 <normaloff>circle.png</normaloff>circle.png</iconset>
+               </property>
+               <attribute name="buttonGroup">
+                <string notr="true">marker_radio_group</string>
+               </attribute>
+              </widget>
+             </item>
+             <item row="2" column="4">
+              <widget class="Square_RadioBtn" name="squaremarker_radio">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">color: rgb(255, 0, 0);</string>
+               </property>
+               <property name="text">
+                <string>s</string>
+               </property>
+               <property name="icon">
+                <iconset>
+                 <normaloff>square.png</normaloff>square.png</iconset>
+               </property>
+               <attribute name="buttonGroup">
+                <string notr="true">marker_radio_group</string>
+               </attribute>
+              </widget>
+             </item>
+             <item row="2" column="5">
+              <widget class="Square_RadioBtn" name="crossmarker_radio">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">color: rgb(255, 0, 0);</string>
+               </property>
+               <property name="text">
+                <string>+</string>
+               </property>
+               <property name="icon">
+                <iconset>
+                 <normaloff>cross.png</normaloff>cross.png</iconset>
+               </property>
+               <attribute name="buttonGroup">
+                <string notr="true">marker_radio_group</string>
+               </attribute>
               </widget>
              </item>
             </layout>
@@ -1163,6 +1518,104 @@
        </widget>
       </item>
       <item>
+       <layout class="QVBoxLayout" name="verticalLayout_3">
+        <item>
+         <widget class="QPushButton" name="btnWhitebg">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>20</width>
+            <height>20</height>
+           </size>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>whitebg.png</normaloff>whitebg.png</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>18</width>
+            <height>18</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="btnGreybg">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>20</width>
+            <height>20</height>
+           </size>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>greybg.png</normaloff>greybg.png</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>18</width>
+            <height>18</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="btnBlackbg">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>20</width>
+            <height>20</height>
+           </size>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>blackbg.png</normaloff>blackbg.png</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>18</width>
+            <height>18</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <widget class="Line" name="line_6">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+       </widget>
+      </item>
+      <item>
        <spacer name="horizontalSpacer_2">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
@@ -1426,7 +1879,6 @@
     <property name="title">
      <string>File</string>
     </property>
-    <addaction name="actionAdd_Signals"/>
     <addaction name="actionSave_to_File"/>
     <addaction name="actionBackup"/>
     <addaction name="actionSettings"/>
@@ -1506,6 +1958,18 @@
    </property>
   </action>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>Square_RadioBtn</class>
+   <extends>QRadioButton</extends>
+   <header>square_radiobtn</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
+ <buttongroups>
+  <buttongroup name="marker_radio_group"/>
+  <buttongroup name="linestyle_radio_group"/>
+  <buttongroup name="color_radio_group"/>
+ </buttongroups>
 </ui>
