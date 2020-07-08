@@ -452,6 +452,7 @@ class WindowMain(QtGui.QMainWindow):
         self._add_signal(drv_addr, 'StatSettling', 3, QColor(255, 255, 0), Qt.DotLine, '')
         self._add_signal(drv_addr, 'StatOutofwin', 3, QColor(128, 0, 0), Qt.DotLine, '')
         self._add_signal(drv_addr, 'StatWarning', 3, QColor(0, 128, 0), Qt.DotLine, '')
+        self._add_signal(drv_addr, 'StatStopcode', 3, QColor(255, 0, 0), Qt.DotLine, '')
         self.view_boxes[0].enableAutoRange(axis=self.view_boxes[0].YAxis)
         self.view_boxes[1].disableAutoRange(axis=self.view_boxes[1].YAxis)
         self.view_boxes[1].setYRange(-30, 70, padding=0)
