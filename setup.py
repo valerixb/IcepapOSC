@@ -19,7 +19,8 @@ package_list = ['*ui']
 long_description = """ Python application to monitor and tune IcePAP 
 based systems. """
 
-# TODO: Include documentation.
+# Add your dependencies in the following line.
+install_requires = ['python-configparser', 'python-pyicepap']
 
 classifiers = [
     # How mature is this project? Common values are
@@ -55,6 +56,7 @@ setup(
     author_email="ctbeamlines@cells.es",
     url="https://github.com/ALBA-Synchrotron/IcepapOCS",
     packages=find_packages(),
+    install_requires=install_requires,
     package_data={'': package_list},
     include_package_data=True,
     keywords='APP',
