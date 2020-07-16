@@ -20,7 +20,12 @@ long_description = """ Python application to monitor and tune IcePAP
 based systems. """
 
 # Add your dependencies in the following line.
-#install_requires = ['python-configparser', 'python-pyicepap']
+# install_requires = ['python-configparser', 'python-pyicepap']
+# do not use "python-" prefixes here, otherwise python doesn't look
+# for the right library name at run-time. Instead, use the FPM option
+# --python-fix-dependencies
+# in the gitlab_ci.yml staging script at 
+# https://gitlab.maxiv.lu.se/kits-maxiv/icepap-staging/
 install_requires = ['configparser', 'pyicepap']
 
 classifiers = [
