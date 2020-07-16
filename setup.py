@@ -20,8 +20,7 @@ long_description = """ Python application to monitor and tune IcePAP
 based systems. """
 
 # Add your dependencies in the following line.
-#install_requires = ['python-configparser', 'python-pyicepap']
-install_requires = ['configparser', 'pyicepap']
+install_requires = ['python-configparser', 'python-pyicepap']
 
 classifiers = [
     # How mature is this project? Common values are
