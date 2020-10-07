@@ -17,8 +17,7 @@
 # along with IcepapOCS. If not, see <http://www.gnu.org/licenses/>.
 # -----------------------------------------------------------------------------
 
-from PyQt4.QtCore import QTimer
-from PyQt4.QtCore import QString
+from PyQt5 import QtCore
 from collections import OrderedDict
 from pyIcePAP import EthIcePAPController
 from .channel import Channel
@@ -100,7 +99,7 @@ class Collector:
                   'Aborting.'.format(self.host)
             raise Exception(msg)
 
-        self.ticker = QTimer()
+        self.ticker = QtCore.QTimer()
         self.ticker.timeout.connect(self._tick)
         self.ticker.start(self.settings.sample_rate)
 
@@ -151,9 +150,9 @@ class Collector:
                       '{}\nSignal: {}'.format(icepap_addr, signal_name)
                 raise Exception(msg)
         channel = Channel(icepap_addr, signal_name)
-        sn = QString(signal_name)
-        cond_1 = sn.endsWith('Tgtenc')
-        cond_2 = sn.endsWith('Shftenc')
+        sn = str(signal_name)
+        cond_1 = sn.endswith('Tgtenc')
+        cond_2 = sn.endswith('Shftenc')
         cond_3 = sn == 'DifAxMeasure'
         if cond_1 or cond_2 or cond_3:
             try:
