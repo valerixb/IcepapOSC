@@ -16,28 +16,22 @@
 # You should have received a copy of the GNU General Public License
 # along with IcepapOCS. If not, see <http://www.gnu.org/licenses/>.
 # -----------------------------------------------------------------------------
-
-from PyQt4.QtGui import QMainWindow
-from PyQt4.QtGui import QFileDialog
-from PyQt4.QtGui import QMessageBox
-from PyQt4.QtGui import QBoxLayout
-from PyQt4.QtGui import QColor
-from PyQt4.QtCore import Qt
-from PyQt4.QtCore import QTimer
-from .ui.ui_window_main import Ui_WindowMain
-from .collector import Collector
-from .dialog_settings import DialogSettings
-from .settings import Settings
-from .axis_time import AxisTime
-from .curve_item import CurveItem
 import pyqtgraph as pg
 import numpy as np
 import collections
 import time
 import datetime
 
+from PyQt5 import QtWidgets, Qt, QtCore, uic
+from pkg_resources import resource_filename
+from .collector import Collector
+from .dialog_settings import DialogSettings
+from .settings import Settings
+from .axis_time import AxisTime
+from .curve_item import CurveItem
 
-class WindowMain(QMainWindow):
+
+class WindowMain(QtWidgets.QMainWindow):
     """A dialog for plotting IcePAP signals."""
 
     def __init__(self, host, port, timeout, siglist, selected_driver=None):
@@ -52,10 +46,12 @@ class WindowMain(QMainWindow):
                             Example: ["1:PosAxis:1", "1:MeasI:2", "1:MeasVm:3"]
         selected_driver - The driver to display in combobox at startup.
         """
-        QMainWindow.__init__(self, None)
-        self.ui = Ui_WindowMain()
-        self.setAttribute(Qt.WA_DeleteOnClose, True)
-        self.ui.setupUi(self)
+        QtWidgets.QMainWindow.__init__(self, None)
+        ui_filename = resource_filename('icepaposc.ui', 'window_main.ui')
+        self.ui = self
+        uic.loadUi(ui_filename, baseinstance=self.ui)
+
+        self.setAttribute(QtCore.Qt.WA_DeleteOnClose, True)
         self.setWindowTitle('Oscilloscope  |  ' + host)
         self.settings = Settings()
 
@@ -68,7 +64,7 @@ class WindowMain(QMainWindow):
         except Exception as e:
             msg = 'Failed to create main window.\n{}'.format(e)
             print(msg)
-            QMessageBox.critical(None, 'Create Main Window', msg)
+            QtWidgets.QMessageBox.critical(self, 'Create Main Window', msg)
             return
 
         self.subscriptions = {}
@@ -81,7 +77,7 @@ class WindowMain(QMainWindow):
         self.view_boxes = [self.plot_widget.getViewBox(),
                            pg.ViewBox(),
                            pg.ViewBox()]
-        self.ui.vloCurves.setDirection(QBoxLayout.BottomToTop)
+        self.ui.vloCurves.setDirection(QtWidgets.QBoxLayout.BottomToTop)
         self.ui.vloCurves.addWidget(self.plot_widget)
 
         # Set up the X-axis.
@@ -134,13 +130,13 @@ class WindowMain(QMainWindow):
                       'It should be: ' \
                       '<driver>:<signal name>:<Y-axis>'.format(sig)
                 print(msg)
-                QMessageBox.critical(None, 'Bad Signal Syntax', msg)
+                QtWidgets.QMessageBox.critical(self, 'Bad Signal Syntax', msg)
                 return
             auto_save = True if sig == siglist[-1] else False
             self._add_signal(int(lst[0]), lst[1], int(lst[2]), auto_save)
 
         # Set up auto save of collected signal data.
-        self._save_ticker = QTimer()
+        self._save_ticker = QtCore.QTimer()
         self._save_ticker.timeout.connect(self._auto_save)
         self._save_time = None
         self._idx = 0
@@ -165,7 +161,7 @@ class WindowMain(QMainWindow):
             msg = 'Internal error!\nNew signals added.\nAdd ' \
                   'more colors and pens.'
             print(msg)
-            QMessageBox.warning(None, 'Available Signals', msg)
+            QtWidgets.QMessageBox.warning(self, 'Available Signals', msg)
             for i in range(num_colors):
                 self.ui.cbSignals.addItem(signals[i])
         else:
@@ -268,7 +264,7 @@ class WindowMain(QMainWindow):
             msg = 'Failed to subscribe to signal {} ' \
                   'from driver {}.\n{}'.format(signal_name, driver_addr, e)
             print(msg)
-            QMessageBox.critical(None, 'Add Curve', msg)
+            QtWidgets.QMessageBox.critical(self, 'Add Curve', msg)
             return
         try:
             color_idx = self.collector.get_signal_index(signal_name)
@@ -276,7 +272,7 @@ class WindowMain(QMainWindow):
             msg = 'Internal error. Failed to retrieve index ' \
                   'for signal {}.\n{}'.format(signal_name, e)
             print(msg)
-            QMessageBox.critical(None, 'Add Curve', msg)
+            QtWidgets.QMessageBox.critical(self, 'Add Curve', msg)
             return
         ci = CurveItem(subscription_id, driver_addr, signal_name,
                        y_axis, color_idx)
@@ -287,7 +283,7 @@ class WindowMain(QMainWindow):
         index = len(self.curve_items) - 1
         self.ui.lvActiveSig.setCurrentRow(index)
         self.ui.lvActiveSig.item(index).setForeground(ci.color)
-        self.ui.lvActiveSig.item(index).setBackground(QColor(0, 0, 0))
+        self.ui.lvActiveSig.item(index).setBackground(Qt.QColor(0, 0, 0))
         self._update_plot_axes_labels()
         self._update_button_status()
         if auto_save:
@@ -326,7 +322,7 @@ class WindowMain(QMainWindow):
         self.ui.lvActiveSig.takeItem(index)
         self.ui.lvActiveSig.insertItem(index, ci.signature)
         self.ui.lvActiveSig.item(index).setForeground(ci.color)
-        self.ui.lvActiveSig.item(index).setBackground(QColor(0, 0, 0))
+        self.ui.lvActiveSig.item(index).setBackground(Qt.QColor(0, 0, 0))
         self.ui.lvActiveSig.setCurrentRow(index)
         self._update_plot_axes_labels()
 
@@ -478,7 +474,8 @@ class WindowMain(QMainWindow):
         if not self.curve_items:
             return
         capt = "Save to csv file"
-        fn = QFileDialog.getSaveFileName(caption=capt, filter="*.csv")
+        fn = QtWidgets.QFileDialog.getSaveFileName(caption=capt,
+                                                   filter="*.csv")
         if not fn:
             return
         if fn[-4:] != ".csv":
@@ -488,7 +485,7 @@ class WindowMain(QMainWindow):
         except Exception as e:
             msg = 'Failed to open/create file: {}\n{}'.format(fn, e)
             print(msg)
-            QMessageBox.critical(None, 'File Open Failed', msg)
+            QtWidgets.QMessageBox.critical(self, 'File Open Failed', msg)
             return
         self._create_csv_file(f)
         f.close()
@@ -552,7 +549,7 @@ class WindowMain(QMainWindow):
         except Exception as e:
             msg = 'Failed to open file: {}\n{}'.format(self._file_path, e)
             print(msg)
-            QMessageBox.critical(None, 'File Open Failed', msg)
+            QtWidgets.QMessageBox.critical(self, 'File Open Failed', msg)
             return
         if self._idx == 0:
             for key in my_dict:
