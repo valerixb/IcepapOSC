@@ -57,11 +57,13 @@ class WindowMain(QMainWindow):
         self.setAttribute(Qt.WA_DeleteOnClose, True)
         self.ui.setupUi(self)
         self.setWindowTitle('Oscilloscope  |  ' + host)
+        self.settings = Settings()
 
         try:
             self.collector = Collector(host,
                                        port,
                                        timeout,
+                                       self.settings,
                                        self.callback_collect)
         except Exception as e:
             msg = 'Failed to create main window.\n{}'.format(e)
@@ -72,7 +74,6 @@ class WindowMain(QMainWindow):
         self.subscriptions = {}
         self.curve_items = []
         self._paused = False
-        self.settings = Settings(self, self.collector)
 
         # Set up the plot area.
         self.plot_widget = pg.PlotWidget()
@@ -138,14 +139,15 @@ class WindowMain(QMainWindow):
             auto_save = True if sig == siglist[-1] else False
             self._add_signal(int(lst[0]), lst[1], int(lst[2]), auto_save)
 
-        # Set up continuous saving of collected signal data.
+        # Set up auto save of collected signal data.
         self._save_ticker = QTimer()
         self._save_ticker.timeout.connect(self._auto_save)
         self._save_time = None
         self._idx = 0
         self._settings_updated = False
         self._file_path = None
-        self._old_use_append = False
+        self._old_use_append = self.settings.use_append
+        self._prepare_next_auto_save()
 
     def _fill_combo_box_driver_ids(self, selected_driver):
         driver_ids = self.collector.get_available_drivers()

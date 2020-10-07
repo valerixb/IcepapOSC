@@ -28,7 +28,7 @@ import time
 class Collector:
     """Feeds a subscriber with collected IcePAP signal data."""
 
-    def __init__(self, host, port, timeout, callback):
+    def __init__(self, host, port, timeout, settings, callback):
         """
         Initializes an instance of class Collector.
 
@@ -78,6 +78,7 @@ class Collector:
         )
         self.host = host
         self.port = port
+        self.settings = settings
         self.cb = callback
         self.icepap_system = None
         self.channels_subscribed = {}
@@ -99,15 +100,9 @@ class Collector:
                   'Aborting.'.format(self.host)
             raise Exception(msg)
 
-        self.tick_interval_min = 10  # [milliseconds]
-        self.tick_interval_max = 1000  # [milliseconds]
-        self.tick_interval = 50  # [milliseconds]
-        self.sample_buf_len_min = 1
-        self.sample_buf_len_max = 100
-        self.sample_buf_len = 2
         self.ticker = QTimer()
         self.ticker.timeout.connect(self._tick)
-        self.ticker.start(self.tick_interval)
+        self.ticker.start(self.settings.sample_rate)
 
     def get_available_drivers(self):
         """
@@ -211,10 +206,10 @@ class Collector:
                 continue
             tv = (time.time(), val)
             channel.collected_samples.append(tv)
-            if len(channel.collected_samples) >= self.sample_buf_len:
+            if len(channel.collected_samples) >= self.settings.dump_rate:
                 self.cb(subscription_id, channel.collected_samples)
                 channel.collected_samples = []
-        self.ticker.start(self.tick_interval)
+        self.ticker.start(self.settings.sample_rate)
 
     def _getter_pos_axis(self, addr):
         return self.icepap_system[addr].pos
