@@ -19,7 +19,10 @@
 
 from PyQt4.QtGui import QDialog
 from PyQt4.QtGui import QDialogButtonBox
+from PyQt4.QtGui import QFileDialog
+from PyQt4.QtGui import QMessageBox
 from ui.ui_dialog_settings import Ui_DialogSettings
+import os
 
 
 class DialogSettings(QDialog):
@@ -40,45 +43,118 @@ class DialogSettings(QDialog):
         self.ui.sbDumpRate.setMinimum(self.settings.dump_rate_min)
         self.ui.sbDumpRate.setMaximum(self.settings.dump_rate_max)
         self.ui.sbDumpRate.setValue(self.settings.dump_rate)
-        self.ui.sbLenAxisX.setMinimum(self.settings.default_x_axis_length_min)
-        self.ui.sbLenAxisX.setMaximum(self.settings.default_x_axis_length_max)
-        self.ui.sbLenAxisX.setValue(self.settings.default_x_axis_length)
+        self.ui.sbLenAxisX.setMinimum(self.settings.default_x_axis_len_min)
+        self.ui.sbLenAxisX.setMaximum(self.settings.default_x_axis_len_max)
+        self.ui.sbLenAxisX.setValue(self.settings.default_x_axis_len)
+        self.ui.cbUseAutoSave.setChecked(self.settings.use_auto_save)
+        self.ui.cbAppend.setChecked(self.settings.use_append)
+        self.ui.sbAutoSaveInterval.setMinimum(self.settings.as_interval_min)
+        self.ui.sbAutoSaveInterval.setMaximum(self.settings.as_interval_max)
+        self.ui.sbAutoSaveInterval.setValue(self.settings.as_interval)
+        self.ui.leDataFolder.setText(self.settings.as_folder)
+        self._as_state_changed()
         self.apply_button.setDisabled(True)
 
     def _connect_signals(self):
         self.ui.sbSampleRate.valueChanged.connect(self._sample_rate_changed)
         self.ui.sbDumpRate.valueChanged.connect(self._dump_rate_changed)
         self.ui.sbLenAxisX.valueChanged.connect(self._x_axis_length_changed)
+        self.ui.cbUseAutoSave.stateChanged.connect(self._as_state_changed)
+        self.ui.cbAppend.stateChanged.connect(self._append_changed)
+        self.ui.sbAutoSaveInterval.valueChanged.connect(self._as_intvl_changed)
+        self.ui.btnOpenFolderDlg.clicked.connect(self._launch_folder_dialog)
+        self.ui.leDataFolder.textChanged.connect(self._set_apply_state)
         self.apply_button.clicked.connect(self._apply)
         self.close_button.clicked.connect(self.close)
 
     def _sample_rate_changed(self):
         self._update_gui_rate()
-        self._check_button_state()
+        self._set_apply_state()
 
     def _dump_rate_changed(self):
         self._update_gui_rate()
-        self._check_button_state()
+        self._set_apply_state()
 
     def _x_axis_length_changed(self):
-        self._check_button_state()
+        self._set_apply_state()
 
-    def _check_button_state(self):
+    def _set_apply_state(self):
         eq = self.ui.sbSampleRate.value() == self.settings.sample_rate and \
            self.ui.sbDumpRate.value() == self.settings.dump_rate and \
-           self.ui.sbLenAxisX.value() == self.settings.default_x_axis_length
+           self.ui.sbLenAxisX.value() == self.settings.default_x_axis_len and \
+           self.ui.cbUseAutoSave.isChecked() == \
+           self.settings.use_auto_save and \
+           self.ui.cbAppend.isChecked() == self.settings.use_append and \
+           self.ui.sbAutoSaveInterval.value() == \
+           self.settings.as_interval and \
+           self.ui.leDataFolder.text() == self.settings.as_folder
         self.apply_button.setDisabled(eq)
 
     def _update_gui_rate(self):
         update_rate = self.ui.sbSampleRate.value() * self.ui.sbDumpRate.value()
         self.ui.leGuiUpdateRate.setText(str(update_rate))
 
+    def _as_state_changed(self):
+        use = self.ui.cbUseAutoSave.isChecked()
+        self.ui.cbAppend.setEnabled(use)
+        self.ui.sbAutoSaveInterval.setEnabled(use)
+        self.ui.leDataFolder.setEnabled(use)
+        self.ui.btnOpenFolderDlg.setEnabled(use)
+        self._set_apply_state()
+
+    def _append_changed(self):
+        self._set_apply_state()
+
+    def _as_intvl_changed(self):
+        self._set_apply_state()
+
+    def _launch_folder_dialog(self):
+        folder_name = QFileDialog.getExistingDirectory()
+        if folder_name:
+            self.ui.leDataFolder.setText(folder_name)
+            self._set_apply_state()
+
     def _apply(self):
+        auto_save_folder = self.ui.leDataFolder.text()
+        if not self._is_valid_folder(auto_save_folder):
+            return
         self.settings.sample_rate = self.ui.sbSampleRate.value()
         self.settings.dump_rate = self.ui.sbDumpRate.value()
-        self.settings.default_x_axis_length = self.ui.sbLenAxisX.value()
+        self.settings.default_x_axis_len = self.ui.sbLenAxisX.value()
+        self.settings.use_auto_save = self.ui.cbUseAutoSave.isChecked()
+        self.settings.use_append = self.ui.cbAppend.isChecked()
+        self.settings.as_interval = self.ui.sbAutoSaveInterval.value()
+        self.settings.as_folder = auto_save_folder
         self.settings.announce_update()
         self.apply_button.setDisabled(True)
+
+    @staticmethod
+    def _is_valid_folder(folder):
+        # Make sure path exists.
+        if not os.path.exists(folder):
+            msg = 'Folder does not exist: {}\n'.format(folder)
+            print(msg)
+            QMessageBox.critical(None, 'Set Data Folder', msg)
+            return False
+        # Create a dummy file name (hopefully unique for our test).
+        fn = folder + '/IcePapOSCfolderTest.txt'
+        # Create the dummy file for reading and writing.
+        try:
+            open(fn, "w+")
+        except Exception as e:
+            msg = 'Failed to create test file: {}\n{}'.format(fn, e)
+            print(msg)
+            QMessageBox.critical(None, 'Bad Folder', msg)
+            return False
+        # Delete the dummy file.
+        try:
+            os.remove(fn)
+        except OSError as e:
+            msg = 'Failed to remove test file: {}\n{}'.format(fn, e)
+            print(msg)
+            QMessageBox.critical(None, 'Remove Test File', msg)
+            return False
+        return True
 
     def done(self, r):
         """Overload of QDialog.done()."""

@@ -17,8 +17,13 @@
 # along with IcepapOCS. If not, see <http://www.gnu.org/licenses/>.
 # -----------------------------------------------------------------------------
 
-from PyQt4 import QtGui
+from PyQt4.QtGui import QMainWindow
+from PyQt4.QtGui import QFileDialog
+from PyQt4.QtGui import QMessageBox
+from PyQt4.QtGui import QBoxLayout
+from PyQt4.QtGui import QColor
 from PyQt4.QtCore import Qt
+from PyQt4.QtCore import QTimer
 from ui.ui_window_main import Ui_WindowMain
 from collector import Collector
 from dialog_settings import DialogSettings
@@ -26,11 +31,13 @@ from settings import Settings
 from axis_time import AxisTime
 from curve_item import CurveItem
 import pyqtgraph as pg
+import numpy as np
+import collections
 import time
 import datetime
 
 
-class WindowMain(QtGui.QMainWindow):
+class WindowMain(QMainWindow):
     """A dialog for plotting IcePAP signals."""
 
     def __init__(self, host, port, timeout, siglist, selected_driver=None):
@@ -45,7 +52,7 @@ class WindowMain(QtGui.QMainWindow):
                             Example: ["1:PosAxis:1", "1:MeasI:2", "1:MeasVm:3"]
         selected_driver - The driver to display in combobox at startup.
         """
-        QtGui.QMainWindow.__init__(self, None)
+        QMainWindow.__init__(self, None)
         self.ui = Ui_WindowMain()
         self.setAttribute(Qt.WA_DeleteOnClose, True)
         self.ui.setupUi(self)
@@ -59,7 +66,7 @@ class WindowMain(QtGui.QMainWindow):
         except Exception as e:
             msg = 'Failed to create main window.\n{}'.format(e)
             print(msg)
-            QtGui.QMessageBox.critical(None, 'Create Main Window', msg)
+            QMessageBox.critical(None, 'Create Main Window', msg)
             return
 
         self.subscriptions = {}
@@ -73,7 +80,7 @@ class WindowMain(QtGui.QMainWindow):
         self.view_boxes = [self.plot_widget.getViewBox(),
                            pg.ViewBox(),
                            pg.ViewBox()]
-        self.ui.vloCurves.setDirection(QtGui.QBoxLayout.BottomToTop)
+        self.ui.vloCurves.setDirection(QBoxLayout.BottomToTop)
         self.ui.vloCurves.addWidget(self.plot_widget)
 
         # Set up the X-axis.
@@ -126,9 +133,19 @@ class WindowMain(QtGui.QMainWindow):
                       'It should be: ' \
                       '<driver>:<signal name>:<Y-axis>'.format(sig)
                 print(msg)
-                QtGui.QMessageBox.critical(None, 'Bad Signal Syntax', msg)
+                QMessageBox.critical(None, 'Bad Signal Syntax', msg)
                 return
-            self._add_signal(int(lst[0]), lst[1], int(lst[2]))
+            auto_save = True if sig == siglist[-1] else False
+            self._add_signal(int(lst[0]), lst[1], int(lst[2]), auto_save)
+
+        # Set up continuous saving of collected signal data.
+        self._save_ticker = QTimer()
+        self._save_ticker.timeout.connect(self._auto_save)
+        self._save_time = None
+        self._idx = 0
+        self._settings_updated = False
+        self._file_path = None
+        self._old_use_append = False
 
     def _fill_combo_box_driver_ids(self, selected_driver):
         driver_ids = self.collector.get_available_drivers()
@@ -146,7 +163,7 @@ class WindowMain(QtGui.QMainWindow):
             msg = 'Internal error!\nNew signals added.\nAdd ' \
                   'more colors and pens.'
             print(msg)
-            QtGui.QMessageBox.warning(None, 'Available Signals', msg)
+            QMessageBox.warning(None, 'Available Signals', msg)
             for i in range(num_colors):
                 self.ui.cbSignals.addItem(signals[i])
         else:
@@ -171,6 +188,8 @@ class WindowMain(QtGui.QMainWindow):
         self.ui.btnResetY.clicked.connect(self._enable_auto_range_y)
         self.ui.btnPause.clicked.connect(self._pause_x_axis)
         self.ui.btnNow.clicked.connect(self._goto_now)
+        self.ui.btnSave.clicked.connect(self._save_to_file)
+        self.ui.actionSave_to_File.triggered.connect(self._save_to_file)
         self.ui.actionSettings.triggered.connect(self._display_settings_dlg)
         self.ui.actionExit.triggered.connect(self.close)
         self.ui.actionClosed_Loop.triggered.connect(self._signals_closed_loop)
@@ -230,9 +249,9 @@ class WindowMain(QtGui.QMainWindow):
             my_axis = 2
         elif self.ui.rbAxis3.isChecked():
             my_axis = 3
-        self._add_signal(addr, my_signal_name, my_axis)
+        self._add_signal(addr, my_signal_name, my_axis, True)
 
-    def _add_signal(self, driver_addr, signal_name, y_axis):
+    def _add_signal(self, driver_addr, signal_name, y_axis, auto_save=False):
         """
         Adds a new curve to the plot area.
 
@@ -247,7 +266,7 @@ class WindowMain(QtGui.QMainWindow):
             msg = 'Failed to subscribe to signal {} ' \
                   'from driver {}.\n{}'.format(signal_name, driver_addr, e)
             print(msg)
-            QtGui.QMessageBox.critical(None, 'Add Curve', msg)
+            QMessageBox.critical(None, 'Add Curve', msg)
             return
         try:
             color_idx = self.collector.get_signal_index(signal_name)
@@ -255,7 +274,7 @@ class WindowMain(QtGui.QMainWindow):
             msg = 'Internal error. Failed to retrieve index ' \
                   'for signal {}.\n{}'.format(signal_name, e)
             print(msg)
-            QtGui.QMessageBox.critical(None, 'Add Curve', msg)
+            QMessageBox.critical(None, 'Add Curve', msg)
             return
         ci = CurveItem(subscription_id, driver_addr, signal_name,
                        y_axis, color_idx)
@@ -266,11 +285,14 @@ class WindowMain(QtGui.QMainWindow):
         index = len(self.curve_items) - 1
         self.ui.lvActiveSig.setCurrentRow(index)
         self.ui.lvActiveSig.item(index).setForeground(ci.color)
-        self.ui.lvActiveSig.item(index).setBackground(QtGui.QColor(0, 0, 0))
+        self.ui.lvActiveSig.item(index).setBackground(QColor(0, 0, 0))
         self._update_plot_axes_labels()
         self._update_button_status()
+        if auto_save:
+            self._auto_save(True)
 
     def _remove_selected_signal(self):
+        self._auto_save(True)
         index = self.ui.lvActiveSig.currentRow()
         ci = self.curve_items[index]
         self.collector.unsubscribe(ci.subscription_id)
@@ -282,6 +304,7 @@ class WindowMain(QtGui.QMainWindow):
 
     def _remove_all_signals(self):
         """Removes all signals."""
+        self._auto_save(True)
         for ci in self.curve_items:
             self.collector.unsubscribe(ci.subscription_id)
             self._remove_curve_plot(ci)
@@ -301,7 +324,7 @@ class WindowMain(QtGui.QMainWindow):
         self.ui.lvActiveSig.takeItem(index)
         self.ui.lvActiveSig.insertItem(index, ci.signature)
         self.ui.lvActiveSig.item(index).setForeground(ci.color)
-        self.ui.lvActiveSig.item(index).setBackground(QtGui.QColor(0, 0, 0))
+        self.ui.lvActiveSig.item(index).setBackground(QColor(0, 0, 0))
         self.ui.lvActiveSig.setCurrentRow(index)
         self._update_plot_axes_labels()
 
@@ -364,13 +387,16 @@ class WindowMain(QtGui.QMainWindow):
         self._add_signal(drv_addr, 'StatReady', 3)
         self._add_signal(drv_addr, 'StatMoving', 3)
         self._add_signal(drv_addr, 'StatSettling', 3)
-        self._add_signal(drv_addr, 'StatOutofwin', 3)
-        self._add_signal(drv_addr, 'StatWarning', 3)
-        self.view_boxes[0].enableAutoRange(axis=self.view_boxes[0].YAxis)
-        self.view_boxes[1].disableAutoRange(axis=self.view_boxes[1].YAxis)
-        self.view_boxes[1].setYRange(-30, 70, padding=0)
-        self.view_boxes[2].disableAutoRange(axis=self.view_boxes[2].YAxis)
-        self.view_boxes[2].setYRange(-1, 20, padding=0)
+
+        self._add_signal(drv_addr, 'StatOutofwin', 3, True)
+
+        # self._add_signal(drv_addr, 'StatOutofwin', 3)
+        # self._add_signal(drv_addr, 'StatWarning', 3)
+        # self.view_boxes[0].enableAutoRange(axis=self.view_boxes[0].YAxis)
+        # self.view_boxes[1].disableAutoRange(axis=self.view_boxes[1].YAxis)
+        # self.view_boxes[1].setYRange(-30, 70, padding=0)
+        # self.view_boxes[2].disableAutoRange(axis=self.view_boxes[2].YAxis)
+        # self.view_boxes[2].setYRange(-1, 20, padding=0)
 
     def _signals_currents(self):
         """Display a specific set of curves."""
@@ -378,22 +404,25 @@ class WindowMain(QtGui.QMainWindow):
         drv_addr = int(self.ui.cbDrivers.currentText())
         self._add_signal(drv_addr, 'PosAxis', 1)
         self._add_signal(drv_addr, 'MeasI', 2)
-        self._add_signal(drv_addr, 'MeasVm', 3)
-        # Ajust plot axis
-        self.view_boxes[0].enableAutoRange(axis=self.view_boxes[0].YAxis)
-        self.view_boxes[1].disableAutoRange(axis=self.view_boxes[1].YAxis)
-        self.view_boxes[1].setYRange(-9, 10, padding=0)
-        self.view_boxes[2].enableAutoRange(axis=self.view_boxes[2].YAxis)
+
+        self._add_signal(drv_addr, 'MeasVm', 3, True)
+        # self._add_signal(drv_addr, 'MeasVm', 3)
+        # # Ajust plot axis
+        # self.view_boxes[0].enableAutoRange(axis=self.view_boxes[0].YAxis)
+        # self.view_boxes[1].disableAutoRange(axis=self.view_boxes[1].YAxis)
+        # self.view_boxes[1].setYRange(-9, 10, padding=0)
+        # self.view_boxes[2].enableAutoRange(axis=self.view_boxes[2].YAxis)
 
     def _signals_target(self):
         """Display a specific set of curves."""
         self._remove_all_signals()
         drv_addr = int(self.ui.cbDrivers.currentText())
         self._add_signal(drv_addr, 'PosAxis', 1)
-        self._add_signal(drv_addr, 'EncTgtenc', 2)
+        self._add_signal(drv_addr, 'EncTgtenc', 2, True)
 
     def _clear_all(self):
         """Clear all the displayed curves."""
+        self._auto_save()
         for ci in self.curve_items:
             ci.clear()
 
@@ -414,7 +443,7 @@ class WindowMain(QtGui.QMainWindow):
         the initial number of seconds (setting).
         """
         now = self.collector.get_current_time()
-        start = now - self.settings.default_x_axis_length
+        start = now - self.settings.default_x_axis_len
         self.view_boxes[0].setXRange(start, now, padding=0)
 
     def _enable_auto_range_y(self):
@@ -443,6 +472,123 @@ class WindowMain(QtGui.QMainWindow):
         """Enables or disables menu item File|Settings."""
         self.ui.actionSettings.setEnabled(enable)
 
+    def _save_to_file(self):
+        if not self.curve_items:
+            return
+        capt = "Save to csv file"
+        fn = QFileDialog.getSaveFileName(caption=capt, filter="*.csv")
+        if not fn:
+            return
+        if fn[-4:] != ".csv":
+            fn = fn + ".csv"
+        try:
+            f = open(fn, "w+")
+        except Exception as e:
+            msg = 'Failed to open/create file: {}\n{}'.format(fn, e)
+            print(msg)
+            QMessageBox.critical(None, 'File Open Failed', msg)
+            return
+        self._create_csv_file(f)
+        f.close()
+
+    def _create_csv_file(self, csv_file):
+        my_dict = collections.OrderedDict()
+        for ci in self.curve_items:
+            header = "time-{}-{}".format(ci.driver_addr, ci.signal_name)
+            my_dict[header] = ci.array_time
+            header = "val-{}-{}".format(ci.driver_addr, ci.signal_name)
+            my_dict[header] = ci.array_val
+        key_longest = my_dict.keys()[0]
+        for key in my_dict:
+            if my_dict[key][0] < my_dict[key_longest][0]:
+                key_longest = key
+        for key in my_dict:
+            delta = len(my_dict[key_longest]) - len(my_dict[key])
+            my_dict[key] = delta * [np.nan] + my_dict[key]
+        for key in my_dict:
+            csv_file.write(",{}".format(key))
+        csv_file.write("\n")
+        for idx in range(0, len(my_dict[key_longest])):
+            line = str(idx)
+            for key in my_dict:
+                line += ",{}".format(my_dict[key][idx])
+            csv_file.write(line + '\n')
+
+    def _auto_save(self, use_new_file=False):
+        if not self.curve_items or not self._file_path:
+            return
+        if not self._settings_updated and not self.settings.use_auto_save:
+            return
+        self._save_ticker.stop()
+
+        # Create matrix.
+        my_dict = collections.OrderedDict()
+        for ci in self.curve_items:
+            start_idx = ci.get_time_index(self._save_time)
+            header = "time-{}-{}".format(ci.driver_addr, ci.signal_name)
+            my_dict[header] = ci.array_time[start_idx:]
+            header = "val-{}-{}".format(ci.driver_addr, ci.signal_name)
+            my_dict[header] = ci.array_val[start_idx:]
+        key_longest = None
+        for key in my_dict:  # Find a non empty list.
+            if my_dict[key]:
+                key_longest = key
+                break
+        if not key_longest:
+            self._prepare_next_auto_save(True)
+            return
+        for key in my_dict:  # Find the longest list.
+            if my_dict[key] and my_dict[key][0] < my_dict[key_longest][0]:
+                key_longest = key
+        for key in my_dict:  # Fill up the shorter lists with nan.
+            delta = len(my_dict[key_longest]) - len(my_dict[key])
+            my_dict[key] = delta * [np.nan] + my_dict[key]
+
+        # Write matrix to file.
+        try:
+            f = open(self._file_path, self._get_write_mode())
+        except Exception as e:
+            msg = 'Failed to open file: {}\n{}'.format(self._file_path, e)
+            print(msg)
+            QMessageBox.critical(None, 'File Open Failed', msg)
+            return
+        if self._idx == 0:
+            for key in my_dict:
+                f.write(",{}".format(key))
+            f.write("\n")
+        for i in range(0, len(my_dict[key_longest])):
+            line = str(self._idx)
+            self._idx += 1
+            for key in my_dict:
+                line += ",{}".format(my_dict[key][i])
+            f.write(line + '\n')
+        f.close()
+
+        self._prepare_next_auto_save(use_new_file)
+
+    def _prepare_next_auto_save(self, use_new_file=False):
+        if self.settings.use_auto_save:
+            if use_new_file or not self.settings.use_append or \
+                    not self._file_path or self._settings_updated:
+                self._set_new_file_path()
+            self._save_time = time.time()
+            self._save_ticker.start(60000 * self.settings.as_interval)
+        else:
+            self._save_time = None
+            self._file_path = None
+
+    def _set_new_file_path(self):
+        self._idx = 0
+        time_str = time.strftime("%Y%m%d_%H%M%S", time.localtime())
+        file_name = "IcepapOSC_{}.csv".format(time_str)
+        self._file_path = self.settings.as_folder + '/' + file_name
+
+    def _get_write_mode(self):
+        do_append = self.settings.use_append
+        if self._settings_updated:
+            do_append = self._old_use_append
+        return "a+" if do_append else "w+"
+
     def _display_settings_dlg(self):
         self.enable_action(False)
         dlg = DialogSettings(self, self.settings)
@@ -450,6 +596,13 @@ class WindowMain(QtGui.QMainWindow):
 
     def settings_updated(self):
         """Settings have been changed."""
+        self._settings_updated = True
+        if self._file_path:
+            self._auto_save(True)
+        else:
+            self._prepare_next_auto_save()
+        self._old_use_append = self.settings.use_append
+        self._settings_updated = False
         self._reset_x()
 
     def callback_collect(self, subscription_id, value_list):
