@@ -17,24 +17,25 @@
 # along with IcepapOCS. If not, see <http://www.gnu.org/licenses/>.
 # -----------------------------------------------------------------------------
 
-from PyQt4.QtGui import QDialog
-from PyQt4.QtGui import QDialogButtonBox
-from PyQt4.QtGui import QFileDialog
-from PyQt4.QtGui import QMessageBox
-from .ui.ui_dialog_settings import Ui_DialogSettings
+from PyQt5 import QtWidgets, uic
 import os
+from pkg_resources import resource_filename
 
 
-class DialogSettings(QDialog):
+class DialogSettings(QtWidgets.QDialog):
 
     def __init__(self, parent, settings):
-        QDialog.__init__(self, parent)
+        QtWidgets.QDialog.__init__(self, parent)
         self.parent = parent
-        self.ui = Ui_DialogSettings()
-        self.ui.setupUi(self)
+        ui_filename = resource_filename('icepaposc.ui',
+                                        'dialog_settings.ui')
+        self.ui = self
+        uic.loadUi(ui_filename, baseinstance=self.ui)
         self.settings = settings
-        self.apply_button = self.ui.bbApplyClose.button(QDialogButtonBox.Apply)
-        self.close_button = self.ui.bbApplyClose.button(QDialogButtonBox.Close)
+        self.apply_button = self.ui.bbApplyClose.button(
+            QtWidgets.QDialogButtonBox.Apply)
+        self.close_button = self.ui.bbApplyClose.button(
+            QtWidgets.QDialogButtonBox.Close)
         self._connect_signals()
         self._update_gui_rate()
         self.ui.sbSampleRate.setMinimum(self.settings.sample_rate_min)
@@ -109,7 +110,7 @@ class DialogSettings(QDialog):
         self._set_apply_state()
 
     def _launch_folder_dialog(self):
-        folder_name = QFileDialog.getExistingDirectory()
+        folder_name = QtWidgets.QFileDialog.getExistingDirectory()
         if folder_name:
             self.ui.leDataFolder.setText(folder_name)
             self._set_apply_state()
@@ -135,7 +136,7 @@ class DialogSettings(QDialog):
         if not os.path.exists(folder):
             msg = 'Folder does not exist: {}\n'.format(folder)
             print(msg)
-            QMessageBox.critical(None, 'Set Data Folder', msg)
+            QtWidgets.QMessageBox.critical(None, 'Set Data Folder', msg)
             return False
         # Create a dummy file name (hopefully unique for our test).
         fn = folder + '/IcePapOSCfolderTest.txt'
@@ -145,7 +146,7 @@ class DialogSettings(QDialog):
         except Exception as e:
             msg = 'Failed to create test file: {}\n{}'.format(fn, e)
             print(msg)
-            QMessageBox.critical(None, 'Bad Folder', msg)
+            QtWidgets.QMessageBox.critical(None, 'Bad Folder', msg)
             return False
         # Delete the dummy file.
         try:
@@ -153,11 +154,11 @@ class DialogSettings(QDialog):
         except OSError as e:
             msg = 'Failed to remove test file: {}\n{}'.format(fn, e)
             print(msg)
-            QMessageBox.critical(None, 'Remove Test File', msg)
+            QtWidgets.QMessageBox.critical(None, 'Remove Test File', msg)
             return False
         return True
 
     def done(self, r):
         """Overload of QDialog.done()."""
         self.parent.enable_action()
-        QDialog.done(self, r)
+        QtWidgets.QDialog.done(self, r)
