@@ -19,9 +19,9 @@
 
 import sys
 from PyQt4.QtGui import QApplication
-from window_main import WindowMain
+from .window_main import WindowMain
 import argparse
-from __init__ import version
+from . import version
 
 
 def get_parser():

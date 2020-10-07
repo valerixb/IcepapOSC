@@ -20,7 +20,7 @@
 
 from os.path import exists
 from os.path import expanduser
-from ConfigParser import SafeConfigParser
+from configparser import SafeConfigParser
 
 
 class Settings:

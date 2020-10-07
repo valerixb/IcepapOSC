@@ -21,7 +21,7 @@ from PyQt4.QtCore import QTimer
 from PyQt4.QtCore import QString
 from collections import OrderedDict
 from pyIcePAP import EthIcePAPController
-from channel import Channel
+from .channel import Channel
 import time
 
 
@@ -85,7 +85,7 @@ class Collector:
         self.channels = {}
         self.channel_id = 0
         self.current_channel = 0
-        self.sig_list = self.sig_getters.keys()
+        self.sig_list = list(self.sig_getters.keys())
 
         try:
             self.icepap_system = EthIcePAPController(self.host,
@@ -110,7 +110,7 @@ class Collector:
 
         Return: List of available drivers.
         """
-        return self.icepap_system.keys()
+        return list(self.icepap_system.keys())
 
     def get_available_signals(self):
         """
@@ -145,7 +145,7 @@ class Collector:
         signal_name - Signal name.
         Return - A positive integer id used when unsubscribing.
         """
-        for ch in self.channels_subscribed.values():
+        for ch in list(self.channels_subscribed.values()):
             if ch.equals(icepap_addr, signal_name):
                 msg = 'Channel already exists.\nAddr: ' \
                       '{}\nSignal: {}'.format(icepap_addr, signal_name)
@@ -178,8 +178,8 @@ class Collector:
 
         subscription_id - The given subscription id.
         """
-        if subscription_id in self.channels_subscribed.keys() and \
-                subscription_id not in self.channels.keys():
+        if subscription_id in list(self.channels_subscribed.keys()) and \
+                subscription_id not in list(self.channels.keys()):
             self.channels[subscription_id] = \
                 self.channels_subscribed[subscription_id]
 
@@ -189,12 +189,12 @@ class Collector:
 
         subscription_id - The given subscription id.
         """
-        if subscription_id in self.channels_subscribed.keys():
+        if subscription_id in list(self.channels_subscribed.keys()):
             del self.channels[subscription_id]
             del self.channels_subscribed[subscription_id]
 
     def _tick(self):
-        for subscription_id, channel in self.channels.iteritems():
+        for subscription_id, channel in self.channels.items():
             self.current_channel = subscription_id
             try:
                 addr = channel.icepap_address

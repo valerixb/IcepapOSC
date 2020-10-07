@@ -24,12 +24,12 @@ from PyQt4.QtGui import QBoxLayout
 from PyQt4.QtGui import QColor
 from PyQt4.QtCore import Qt
 from PyQt4.QtCore import QTimer
-from ui.ui_window_main import Ui_WindowMain
-from collector import Collector
-from dialog_settings import DialogSettings
-from settings import Settings
-from axis_time import AxisTime
-from curve_item import CurveItem
+from .ui.ui_window_main import Ui_WindowMain
+from .collector import Collector
+from .dialog_settings import DialogSettings
+from .settings import Settings
+from .axis_time import AxisTime
+from .curve_item import CurveItem
 import pyqtgraph as pg
 import numpy as np
 import collections
@@ -500,7 +500,7 @@ class WindowMain(QMainWindow):
             my_dict[header] = ci.array_time
             header = "val-{}-{}".format(ci.driver_addr, ci.signal_name)
             my_dict[header] = ci.array_val
-        key_longest = my_dict.keys()[0]
+        key_longest = list(my_dict.keys())[0]
         for key in my_dict:
             if my_dict[key][0] < my_dict[key_longest][0]:
                 key_longest = key

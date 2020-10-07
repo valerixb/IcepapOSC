@@ -21,7 +21,7 @@ from PyQt4.QtGui import QDialog
 from PyQt4.QtGui import QDialogButtonBox
 from PyQt4.QtGui import QFileDialog
 from PyQt4.QtGui import QMessageBox
-from ui.ui_dialog_settings import Ui_DialogSettings
+from .ui.ui_dialog_settings import Ui_DialogSettings
 import os
 
 
