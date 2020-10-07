@@ -413,7 +413,6 @@ class WindowMain(QMainWindow):
         # self.view_boxes[1].setYRange(-9, 10, padding=0)
         # self.view_boxes[2].enableAutoRange(axis=self.view_boxes[2].YAxis)
 
-
     def _signals_target(self):
         """Display a specific set of curves."""
         self._remove_all_signals()

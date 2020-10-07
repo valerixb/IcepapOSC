@@ -37,7 +37,6 @@ class Settings:
         self.dump_rate_max = collector.sample_buf_len_max
         self.dump_rate = collector.sample_buf_len
 
-
         # Settings for GUI.
         self.default_x_axis_len_min = 5  # [Seconds]
         self.default_x_axis_len_max = 3600  # [Seconds]
