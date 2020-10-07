@@ -34,6 +34,7 @@ import pyqtgraph as pg
 import numpy as np
 import collections
 import time
+import datetime
 
 
 class WindowMain(QMainWindow):
@@ -347,8 +348,8 @@ class WindowMain(QMainWindow):
             mouse_point = self.view_boxes[0].mapSceneToView(pos)
             time_value = mouse_point.x()
             try:
-                pretty_time = time.strftime("%H:%M:%S",
-                                            time.gmtime(time_value))
+                date = datetime.datetime.fromtimestamp(time_value)
+                pretty_time = date.strftime("%H:%M:%S.%f")[:-3]
             except ValueError:  # Time out of range.
                 return
             txtmax = ''
@@ -386,7 +387,16 @@ class WindowMain(QMainWindow):
         self._add_signal(drv_addr, 'StatReady', 3)
         self._add_signal(drv_addr, 'StatMoving', 3)
         self._add_signal(drv_addr, 'StatSettling', 3)
+
         self._add_signal(drv_addr, 'StatOutofwin', 3, True)
+
+        #self._add_signal(drv_addr, 'StatOutofwin', 3)
+        #self._add_signal(drv_addr, 'StatWarning', 3)
+        #self.view_boxes[0].enableAutoRange(axis=self.view_boxes[0].YAxis)
+        #self.view_boxes[1].disableAutoRange(axis=self.view_boxes[1].YAxis)
+        #self.view_boxes[1].setYRange(-30, 70, padding=0)
+        #self.view_boxes[2].disableAutoRange(axis=self.view_boxes[2].YAxis)
+        #self.view_boxes[2].setYRange(-1, 20, padding=0)
 
     def _signals_currents(self):
         """Display a specific set of curves."""
@@ -394,7 +404,15 @@ class WindowMain(QMainWindow):
         drv_addr = int(self.ui.cbDrivers.currentText())
         self._add_signal(drv_addr, 'PosAxis', 1)
         self._add_signal(drv_addr, 'MeasI', 2)
+
         self._add_signal(drv_addr, 'MeasVm', 3, True)
+        #self._add_signal(drv_addr, 'MeasVm', 3)
+        # Ajust plot axis
+        #self.view_boxes[0].enableAutoRange(axis=self.view_boxes[0].YAxis)
+        #self.view_boxes[1].disableAutoRange(axis=self.view_boxes[1].YAxis)
+        #self.view_boxes[1].setYRange(-9, 10, padding=0)
+        #self.view_boxes[2].enableAutoRange(axis=self.view_boxes[2].YAxis)
+
 
     def _signals_target(self):
         """Display a specific set of curves."""

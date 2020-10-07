@@ -16,9 +16,9 @@
 # You should have received a copy of the GNU General Public License
 # along with IcepapOCS. If not, see <http://www.gnu.org/licenses/>.
 # -----------------------------------------------------------------------------
-
 from pyqtgraph import AxisItem
 import time
+import datetime
 
 
 class AxisTime(AxisItem):
@@ -35,7 +35,14 @@ class AxisTime(AxisItem):
         strings = []
         for x in values:
             try:
-                strings.append(time.strftime("%H:%M:%S", time.gmtime(x)))
+                if spacing >= 1:
+                    strings.append(time.strftime("%H:%M:%S", time.gmtime(x)))
+                else:
+                    # Generate date from timesamp
+                    date = datetime.datetime.fromtimestamp(x)
+                    # Format with millisecond
+                    date = date.strftime("%M:%S.%f")[:-3]
+                    strings.append(date)
             except ValueError:  # Time out of range.
                 strings.append('')
         return strings
