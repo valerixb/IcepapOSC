@@ -18,7 +18,7 @@
 # -----------------------------------------------------------------------------
 
 import sys
-from PyQt4.QtGui import QApplication
+from PyQt5.QtWidgets import QApplication
 from .window_main import WindowMain
 import argparse
 from . import version
