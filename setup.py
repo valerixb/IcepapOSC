@@ -1,4 +1,3 @@
-# setup.py
 from setuptools import setup
 from setuptools import find_packages
 
@@ -9,15 +8,9 @@ __version = '0.4.0'
 # windows installer:
 # python setup.py bdist_wininst
 
-# patch distutils if it can't cope with the "classifiers" or
-# "download_url" keywords
 
-# ipython profile magic commands implementation
-package_list = ['*ui']
-
-# TODO: fill the long description
-long_description = """ Python application to monitor and tune IcePAP 
-based systems. """
+long_description = """ Python application to monitor and tune IcePAP based 
+systems. """
 
 # TODO: Include documentation.
 
@@ -42,10 +35,9 @@ classifiers = [
 
     # Specify the Python versions you support here. In particular, ensure
     # that you indicate whether you support Python 2, Python 3 or both.
-    'Programming Language :: Python :: 2.7',
+    'Programming Language :: Python :: 3',
 ]
 
-# TODO: Include dependencies
 
 setup(
     name="icepaposc",
@@ -55,8 +47,8 @@ setup(
     author_email="ctbeamlines@cells.es",
     url="https://github.com/ALBA-Synchrotron/IcepapOCS",
     packages=find_packages(),
-    package_data={'': package_list},
     include_package_data=True,
+    python_requires='>=3.5',
     keywords='APP',
     license="GPL",
     long_description=long_description,
@@ -64,6 +56,14 @@ setup(
     entry_points={
         'console_scripts': [
             'icepaposc = icepaposc.__main__:main',
-        ]
-    }
+        ],
+    },
+    install_requires=[
+        "PyQt5",
+        "icepap",
+        'pyqtgraph',
+        'numpy',
+
+    ],
+    package_data={'': ['*.ui', ]}
 )
