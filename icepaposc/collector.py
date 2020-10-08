@@ -19,7 +19,7 @@
 
 from PyQt5 import QtCore
 from collections import OrderedDict
-from pyIcePAP import EthIcePAPController
+from icepap import IcePAPController
 from .channel import Channel
 import time
 
@@ -87,9 +87,8 @@ class Collector:
         self.sig_list = list(self.sig_getters.keys())
 
         try:
-            self.icepap_system = EthIcePAPController(self.host,
-                                                     self.port,
-                                                     timeout)
+            self.icepap_system = IcePAPController(self.host, self.port,
+                                                  timeout, auto_axes=True)
         except Exception as e:
             msg = 'Failed to instantiate master controller.\nHost: ' \
                   '{}\nPort: {}\n{}'.format(self.host, self.port, e)
@@ -109,7 +108,7 @@ class Collector:
 
         Return: List of available drivers.
         """
-        return list(self.icepap_system.keys())
+        return self.icepap_system.axes
 
     def get_available_signals(self):
         """
