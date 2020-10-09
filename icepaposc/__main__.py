@@ -40,7 +40,7 @@ def get_parser():
     parse.add_argument('--version', action='version', version=ver)
 
     parse.add_argument('host', help='IcePAP Host')
-    parse.add_argument('axis', help='Selected axis', default=1, type=int)
+    parse.add_argument('--axis', help='Selected axis', default=1, type=int)
     parse.add_argument('-p', '--port', type=int, default=5000,
                        help='IcePAP port')
     parse.add_argument('-t', '--timeout', type=int, default=3,
