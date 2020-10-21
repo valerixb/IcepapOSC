@@ -18,10 +18,10 @@
 # -----------------------------------------------------------------------------
 
 import sys
-from PyQt4.QtGui import QApplication
-from window_main import WindowMain
+from PyQt5.QtWidgets import QApplication
+from .window_main import WindowMain
 import argparse
-from __init__ import version
+from . import version
 
 
 def get_parser():
@@ -40,6 +40,7 @@ def get_parser():
     parse.add_argument('--version', action='version', version=ver)
 
     parse.add_argument('host', help='IcePAP Host')
+    parse.add_argument('--axis', help='Selected axis', default=1, type=int)
     parse.add_argument('-p', '--port', type=int, default=5000,
                        help='IcePAP port')
     parse.add_argument('-t', '--timeout', type=int, default=3,
@@ -49,7 +50,7 @@ def get_parser():
                             '<driver>:<signal name>:<Y-axis>')
 
     # TODO: Allow to pass the axes preselected and type of graph
-    # parse.add_argument('axes', nargs='*', help='Axes to save, default all',
+    # parse.add_argument('-a', nargs='*', help='Axes to save, default all',
     #                    type=int, default=[])
     # save_cmd.add_argument('-d', '--debug', action='store_true',
     #                       help='Activate log level DEBUG')
@@ -61,7 +62,7 @@ def main():
     args = get_parser().parse_args()
 
     app = QApplication(sys.argv)
-    win = WindowMain(args.host, args.port, args.timeout, args.sig)
+    win = WindowMain(args.host, args.port, args.timeout, args.sig, args.axis)
     win.show()
     sys.exit(app.exec_())
 

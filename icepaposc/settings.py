@@ -17,10 +17,8 @@
 # along with IcepapOCS. If not, see <http://www.gnu.org/licenses/>.
 # -----------------------------------------------------------------------------
 
-
-from os.path import exists
-from os.path import expanduser
-from ConfigParser import SafeConfigParser
+import os
+from configparser import SafeConfigParser
 
 
 class Settings:
@@ -28,9 +26,10 @@ class Settings:
 
     def __init__(self):
         """Initializes an instance of class Settings."""
-        self.conf_file = expanduser("~") + "/IcepapOSC/settings.ini"
-        if not exists(self.conf_file):
-            self._create_file()
+        user_path = os.path.expanduser("~")
+        self.conf_file = os.path.join(user_path, ".icepaposc/settings.ini")
+        if not os.path.exists(self.conf_file):
+            self._create_file(user_path)
 
         # Settings for collector.
         self.sample_rate_min = 10  # [milliseconds]
@@ -52,11 +51,14 @@ class Settings:
         self.use_auto_save = False
         self.use_append = False
         self.as_interval = 5  # [Minutes]
-        self.as_folder = expanduser("~")
+        self.as_folder = user_path
 
         self._read_file()
 
-    def _create_file(self):
+    def _create_file(self, user_path):
+        icepaosc_folder = os.path.join(user_path, '.icepaposc')
+        if not os.path.exists(icepaosc_folder):
+            os.mkdir(icepaosc_folder)
         conf = SafeConfigParser()
         conf.add_section('collector')
         conf.add_section('gui')
@@ -67,7 +69,7 @@ class Settings:
         conf.set('auto_save', 'use', 'False')
         conf.set('auto_save', 'append', 'False')
         conf.set('auto_save', 'interval', '5')  # [Minutes]
-        conf.set('auto_save', 'folder', expanduser("~"))
+        conf.set('auto_save', 'folder', user_path)
         with open(self.conf_file, 'w') as f:
             conf.write(f)
 
