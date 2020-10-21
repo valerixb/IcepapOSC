@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Add the axis as optional parameter on the script. 
 
 ### Fixed
+- Fix classifiers to upload to PyPi
 
 ## [0.4.0] 
 
