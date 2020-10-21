@@ -12,32 +12,6 @@ __version = '0.5.0'
 long_description = """ Python application to monitor and tune IcePAP based 
 systems. """
 
-# TODO: Include documentation.
-
-classifiers = [
-    # How mature is this project? Common values are
-    #   3 - Alpha
-    #   4 - Beta
-    #   5 - Production/Stable
-    'Development Status :: 3 - Alpha',
-
-    # Indicate who your project is intended for
-    'Intended Audience :: End Users/Desktop',
-    'Topic :: Software Development :: Build Tools',
-    'Topic :: Communications',
-    'Topic :: Scientific/Engineering',
-    'Topic :: Software Development :: Libraries',
-    'Topic :: Software Development :: User Interfaces',
-
-    # Pick your license as you wish (should match "license" above)
-    'License :: OSI Approved :: GNU Library or Lesser General Public ' + \
-    'License',
-
-    # Specify the Python versions you support here. In particular, ensure
-    # that you indicate whether you support Python 2, Python 3 or both.
-    'Programming Language :: Python :: 3',
-]
-
 
 setup(
     name="icepaposc",
@@ -52,7 +26,18 @@ setup(
     keywords='APP',
     license="GPL",
     long_description=long_description,
-    classifiers=classifiers,
+    classifiers=[
+        'Development Status :: 5 - Production/Stable',
+        'Intended Audience :: Developers',
+        'Intended Audience :: End Users/Desktop',
+        'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
+        'Natural Language :: English',
+        'Operating System :: POSIX',
+        'Operating System :: Microsoft :: Windows',
+        'Programming Language :: Python :: 3.5',
+        'Topic :: Communications',
+        'Topic :: Software Development :: Libraries',
+    ],
     entry_points={
         'console_scripts': [
             'icepaposc = icepaposc.__main__:main',
