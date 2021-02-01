@@ -32,12 +32,13 @@ import numpy as np
 import collections
 import time
 import datetime
-from dialogstatusinfo import DialogStatusInfo
-from pyIcePAP.backups import IcePAPBackup
+from .dialogstatusinfo import DialogStatusInfo
+#from pyIcePAP.backups import IcePAPBackup
+from icepap.backups import IcePAPBackup
 import os
 
 
-from PyQt5 import QtWidgets, Qt, QtCore, uic
+from PyQt5 import QtWidgets, Qt, QtCore, uic, QtGui
 from pkg_resources import resource_filename
 from .collector import Collector
 from .dialog_settings import DialogSettings
@@ -85,14 +86,14 @@ class WindowMain(QtWidgets.QMainWindow):
         self.subscriptions = {}
         self.curve_items = []
         self._paused = False
-        self.settings = Settings(self, self.collector)
+        #self.settings = Settings(self, self.collector)
         self.backup = IcePAPBackup(host, port, timeout)
 
         ## Switch to using white background and black foreground
         #pg.setConfigOption('background', '#D0D0D0')
         pg.setConfigOption('background', 'w')
         pg.setConfigOption('foreground', 'k')
-        self.fgcolor=QColor(0, 0, 0)
+        self.fgcolor=QtGui.QColor(0, 0, 0)
         
         # Set up the plot area.
         self.plot_widget = pg.PlotWidget()
@@ -160,23 +161,23 @@ class WindowMain(QtWidgets.QMainWindow):
                 QtWidgets.QMessageBox.critical(self, 'Bad Signal Syntax', msg)
                 return
         
-            auto_save = True if sig == siglist[-1] else False
-            self._add_signal(int(lst[0]), lst[1], int(lst[2]), auto_save)
+            #auto_save = True if sig == siglist[-1] else False
+            #self._add_signal(int(lst[0]), lst[1], int(lst[2]), auto_save)
 
         # encoder count to motor step conversion factor measurement
         self.ecpmt_just_enabled = False
         self.step_ini = 0
         self.enc_ini = 0
 
-        # Set up auto save of collected signal data.
-        self._save_ticker = QtCore.QTimer()
-        self._save_ticker.timeout.connect(self._auto_save)
-        self._save_time = None
-        self._idx = 0
-        self._settings_updated = False
-        self._file_path = None
-        self._old_use_append = self.settings.use_append
-        self._prepare_next_auto_save()
+        ## Set up auto save of collected signal data.
+        #self._save_ticker = QtCore.QTimer()
+        #self._save_ticker.timeout.connect(self._auto_save)
+        #self._save_time = None
+        #self._idx = 0
+        #self._settings_updated = False
+        #self._file_path = None
+        #self._old_use_append = self.settings.use_append
+        #self._prepare_next_auto_save()
 
     def _fill_combo_box_driver_ids(self, selected_driver):
         driver_ids = self.collector.get_available_drivers()
@@ -227,7 +228,7 @@ class WindowMain(QtWidgets.QMainWindow):
         self.ui.btnPause.clicked.connect(self._pause_x_axis)
         self.ui.btnNow.clicked.connect(self._goto_now)
         self.ui.actionBackup.triggered.connect(self._icepap_backup)
-        self.ui.btnSave.clicked.connect(self._save_to_file)
+        #self.ui.btnSave.clicked.connect(self._save_to_file)
         self.ui.actionSave_to_File.triggered.connect(self._save_to_file)
         self.ui.actionSettings.triggered.connect(self._display_settings_dlg)
         self.ui.actionExit.triggered.connect(self.close)
@@ -310,11 +311,11 @@ class WindowMain(QtWidgets.QMainWindow):
 
     def _getlinestyle(self):
         if self.ui.solidline_radio.isChecked():
-            return Qt.SolidLine
+            return QtCore.Qt.SolidLine
         elif self.ui.dottedline_radio.isChecked():
-            return Qt.DotLine
+            return QtCore.Qt.DotLine
         else:
-            return Qt.SolidLine
+            return QtCore.Qt.SolidLine
 
     def _ESYNC_button_clicked(self):
         addr = int(self.ui.cbDrivers.currentText())
@@ -363,11 +364,11 @@ class WindowMain(QtWidgets.QMainWindow):
         self.ui.lvActiveSig.item(index).setBackground(Qt.QColor(0, 0, 0))
         self._update_plot_axes_labels()
         self._update_button_status()
-        if auto_save:
-            self._auto_save(True)
+        #if auto_save:
+        #    self._auto_save(True)
 
     def _remove_selected_signal(self):
-        self._auto_save(True)
+        #self._auto_save(True)
         index = self.ui.lvActiveSig.currentRow()
         ci = self.curve_items[index]
         self.collector.unsubscribe(ci.subscription_id)
@@ -379,7 +380,7 @@ class WindowMain(QtWidgets.QMainWindow):
 
     def _remove_all_signals(self):
         """Removes all signals."""
-        self._auto_save(True)
+        #self._auto_save(True)
         for ci in self.curve_items:
             self.collector.unsubscribe(ci.subscription_id)
             self._remove_curve_plot(ci)
@@ -453,39 +454,39 @@ class WindowMain(QtWidgets.QMainWindow):
         self.view_boxes[ci.y_axis - 1].removeItem(ci.curve)
 
     def _DoWhiteBackground(self):
-        self.plot_widget.setBackground(QColor(255, 255, 255))
+        self.plot_widget.setBackground(QtGui.QColor(255, 255, 255))
         for i in range(3):
-            self.axes[i].setPen(QColor(0, 0, 0))
-        self._axisTime.setPen(QColor(0, 0, 0))
-        self.fgcolor=QColor(0, 0, 0)
+            self.axes[i].setPen(QtGui.QColor(0, 0, 0))
+        self._axisTime.setPen(QtGui.QColor(0, 0, 0))
+        self.fgcolor=QtGui.QColor(0, 0, 0)
         
     def _DoGreyBackground(self):
-        self.plot_widget.setBackground(QColor(230, 230, 230))
+        self.plot_widget.setBackground(QtGui.QColor(230, 230, 230))
         for i in range(3):
-            self.axes[i].setPen(QColor(0, 0, 0))
-        self._axisTime.setPen(QColor(0, 0, 0))
-        self.fgcolor=QColor(0, 0, 0)
+            self.axes[i].setPen(QtGui.QColor(0, 0, 0))
+        self._axisTime.setPen(QtGui.QColor(0, 0, 0))
+        self.fgcolor=QtGui.QColor(0, 0, 0)
 
     def _DoBlackBackground(self):
-        self.plot_widget.setBackground(QColor(0, 0, 0))
+        self.plot_widget.setBackground(QtGui.QColor(0, 0, 0))
         for i in range(3):
-            self.axes[i].setPen(QColor(255, 255, 255))
-        self._axisTime.setPen(QColor(255, 255, 255))
-        self.fgcolor=QColor(255, 255, 255)
+            self.axes[i].setPen(QtGui.QColor(255, 255, 255))
+        self._axisTime.setPen(QtGui.QColor(255, 255, 255))
+        self.fgcolor=QtGui.QColor(255, 255, 255)
 
     def _signals_closed_loop(self):
         """Display a specific set of curves."""
         self._remove_all_signals()
         drv_addr = int(self.ui.cbDrivers.currentText())
-        self._add_signal(drv_addr, 'PosAxis', 1, QColor(255, 0, 0), Qt.SolidLine, '')
-        self._add_signal(drv_addr, 'DifAxTgtenc', 2, QColor(0, 255, 0), Qt.SolidLine, '')
-        self._add_signal(drv_addr, 'DifAxMotor', 2, QColor(0, 127, 255), Qt.SolidLine, '')
-        self._add_signal(drv_addr, 'StatReady', 3, QColor(0, 255, 255), Qt.DotLine, '')
-        self._add_signal(drv_addr, 'StatMoving', 3, QColor(255, 192, 203), Qt.DotLine, '')
-        self._add_signal(drv_addr, 'StatSettling', 3, QColor(255, 255, 0), Qt.DotLine, '')
-        self._add_signal(drv_addr, 'StatOutofwin', 3, QColor(128, 0, 0), Qt.DotLine, '')
-        self._add_signal(drv_addr, 'StatWarning', 3, QColor(0, 128, 0), Qt.DotLine, '')
-        self._add_signal(drv_addr, 'StatStopcode', 3, QColor(255, 0, 0), Qt.DotLine, '')
+        self._add_signal(drv_addr, 'PosAxis', 1, QtGui.QColor(255, 0, 0), QtCore.Qt.SolidLine, '')
+        self._add_signal(drv_addr, 'DifAxTgtenc', 2, QtGui.QColor(0, 255, 0), QtCore.Qt.SolidLine, '')
+        self._add_signal(drv_addr, 'DifAxMotor', 2, QtGui.QColor(0, 127, 255), QtCore.Qt.SolidLine, '')
+        self._add_signal(drv_addr, 'StatReady', 3, QtGui.QColor(0, 255, 255), QtCore.Qt.DotLine, '')
+        self._add_signal(drv_addr, 'StatMoving', 3, QtGui.QColor(255, 192, 203), QtCore.Qt.DotLine, '')
+        self._add_signal(drv_addr, 'StatSettling', 3, QtGui.QColor(255, 255, 0), QtCore.Qt.DotLine, '')
+        self._add_signal(drv_addr, 'StatOutofwin', 3, QtGui.QColor(128, 0, 0), QtCore.Qt.DotLine, '')
+        self._add_signal(drv_addr, 'StatWarning', 3, QtGui.QColor(0, 128, 0), QtCore.Qt.DotLine, '')
+        self._add_signal(drv_addr, 'StatStopcode', 3, QtGui.QColor(255, 0, 0), QtCore.Qt.DotLine, '')
         self.view_boxes[0].enableAutoRange(axis=self.view_boxes[0].YAxis)
         self.view_boxes[1].disableAutoRange(axis=self.view_boxes[1].YAxis)
         self.view_boxes[1].setYRange(-30, 70, padding=0)
@@ -496,9 +497,9 @@ class WindowMain(QtWidgets.QMainWindow):
         """Display a specific set of curves."""
         self._remove_all_signals()
         drv_addr = int(self.ui.cbDrivers.currentText())
-        self._add_signal(drv_addr, 'PosAxis', 1, QColor(255, 0, 0), Qt.SolidLine, '')
-        self._add_signal(drv_addr, 'MeasI', 2, QColor(0, 255, 0), Qt.SolidLine, '')
-        self._add_signal(drv_addr, 'MeasVm', 3, QColor(0, 127, 255), Qt.SolidLine, '')
+        self._add_signal(drv_addr, 'PosAxis', 1, QtGui.QColor(255, 0, 0), QtCore.Qt.SolidLine, '')
+        self._add_signal(drv_addr, 'MeasI', 2, QtGui.QColor(0, 255, 0), QtCore.Qt.SolidLine, '')
+        self._add_signal(drv_addr, 'MeasVm', 3, QtGui.QColor(0, 127, 255), QtCore.Qt.SolidLine, '')
         # Ajust plot axis
         self.view_boxes[0].enableAutoRange(axis=self.view_boxes[0].YAxis)
         self.view_boxes[1].disableAutoRange(axis=self.view_boxes[1].YAxis)
@@ -509,12 +510,12 @@ class WindowMain(QtWidgets.QMainWindow):
         """Display a specific set of curves."""
         self._remove_all_signals()
         drv_addr = int(self.ui.cbDrivers.currentText())
-        self._add_signal(drv_addr, 'PosAxis', 1, QColor(255, 0, 0), Qt.SolidLine, '')
-        self._add_signal(drv_addr, 'EncTgtenc', 2, QColor(0, 255, 0), Qt.SolidLine, '')
+        self._add_signal(drv_addr, 'PosAxis', 1, QtGui.QColor(255, 0, 0), QtCore.Qt.SolidLine, '')
+        self._add_signal(drv_addr, 'EncTgtenc', 2, QtGui.QColor(0, 255, 0), QtCore.Qt.SolidLine, '')
 
     def _clear_all(self):
         """Clear all the displayed curves."""
-        self._auto_save()
+        #self._auto_save()
         for ci in self.curve_items:
             ci.clear()
 
@@ -721,13 +722,13 @@ class WindowMain(QtWidgets.QMainWindow):
 
     def settings_updated(self):
         """Settings have been changed."""
-        self._settings_updated = True
-        if self._file_path:
-            self._auto_save(True)
-        else:
-            self._prepare_next_auto_save()
-        self._old_use_append = self.settings.use_append
-        self._settings_updated = False
+        #self._settings_updated = True
+        #if self._file_path:
+        #    self._auto_save(True)
+        #else:
+        #    self._prepare_next_auto_save()
+        #self._old_use_append = self.settings.use_append
+        #self._settings_updated = False
         self._reset_x()
 
     def callback_collect(self, subscription_id, value_list):
@@ -756,13 +757,16 @@ class WindowMain(QtWidgets.QMainWindow):
                                          padding=0)
         self.ui.btnNow.setDisabled(now_in_range)
         
-        # retrieve POS and ENC affine corrections
-        self.collector.poscorr_a = float(self.ui.txt_poscorr_a.text())
-        #print "POS_a correction : " + str(self.collector.poscorr_a)
-        self.collector.poscorr_b = float(self.ui.txt_poscorr_b.text())
-        self.collector.enccorr_a = float(self.ui.txt_enccorr_a.text())
-        self.collector.enccorr_b = float(self.ui.txt_enccorr_b.text())
-
+        try:
+            # retrieve POS and ENC affine corrections
+            self.collector.poscorr_a = float(self.ui.txt_poscorr_a.text())
+            #print "POS_a correction : " + str(self.collector.poscorr_a)
+            self.collector.poscorr_b = float(self.ui.txt_poscorr_b.text())
+            self.collector.enccorr_a = float(self.ui.txt_enccorr_a.text())
+            self.collector.enccorr_b = float(self.ui.txt_enccorr_b.text())
+        except:
+            pass
+            
         # Update the curves.
         for ci in self.curve_items:
             ci.update_curve(x_min, x_max)
@@ -786,7 +790,7 @@ class WindowMain(QtWidgets.QMainWindow):
                 self.step_ini = step_now
                 self.enc_ini = enc_now
                 self.ecpmt_just_enabled = False
-                print self.step_ini, self.enc_ini
+                print(self.step_ini, self.enc_ini)
             #if self.ui.chkEctsTurn.isChecked():
             #print "upd"
             if (step_now - self.step_ini) != 0:
