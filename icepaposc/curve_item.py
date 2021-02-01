@@ -17,9 +17,9 @@
 # along with IcepapOCS. If not, see <http://www.gnu.org/licenses/>.
 # -----------------------------------------------------------------------------
 
-from PyQt4 import QtGui, QtCore
-from PyQt4.QtGui import QColor
-from PyQt4.QtCore import Qt
+#valerix from PyQt4.QtGui import QColor
+#valerix from PyQt4.QtCore import Qt
+from PyQt5 import QtCore, QtGui
 from collections import namedtuple
 from threading import RLock
 from pyqtgraph import PlotCurveItem, PlotDataItem
@@ -28,45 +28,73 @@ from pyqtgraph import PlotCurveItem, PlotDataItem
 class CurveItem:
     """Represents a curve to be plotted in a diagram."""
 
-    #SignalAppearance = namedtuple('SignalAppearance',
-    #                              ['pen_color', 'pen_width', 'pen_style'])
-    #
-    #colors = [
-    #    SignalAppearance(QColor(255, 255, 0), 1, Qt.SolidLine),
-    #    SignalAppearance(QColor(255, 0, 0), 1, Qt.SolidLine),
-    #    SignalAppearance(QColor(0, 255, 0), 1, Qt.SolidLine),
-    #    SignalAppearance(QColor(255, 255, 255), 1, Qt.SolidLine),
-    #    SignalAppearance(QColor(51, 153, 255), 1, Qt.SolidLine),
-    #    SignalAppearance(QColor(0, 255, 255), 1, Qt.SolidLine),
-    #    SignalAppearance(QColor(255, 0, 255), 1, Qt.SolidLine),
-    #    SignalAppearance(QColor(204, 153, 102), 1, Qt.SolidLine),
-    #    SignalAppearance(QColor(0, 0, 255), 1, Qt.SolidLine),
-    #    SignalAppearance(QColor(0, 255, 0), 1, Qt.SolidLine),
-    #    SignalAppearance(QColor(255, 204, 0), 1, Qt.SolidLine),
-    #    SignalAppearance(QColor(153, 255, 153), 2, Qt.DotLine),
-    #    SignalAppearance(QColor(255, 170, 0), 2, Qt.DashLine),
-    #    SignalAppearance(QColor(255, 0, 0), 2, Qt.DashLine),
-    #    SignalAppearance(QColor(0, 255, 255), 1, Qt.DotLine),
-    #    SignalAppearance(QColor(255, 170, 255), 1, Qt.DashLine),
-    #    SignalAppearance(QColor(127, 255, 127), 1, Qt.DashLine),
-    #    SignalAppearance(QColor(255, 255, 127), 1, Qt.DashLine),
-    #    SignalAppearance(QColor(255, 0, 0), 2, Qt.DotLine),
-    #    SignalAppearance(QColor(255, 0, 0), 1, Qt.DashLine),
-    #    SignalAppearance(QColor(0, 255, 0), 2, Qt.DotLine),
-    #    SignalAppearance(QColor(255, 255, 255), 2, Qt.SolidLine),
-    #    SignalAppearance(QColor(51, 153, 255), 1, Qt.DashLine),
-    #    SignalAppearance(QColor(255, 0, 255), 1, Qt.DashLine),
-    #    SignalAppearance(QColor(255, 153, 204), 1, Qt.DashLine),
-    #    SignalAppearance(QColor(204, 153, 102), 1, Qt.DashLine),
-    #    SignalAppearance(QColor(255, 204, 0), 1, Qt.DashLine),
-    #    SignalAppearance(QColor(255, 0, 255), 1, Qt.DashLine),
-    #    SignalAppearance(QColor(255, 153, 204), 1, Qt.DashLine),
-    #    SignalAppearance(QColor(204, 153, 102), 1, Qt.DashLine),
-    #    SignalAppearance(QColor(255, 204, 0), 1, Qt.DashLine),
-    #    SignalAppearance(QColor(255, 255, 0), 1, Qt.DashLine),
-    #    SignalAppearance(QColor(0, 255, 255), 1, Qt.DashLine),
-    #    SignalAppearance(QColor(255, 0, 255), 1, Qt.SolidLine)
-    #]
+#    SignalAppearance = namedtuple('SignalAppearance',
+#                                  ['pen_color', 'pen_width', 'pen_style'])
+#
+#    colors = [
+#        SignalAppearance(QtGui.QColor(255, 255, 0), 1,
+#                         QtCore.Qt.SolidLine),
+#        SignalAppearance(QtGui.QColor(255, 0, 0), 1,
+#                         QtCore.Qt.SolidLine),
+#        SignalAppearance(QtGui.QColor(0, 255, 0), 1,
+#                         QtCore.Qt.SolidLine),
+#        SignalAppearance(QtGui.QColor(255, 255, 255), 1,
+#                         QtCore.Qt.SolidLine),
+#        SignalAppearance(QtGui.QColor(51, 153, 255), 1,
+#                         QtCore.Qt.SolidLine),
+#        SignalAppearance(QtGui.QColor(0, 255, 255), 1,
+#                         QtCore.Qt.SolidLine),
+#        SignalAppearance(QtGui.QColor(255, 0, 255), 1,
+#                         QtCore.Qt.SolidLine),
+#        SignalAppearance(QtGui.QColor(204, 153, 102), 1,
+#                         QtCore.Qt.SolidLine),
+#        SignalAppearance(QtGui.QColor(0, 0, 255), 1,
+#                         QtCore.Qt.SolidLine),
+#        SignalAppearance(QtGui.QColor(0, 255, 0), 1,
+#                         QtCore.Qt.SolidLine),
+#        SignalAppearance(QtGui.QColor(255, 204, 0), 1,
+#                         QtCore.Qt.SolidLine),
+#        SignalAppearance(QtGui.QColor(153, 255, 153), 2,
+#                         QtCore.Qt.DotLine),
+#        SignalAppearance(QtGui.QColor(255, 170, 0), 2,
+#                         QtCore.Qt.DashLine),
+#        SignalAppearance(QtGui.QColor(255, 0, 0), 2,
+#                         QtCore.Qt.DashLine),
+#        SignalAppearance(QtGui.QColor(0, 255, 255), 1,
+#                         QtCore.Qt.DotLine),
+#        SignalAppearance(QtGui.QColor(255, 170, 255), 1,
+#                         QtCore.Qt.DashLine),
+#        SignalAppearance(QtGui.QColor(127, 255, 127), 1,
+#                         QtCore.Qt.DashLine),
+#        SignalAppearance(QtGui.QColor(255, 255, 127), 1,
+#                         QtCore.Qt.DashLine),
+#        SignalAppearance(QtGui.QColor(255, 0, 0), 2,
+#                         QtCore.Qt.DotLine),
+#        SignalAppearance(QtGui.QColor(255, 0, 0), 1,
+#                         QtCore.Qt.DashLine),
+#        SignalAppearance(QtGui.QColor(0, 255, 0), 2,
+#                         QtCore.Qt.DotLine),
+#        SignalAppearance(QtGui.QColor(255, 255, 255), 2,
+#                         QtCore.Qt.SolidLine),
+#        SignalAppearance(QtGui.QColor(51, 153, 255), 1,
+#                         QtCore.Qt.DashLine),
+#        SignalAppearance(QtGui.QColor(255, 0, 255), 1,
+#                         QtCore.Qt.DashLine),
+#        SignalAppearance(QtGui.QColor(255, 153, 204), 1,
+#                         QtCore.Qt.DashLine),
+#        SignalAppearance(QtGui.QColor(204, 153, 102), 1,
+#                         QtCore.Qt.DashLine),
+#        SignalAppearance(QtGui.QColor(255, 204, 0), 1,
+#                         QtCore.Qt.DashLine),
+#        SignalAppearance(QtGui.QColor(255, 0, 255), 1,
+#                         QtCore.Qt.DashLine),
+#        SignalAppearance(QtGui.QColor(255, 153, 204), 1,
+#                         QtCore.Qt.DashLine),
+#        SignalAppearance(QtGui.QColor(204, 153, 102), 1,
+#                         QtCore.Qt.DashLine),
+#        SignalAppearance(QtGui.QColor(255, 204, 0), 1,
+#                         QtCore.Qt.DashLine)
+#    ]
 
     def __init__(self, subscription_id, driver_addr, sig_name, y_axis,
                  linecolor, linestyle, linemarker):
@@ -125,8 +153,8 @@ class CurveItem:
     def update_curve(self, time_min, time_max):
         """Updates the curve with recent collected data."""
         with self.lock:
-            idx_min = self._get_time_index(time_min)
-            idx_max = self._get_time_index(time_max)
+            idx_min = self.get_time_index(time_min)
+            idx_max = self.get_time_index(time_max)
             self.curve.setData(x=self.array_time[idx_min:idx_max],
                                y=self.array_val[idx_min:idx_max])
 
@@ -176,14 +204,14 @@ class CurveItem:
         Return: Signal value corresponding to an adjacent sample in time.
         """
         with self.lock:
-            idx = self._get_time_index(time_val)
+            idx = self.get_time_index(time_val)
             return self.array_val[idx]
 
     def clear(self):
         self.array_time[:] = []
         self.array_val[:] = []
 
-    def _get_time_index(self, time_val):
+    def get_time_index(self, time_val):
         """
         Retrieve the sample index corresponding to the provided time value.
 
