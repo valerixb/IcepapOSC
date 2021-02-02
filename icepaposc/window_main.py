@@ -20,6 +20,7 @@
 #valerix from PyQt4 import QtGui, QtCore
 #valerix from PyQt4.QtCore import Qt
 #valerix from PyQt4.QtGui import QFileDialog, QColor
+from PyQt5.QtWidgets import QFileDialog
 #from .ui.ui_window_main import Ui_WindowMain
 #valerix from collector import Collector
 #valerix from dialog_settings import DialogSettings
@@ -46,6 +47,7 @@ from .settings import Settings
 from .axis_time import AxisTime
 from .curve_item import CurveItem
 
+# add ui subdirectory to PYTHONPATH
 import resources_rc
 
 class WindowMain(QtWidgets.QMainWindow):
@@ -71,7 +73,7 @@ class WindowMain(QtWidgets.QMainWindow):
         #self.ui = Ui_WindowMain()
         
         self.setAttribute(QtCore.Qt.WA_DeleteOnClose, True)
-        self.setWindowTitle('Oscilloscope  |  ' + host)
+        self.setWindowTitle('Oscilloscope py3qt5 |  ' + host)
         self.settings = Settings()
 
         try:
@@ -164,8 +166,8 @@ class WindowMain(QtWidgets.QMainWindow):
                 QtWidgets.QMessageBox.critical(self, 'Bad Signal Syntax', msg)
                 return
         
-            #auto_save = True if sig == siglist[-1] else False
-            #self._add_signal(int(lst[0]), lst[1], int(lst[2]), auto_save)
+            auto_save = True if sig == siglist[-1] else False
+            self._add_signal(int(lst[0]), lst[1], int(lst[2]), auto_save)
 
         # encoder count to motor step conversion factor measurement
         self.ecpmt_just_enabled = False
@@ -538,7 +540,7 @@ class WindowMain(QtWidgets.QMainWindow):
         if fname:
             self._remove_all_signals()
             drv_addr = int(self.ui.cbDrivers.currentText())
-            with open(fname,'r') as f:
+            with open(fname[0],'r') as f:
                 for l in f:
                     tokens=l.split()
                     if len(tokens)<4:
@@ -547,13 +549,13 @@ class WindowMain(QtWidgets.QMainWindow):
                         line_marker=tokens[4]
                     else:
                         line_marker=''
-                    self._add_signal(drv_addr, tokens[0],int(tokens[1]), QColor(tokens[2]),int(tokens[3]),line_marker)
+                    self._add_signal(drv_addr, tokens[0],int(tokens[1]), QtGui.QColor(tokens[2]),int(tokens[3]),line_marker)
                         
         
     def _export_signal_set(self):
         fname= QFileDialog.getSaveFileName(self,"Export Signal Set", "SignalSet.lst", filter="Signal Set Files Files (*.lst);;All Files (*)")
         if fname:
-            with open(fname,'w') as f:
+            with open(fname[0],'w') as f:
                 for ci in self.curve_items:
                     f.write( ci.signal_name + " " + str(ci.y_axis) + " " + str(ci.color.name()) + " " + str(ci.pen['style']) + " " + str(ci.symbol) + "\n" )
         
@@ -639,7 +641,8 @@ class WindowMain(QtWidgets.QMainWindow):
 
     def _icepap_backup(self):
         default_fname=os.path.expanduser("~/.icepapcms/{}_{}.ini".format(str(self.backup._host),datetime.datetime.today().strftime("%Y%m%d_%H%M%S")))
-        fname= str(QFileDialog.getSaveFileName(self,"Save Backup",default_fname,"Backup Files (*.ini);;All Files (*)"))
+        f = QFileDialog.getSaveFileName(self,"Save Backup",default_fname,"Backup Files (*.ini);;All Files (*)")
+        fname= str(f[0])
         if fname:
             self.backup.do_backup(fname)
 
