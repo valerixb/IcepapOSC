@@ -142,7 +142,8 @@ class CurveItem:
                                           pen=self.pen,
                                           symbol=self.symbol,
                                           symbolBrush=QtGui.QBrush(self.color),
-                                          symbolPen=QtGui.QPen(self.color))
+                                          #symbolPen=QtGui.QPen(self.color)
+                                          symbolPen=self.color)
             else:
                 self.curve = PlotDataItem(x=self.array_time,
                                           y=self.array_val,

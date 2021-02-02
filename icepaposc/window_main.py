@@ -166,8 +166,8 @@ class WindowMain(QtWidgets.QMainWindow):
                 QtWidgets.QMessageBox.critical(self, 'Bad Signal Syntax', msg)
                 return
         
-            auto_save = True if sig == siglist[-1] else False
-            self._add_signal(int(lst[0]), lst[1], int(lst[2]), auto_save)
+            #auto_save = True if sig == siglist[-1] else False
+            #self._add_signal(int(lst[0]), lst[1], int(lst[2]), auto_save)
 
         # encoder count to motor step conversion factor measurement
         self.ecpmt_just_enabled = False
@@ -308,7 +308,7 @@ class WindowMain(QtWidgets.QMainWindow):
     def _getlinemarker(self):
         the_btn=self.ui.marker_radio_group.checkedButton()
         if the_btn:
-            #print(the_btn.palette().color(QtGui.QPalette.WindowText).name())
+            #print(the_btn.text())
             return str(the_btn.text())
         else:
             #print("none selected")
@@ -598,8 +598,9 @@ class WindowMain(QtWidgets.QMainWindow):
         if not self.curve_items:
             return
         capt = "Save to csv file"
-        fn = QtWidgets.QFileDialog.getSaveFileName(caption=capt,
+        fa = QtWidgets.QFileDialog.getSaveFileName(caption=capt,
                                                    filter="*.csv")
+        fn=str(fa[0])
         if not fn:
             return
         if fn[-4:] != ".csv":
@@ -609,7 +610,6 @@ class WindowMain(QtWidgets.QMainWindow):
         except Exception as e:
             msg = 'Failed to open/create file: {}\n{}'.format(fn, e)
             print(msg)
-            #valerix QMessageBox.critical(None, 'File Open Failed', msg)
             QtWidgets.QMessageBox.critical(self, 'File Open Failed', msg)
             return
         self._create_csv_file(f)
