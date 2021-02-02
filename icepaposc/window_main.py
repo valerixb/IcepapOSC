@@ -20,7 +20,7 @@
 #valerix from PyQt4 import QtGui, QtCore
 #valerix from PyQt4.QtCore import Qt
 #valerix from PyQt4.QtGui import QFileDialog, QColor
-#valerix from ui.ui_window_main import Ui_WindowMain
+#from .ui.ui_window_main import Ui_WindowMain
 #valerix from collector import Collector
 #valerix from dialog_settings import DialogSettings
 #valerix from settings import Settings
@@ -46,6 +46,7 @@ from .settings import Settings
 from .axis_time import AxisTime
 from .curve_item import CurveItem
 
+import resources_rc
 
 class WindowMain(QtWidgets.QMainWindow):
     """A dialog for plotting IcePAP signals."""
@@ -63,10 +64,12 @@ class WindowMain(QtWidgets.QMainWindow):
         selected_driver - The driver to display in combobox at startup.
         """
         QtWidgets.QMainWindow.__init__(self, None)
+        
         ui_filename = resource_filename('icepaposc.ui', 'window_main.ui')
         self.ui = self
         uic.loadUi(ui_filename, baseinstance=self.ui)
-
+        #self.ui = Ui_WindowMain()
+        
         self.setAttribute(QtCore.Qt.WA_DeleteOnClose, True)
         self.setWindowTitle('Oscilloscope  |  ' + host)
         self.settings = Settings()

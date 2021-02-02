@@ -14,14 +14,15 @@
 #from PyQt5.QtGui import QColor
 #from PyQt4.QtCore import Qt
 #from PyQt4 import QtCore, QtGui
-from PyQt5 import QtCore, QtGui
+from PyQt5 import QtCore, QtGui, QtWidgets
 
 #from collections import namedtuple
 #from threading import RLock
 #from pyqtgraph import PlotCurveItem
 
 
-class Square_RadioBtn(QtGui.QRadioButton):
+#class Square_RadioBtn(QtGui.QRadioButton):
+class Square_RadioBtn(QtWidgets.QRadioButton):
     """Custom radio button for color chooser palette."""
 
     def paintEvent(self, event):
