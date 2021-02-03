@@ -1,5 +1,5 @@
 #from PyQt4 import QtGui
-from PyQt5 import QtGui
+from PyQt5 import QtGui, QtWidgets
 from .ui.ui_dialogstatusinfo import Ui_DialogStatusInfo
 #from lib_icepapcms import IcepapController
 #from pyIcePAP import EthIcePAPController
@@ -20,7 +20,8 @@ class DialogStatusInfo(QtGui.QDialog):
         self.icepapAddress = icepapsys[addr].addr
         self.ui.setupUi(self)
         #self.setWindowTitle('Status Info  |  ' + drv.icepapsystem_name + '  |  ' + str(self.icepapAddress) + ' ' + drv.name)
-        self.setWindowTitle('Status Info  |  ' + self.driver._ctrl._host + '  |  ' + str(self.icepapAddress) + ' ' + self.driver.name)
+        #self.setWindowTitle('Status Info  |  ' + self.driver._ctrl._host + '  |  ' + str(self.icepapAddress) + ' ' + self.driver.name)
+        self.setWindowTitle('Status Info  |  ' + self.driver._ctrl._comm.host + '  |  ' + str(self.icepapAddress) + ' ' + self.driver.name)
         self.show()
         self.connectSignals()
         self.doVstatus()
@@ -54,7 +55,7 @@ class DialogStatusInfo(QtGui.QDialog):
         self.ui.txt1Command.returnPressed.connect(self.sendCommand)
         #self.ui.txt1Command.returnPressed.connect(lambda: self.sendCommand())
         #self.ui.txt1Command.returnPressed()
-        QtCore.QObject.connect(self.ui.txt1Command,QtCore.SIGNAL("editingFinished()"),self.sendCommand)
+        #QtCore.QObject.connect(self.ui.txt1Command,QtCore.SIGNAL("editingFinished()"),self.sendCommand)
         self.ui.cbAllDrivers.activated.connect(self.sendCommandToDrivers)
         #QtCore.QObject.connect(self.ui.txt1Command,QtCore.SIGNAL("returnPressed()"),self.sendCommand)
         #self.ui.btnCommand.clicked.connect(self.sendCommand)
