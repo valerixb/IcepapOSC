@@ -168,21 +168,21 @@ class WindowMain(QtWidgets.QMainWindow):
         
             #auto_save = True if sig == siglist[-1] else False
             #self._add_signal(int(lst[0]), lst[1], int(lst[2]), auto_save)
-
+        
         # encoder count to motor step conversion factor measurement
         self.ecpmt_just_enabled = False
         self.step_ini = 0
         self.enc_ini = 0
 
         ## Set up auto save of collected signal data.
-        #self._save_ticker = QtCore.QTimer()
-        #self._save_ticker.timeout.connect(self._auto_save)
-        #self._save_time = None
-        #self._idx = 0
-        #self._settings_updated = False
-        #self._file_path = None
-        #self._old_use_append = self.settings.use_append
-        #self._prepare_next_auto_save()
+        self._save_ticker = QtCore.QTimer()
+        self._save_ticker.timeout.connect(self._auto_save)
+        self._save_time = None
+        self._idx = 0
+        self._settings_updated = False
+        self._file_path = None
+        self._old_use_append = self.settings.use_append
+        self._prepare_next_auto_save()
 
     def _fill_combo_box_driver_ids(self, selected_driver):
         driver_ids = self.collector.get_available_drivers()
@@ -331,7 +331,7 @@ class WindowMain(QtWidgets.QMainWindow):
             raise Exception(msg)
         print("esynced")
         
-    def _add_signal(self, driver_addr, signal_name, y_axis, linecolor, linestyle, linemarker):
+    def _add_signal(self, driver_addr, signal_name, y_axis, linecolor, linestyle, linemarker, auto_save=False):
         """
         Adds a new curve to the plot area.
 
@@ -369,11 +369,11 @@ class WindowMain(QtWidgets.QMainWindow):
         self.ui.lvActiveSig.item(index).setBackground(Qt.QColor(0, 0, 0))
         self._update_plot_axes_labels()
         self._update_button_status()
-        #if auto_save:
-        #    self._auto_save(True)
+        if auto_save:
+            self._auto_save(True)
 
     def _remove_selected_signal(self):
-        #self._auto_save(True)
+        self._auto_save(True)
         index = self.ui.lvActiveSig.currentRow()
         ci = self.curve_items[index]
         self.collector.unsubscribe(ci.subscription_id)
@@ -385,7 +385,7 @@ class WindowMain(QtWidgets.QMainWindow):
 
     def _remove_all_signals(self):
         """Removes all signals."""
-        #self._auto_save(True)
+        self._auto_save(True)
         for ci in self.curve_items:
             self.collector.unsubscribe(ci.subscription_id)
             self._remove_curve_plot(ci)
@@ -520,7 +520,7 @@ class WindowMain(QtWidgets.QMainWindow):
 
     def _clear_all(self):
         """Clear all the displayed curves."""
-        #self._auto_save()
+        self._auto_save()
         for ci in self.curve_items:
             ci.clear()
 
@@ -728,13 +728,13 @@ class WindowMain(QtWidgets.QMainWindow):
 
     def settings_updated(self):
         """Settings have been changed."""
-        #self._settings_updated = True
-        #if self._file_path:
-        #    self._auto_save(True)
-        #else:
-        #    self._prepare_next_auto_save()
-        #self._old_use_append = self.settings.use_append
-        #self._settings_updated = False
+        self._settings_updated = True
+        if self._file_path:
+            self._auto_save(True)
+        else:
+            self._prepare_next_auto_save()
+        self._old_use_append = self.settings.use_append
+        self._settings_updated = False
         self._reset_x()
 
     def callback_collect(self, subscription_id, value_list):
