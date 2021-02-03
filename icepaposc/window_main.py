@@ -17,29 +17,17 @@
 # along with IcepapOCS. If not, see <http://www.gnu.org/licenses/>.
 # -----------------------------------------------------------------------------
 
-#valerix from PyQt4 import QtGui, QtCore
-#valerix from PyQt4.QtCore import Qt
-#valerix from PyQt4.QtGui import QFileDialog, QColor
-from PyQt5.QtWidgets import QFileDialog
-#from .ui.ui_window_main import Ui_WindowMain
-#valerix from collector import Collector
-#valerix from dialog_settings import DialogSettings
-#valerix from settings import Settings
-#valerix from axis_time import AxisTime
-#valerix from curve_item import CurveItem
-
 import pyqtgraph as pg
 import numpy as np
 import collections
 import time
 import datetime
 from .dialogstatusinfo import DialogStatusInfo
-#from pyIcePAP.backups import IcePAPBackup
 from icepap.backups import IcePAPBackup
 import os
 
-
 from PyQt5 import QtWidgets, Qt, QtCore, uic, QtGui
+from PyQt5.QtWidgets import QFileDialog
 from pkg_resources import resource_filename
 from .collector import Collector
 from .dialog_settings import DialogSettings
@@ -622,7 +610,6 @@ class WindowMain(QtWidgets.QMainWindow):
             my_dict[header] = ci.array_time
             header = "val-{}-{}".format(ci.driver_addr, ci.signal_name)
             my_dict[header] = ci.array_val
-        #valerix key_longest = my_dict.keys()[0]
         key_longest = list(my_dict.keys())[0]
         for key in my_dict:
             if my_dict[key][0] < my_dict[key_longest][0]:

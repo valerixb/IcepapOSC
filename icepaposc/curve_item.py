@@ -17,8 +17,6 @@
 # along with IcepapOCS. If not, see <http://www.gnu.org/licenses/>.
 # -----------------------------------------------------------------------------
 
-#valerix from PyQt4.QtGui import QColor
-#valerix from PyQt4.QtCore import Qt
 from PyQt5 import QtCore, QtGui
 from collections import namedtuple
 from threading import RLock
