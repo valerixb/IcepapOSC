@@ -58,7 +58,6 @@ class WindowMain(QtWidgets.QMainWindow):
         ui_filename = resource_filename('icepaposc.ui', 'window_main.ui')
         self.ui = self
         uic.loadUi(ui_filename, baseinstance=self.ui)
-        #self.ui = Ui_WindowMain()
         
         self.setAttribute(QtCore.Qt.WA_DeleteOnClose, True)
         self.setWindowTitle('Oscilloscope py3qt5 |  ' + host)
@@ -79,7 +78,6 @@ class WindowMain(QtWidgets.QMainWindow):
         self.subscriptions = {}
         self.curve_items = []
         self._paused = False
-        #self.settings = Settings(self, self.collector)
         self.backup = IcePAPBackup(host, port, timeout)
 
         ## Switch to using white background and black foreground
