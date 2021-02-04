@@ -3,7 +3,7 @@ from setuptools import find_packages
 
 # The version is updated automatically with bumpversion
 # Do not update manually
-version = '0.6.1'
+__version = '0.6.1'
 
 # windows installer:
 # python setup.py bdist_wininst
