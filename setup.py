@@ -44,7 +44,7 @@ setup(
         ],
     },
     install_requires=[
-        "PyQt5",
+        "qt5",
         "icepap",
         'pyqtgraph',
         'numpy',
