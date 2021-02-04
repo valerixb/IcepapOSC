@@ -87,11 +87,11 @@ class Collector:
         self.channel_id = 0
         self.current_channel = 0
         # affine corrections for POS and ENC signals (to show them in different units)
-        self.poscorr_a=1
-        self.poscorr_b=0
-        self.enccorr_a=1
-        self.enccorr_b=0
-        #self.sig_list = self.sig_getters.keys()
+        self.poscorr_a = 1
+        self.poscorr_b = 0
+        self.enccorr_a = 1
+        self.enccorr_b = 0
+        # self.sig_list = self.sig_getters.keys()
         self.sig_list = list(self.sig_getters.keys())
 
         try:
@@ -259,7 +259,7 @@ class Collector:
 
     def _getter_pos_measure(self, addr):
         x = self.icepap_system.get_fpos(self.icepap_system[addr].addr,
-                                           'MEASURE')[0]
+                                        'MEASURE')[0]
         x = x * self.poscorr_a + self.poscorr_b
         return x
 
@@ -353,7 +353,7 @@ class Collector:
         x = self.icepap_system[addr].velocity_current
         x = x * self.poscorr_a
         return x
-        
+
     def _getter_vel_motor(self, addr):
         x = self.icepap_system[addr].get_velocity(vtype='MOTOR')
         x = x * self.poscorr_a

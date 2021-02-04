@@ -35,8 +35,8 @@ from .settings import Settings
 from .axis_time import AxisTime
 from .curve_item import CurveItem
 
-# add ui subdirectory to PYTHONPATH
-import resources_rc
+from .ui import resources_rc
+
 
 class WindowMain(QtWidgets.QMainWindow):
     """A dialog for plotting IcePAP signals."""
@@ -54,11 +54,11 @@ class WindowMain(QtWidgets.QMainWindow):
         selected_driver - The driver to display in combobox at startup.
         """
         QtWidgets.QMainWindow.__init__(self, None)
-        
+
         ui_filename = resource_filename('icepaposc.ui', 'window_main.ui')
         self.ui = self
         uic.loadUi(ui_filename, baseinstance=self.ui)
-        
+
         self.setAttribute(QtCore.Qt.WA_DeleteOnClose, True)
         self.setWindowTitle('Oscilloscope py3qt5 |  ' + host)
         self.settings = Settings()
@@ -80,12 +80,12 @@ class WindowMain(QtWidgets.QMainWindow):
         self._paused = False
         self.backup = IcePAPBackup(host, port, timeout)
 
-        ## Switch to using white background and black foreground
-        #pg.setConfigOption('background', '#D0D0D0')
+        # Switch to using white background and black foreground
+        # pg.setConfigOption('background', '#D0D0D0')
         pg.setConfigOption('background', 'w')
         pg.setConfigOption('foreground', 'k')
-        self.fgcolor=QtGui.QColor(0, 0, 0)
-        
+        self.fgcolor = QtGui.QColor(0, 0, 0)
+
         # Set up the plot area.
         self.plot_widget = pg.PlotWidget()
         self._plot_item = self.plot_widget.getPlotItem()
@@ -128,9 +128,9 @@ class WindowMain(QtWidgets.QMainWindow):
         # Initialize comboboxes and buttons.
         self._fill_combo_box_driver_ids(selected_driver)
         self._fill_combo_box_signals()
-        #self._select_axis_1()
+        # self._select_axis_1()
         self._update_button_status()
-        #self._change_axis_ctrl()
+        # self._change_axis_ctrl()
         self.ui.red_radio.setChecked(True)
         self.ui.solidline_radio.setChecked(True)
         self.ui.nomarker_radio.setChecked(True)
@@ -151,16 +151,16 @@ class WindowMain(QtWidgets.QMainWindow):
                 print(msg)
                 QtWidgets.QMessageBox.critical(self, 'Bad Signal Syntax', msg)
                 return
-        
-            #auto_save = True if sig == siglist[-1] else False
-            #self._add_signal(int(lst[0]), lst[1], int(lst[2]), auto_save)
-        
+
+            # auto_save = True if sig == siglist[-1] else False
+            # self._add_signal(int(lst[0]), lst[1], int(lst[2]), auto_save)
+
         # encoder count to motor step conversion factor measurement
         self.ecpmt_just_enabled = False
         self.step_ini = 0
         self.enc_ini = 0
 
-        ## Set up auto save of collected signal data.
+        # Set up auto save of collected signal data.
         self._save_ticker = QtCore.QTimer()
         self._save_ticker.timeout.connect(self._auto_save)
         self._save_time = None
@@ -174,22 +174,24 @@ class WindowMain(QtWidgets.QMainWindow):
         driver_ids = self.collector.get_available_drivers()
         for driver_id in driver_ids:
             self.ui.cbDrivers.addItem(str(driver_id))
-        start_index = 0
         if selected_driver is not None:
             start_index = self.ui.cbDrivers.findText(str(selected_driver))
+        # maybe the selected_driver is not available; then just take the first one
+        if start_index == -1:
+            start_index = 0
         self.ui.cbDrivers.setCurrentIndex(start_index)
 
     def _fill_combo_box_signals(self):
         signals = self.collector.get_available_signals()
-        #num_colors = len(CurveItem.colors)
-        #if num_colors < len(signals):
+        # num_colors = len(CurveItem.colors)
+        # if num_colors < len(signals):
         #    msg = 'Internal error!\nNew signals added.\nAdd ' \
         #          'more colors and pens.'
         #    print(msg)
         #    QtGui.QMessageBox.warning(None, 'Available Signals', msg)
         #    for i in range(num_colors):
         #        self.ui.cbSignals.addItem(signals[i])
-        #else:
+        # else:
         #    for sig in signals:
         #        self.ui.cbSignals.addItem(sig)
         for sig in signals:
@@ -198,9 +200,9 @@ class WindowMain(QtWidgets.QMainWindow):
         self.ui.cbSignals.setCurrentIndex(0)
 
     def _connect_signals(self):
-        #self.ui.rbAxis1.clicked.connect(self._select_axis_1)
-        #self.ui.rbAxis2.clicked.connect(self._select_axis_2)
-        #self.ui.rbAxis3.clicked.connect(self._select_axis_3)
+        # self.ui.rbAxis1.clicked.connect(self._select_axis_1)
+        # self.ui.rbAxis2.clicked.connect(self._select_axis_2)
+        # self.ui.rbAxis3.clicked.connect(self._select_axis_3)
         self.ui.sbAxis.valueChanged.connect(self._select_axis)
         self.ui.btnAdd.clicked.connect(self._add_button_clicked)
         self.ui.btnESYNC.clicked.connect(self._ESYNC_button_clicked)
@@ -208,8 +210,8 @@ class WindowMain(QtWidgets.QMainWindow):
         self.ui.btnRemoveSel.clicked.connect(self._remove_selected_signal)
         self.ui.btnRemoveAll.clicked.connect(self._remove_all_signals)
         self.ui.btnCLoop.clicked.connect(self._signals_closed_loop)
-        #self.ui.btnExportSet.clicked.connect(self._export_signal_set)
-        #self.ui.btnImportSet.clicked.connect(self._import_signal_set)
+        # self.ui.btnExportSet.clicked.connect(self._export_signal_set)
+        # self.ui.btnImportSet.clicked.connect(self._import_signal_set)
         self.ui.btnCurrents.clicked.connect(self._signals_currents)
         self.ui.btnTarget.clicked.connect(self._signals_target)
         self.ui.btnClear.clicked.connect(self._clear_all)
@@ -219,7 +221,7 @@ class WindowMain(QtWidgets.QMainWindow):
         self.ui.btnPause.clicked.connect(self._pause_x_axis)
         self.ui.btnNow.clicked.connect(self._goto_now)
         self.ui.actionBackup.triggered.connect(self._icepap_backup)
-        #self.ui.btnSave.clicked.connect(self._save_to_file)
+        # self.ui.btnSave.clicked.connect(self._save_to_file)
         self.ui.actionSave_to_File.triggered.connect(self._save_to_file)
         self.ui.actionSettings.triggered.connect(self._display_settings_dlg)
         self.ui.actionExit.triggered.connect(self.close)
@@ -229,9 +231,10 @@ class WindowMain(QtWidgets.QMainWindow):
         self.ui.actionCurrents.triggered.connect(self._signals_currents)
         self.ui.actionTarget.triggered.connect(self._signals_target)
         self.view_boxes[0].sigResized.connect(self._update_views)
-        self.ui.chkEctsTurn.stateChanged.connect(self.enableEctsPerTurnCalculation)
+        self.ui.chkEctsTurn.stateChanged.connect(
+            self.enableEctsPerTurnCalculation)
         self.ui.btnSTATUS.clicked.connect(self.addDialogStatus)
-        #self.ui.cbAxisCtrlSelect.currentIndexChanged.connect(self._change_axis_ctrl)
+        # self.ui.cbAxisCtrlSelect.currentIndexChanged.connect(self._change_axis_ctrl)
         self.ui.btnAxisScaleAuto.clicked.connect(self._setAxisAutoscale)
         self.ui.btnAxisOffsIncrease.clicked.connect(self._AxisOffsPP)
         self.ui.btnAxisOffsDecrease.clicked.connect(self._AxisOffsMM)
@@ -277,27 +280,28 @@ class WindowMain(QtWidgets.QMainWindow):
         addr = int(self.ui.cbDrivers.currentText())
         my_signal_name = str(self.ui.cbSignals.currentText())
         my_axis = self.ui.sbAxis.value()
-        my_linecolor=self._getlinecolor()
-        my_linestyle=self._getlinestyle()
-        my_linemarker=self._getlinemarker()
-        self._add_signal(addr, my_signal_name, my_axis, my_linecolor, my_linestyle, my_linemarker)
+        my_linecolor = self._getlinecolor()
+        my_linestyle = self._getlinestyle()
+        my_linemarker = self._getlinemarker()
+        self._add_signal(addr, my_signal_name, my_axis,
+                         my_linecolor, my_linestyle, my_linemarker)
 
     def _getlinecolor(self):
-        the_btn=self.ui.color_radio_group.checkedButton()
+        the_btn = self.ui.color_radio_group.checkedButton()
         if the_btn:
-            #print(the_btn.palette().color(QtGui.QPalette.WindowText).name())
+            # print(the_btn.palette().color(QtGui.QPalette.WindowText).name())
             return the_btn.palette().color(QtGui.QPalette.WindowText)
         else:
-            #print("none selected")
-            return QColor(0, 0, 0)
-    
+            # print("none selected")
+            return QtGui.QColor(0, 0, 0)
+
     def _getlinemarker(self):
-        the_btn=self.ui.marker_radio_group.checkedButton()
+        the_btn = self.ui.marker_radio_group.checkedButton()
         if the_btn:
-            #print(the_btn.text())
+            # print(the_btn.text())
             return str(the_btn.text())
         else:
-            #print("none selected")
+            # print("none selected")
             return ''
 
     def _getlinestyle(self):
@@ -313,10 +317,10 @@ class WindowMain(QtWidgets.QMainWindow):
         try:
             self.collector.icepap_system[addr].esync()
         except Exception as e:
-            msg = 'ESYNC problem'
+            msg = 'ESYNC problem.\n{}'.format(e)
             raise Exception(msg)
         print("esynced")
-        
+
     def _add_signal(self, driver_addr, signal_name, y_axis, linecolor, linestyle, linemarker, auto_save=False):
         """
         Adds a new curve to the plot area.
@@ -334,9 +338,9 @@ class WindowMain(QtWidgets.QMainWindow):
             print(msg)
             QtWidgets.QMessageBox.critical(self, 'Add Curve', msg)
             return
-        #try:
+        # try:
         #    color_idx = self.collector.get_signal_index(signal_name)
-        #except ValueError as e:
+        # except ValueError as e:
         #    msg = 'Internal error. Failed to retrieve index ' \
         #          'for signal {}.\n{}'.format(signal_name, e)
         #    print(msg)
@@ -431,7 +435,8 @@ class WindowMain(QtWidgets.QMainWindow):
                     txtnow += "{}{}</span>".format(tmp, ci.get_y(time_value))
                     txtmin += "{}{}</span>".format(tmp, ci.val_min)
             tmp = "|<span style='font-size: {}pt; color: {};'>{}</span>"
-            txtnow += tmp.format(text_size, str(self.fgcolor.name()), pretty_time)
+            txtnow += tmp.format(text_size,
+                                 str(self.fgcolor.name()), pretty_time)
             title = "<br>{}<br>{}<br>{}".format(txtmax, txtnow, txtmin)
             self.plot_widget.setTitle(title)
             self.vertical_line.setPos(mouse_point.x())
@@ -449,35 +454,44 @@ class WindowMain(QtWidgets.QMainWindow):
         for i in range(3):
             self.axes[i].setPen(QtGui.QColor(0, 0, 0))
         self._axisTime.setPen(QtGui.QColor(0, 0, 0))
-        self.fgcolor=QtGui.QColor(0, 0, 0)
-        
+        self.fgcolor = QtGui.QColor(0, 0, 0)
+
     def _DoGreyBackground(self):
         self.plot_widget.setBackground(QtGui.QColor(230, 230, 230))
         for i in range(3):
             self.axes[i].setPen(QtGui.QColor(0, 0, 0))
         self._axisTime.setPen(QtGui.QColor(0, 0, 0))
-        self.fgcolor=QtGui.QColor(0, 0, 0)
+        self.fgcolor = QtGui.QColor(0, 0, 0)
 
     def _DoBlackBackground(self):
         self.plot_widget.setBackground(QtGui.QColor(0, 0, 0))
         for i in range(3):
             self.axes[i].setPen(QtGui.QColor(255, 255, 255))
         self._axisTime.setPen(QtGui.QColor(255, 255, 255))
-        self.fgcolor=QtGui.QColor(255, 255, 255)
+        self.fgcolor = QtGui.QColor(255, 255, 255)
 
     def _signals_closed_loop(self):
         """Display a specific set of curves."""
         self._remove_all_signals()
         drv_addr = int(self.ui.cbDrivers.currentText())
-        self._add_signal(drv_addr, 'PosAxis', 1, QtGui.QColor(255, 0, 0), QtCore.Qt.SolidLine, '')
-        self._add_signal(drv_addr, 'DifAxTgtenc', 2, QtGui.QColor(0, 255, 0), QtCore.Qt.SolidLine, '')
-        self._add_signal(drv_addr, 'DifAxMotor', 2, QtGui.QColor(0, 127, 255), QtCore.Qt.SolidLine, '')
-        self._add_signal(drv_addr, 'StatReady', 3, QtGui.QColor(0, 255, 255), QtCore.Qt.DotLine, '')
-        self._add_signal(drv_addr, 'StatMoving', 3, QtGui.QColor(255, 192, 203), QtCore.Qt.DotLine, '')
-        self._add_signal(drv_addr, 'StatSettling', 3, QtGui.QColor(255, 255, 0), QtCore.Qt.DotLine, '')
-        self._add_signal(drv_addr, 'StatOutofwin', 3, QtGui.QColor(128, 0, 0), QtCore.Qt.DotLine, '')
-        self._add_signal(drv_addr, 'StatWarning', 3, QtGui.QColor(0, 128, 0), QtCore.Qt.DotLine, '')
-        self._add_signal(drv_addr, 'StatStopcode', 3, QtGui.QColor(255, 0, 0), QtCore.Qt.DotLine, '')
+        self._add_signal(drv_addr, 'PosAxis', 1, QtGui.QColor(
+            255, 0, 0), QtCore.Qt.SolidLine, '')
+        self._add_signal(drv_addr, 'DifAxTgtenc', 2, QtGui.QColor(
+            0, 255, 0), QtCore.Qt.SolidLine, '')
+        self._add_signal(drv_addr, 'DifAxMotor', 2, QtGui.QColor(
+            0, 127, 255), QtCore.Qt.SolidLine, '')
+        self._add_signal(drv_addr, 'StatReady', 3, QtGui.QColor(
+            0, 255, 255), QtCore.Qt.DotLine, '')
+        self._add_signal(drv_addr, 'StatMoving', 3, QtGui.QColor(
+            255, 192, 203), QtCore.Qt.DotLine, '')
+        self._add_signal(drv_addr, 'StatSettling', 3, QtGui.QColor(
+            255, 255, 0), QtCore.Qt.DotLine, '')
+        self._add_signal(drv_addr, 'StatOutofwin', 3,
+                         QtGui.QColor(128, 0, 0), QtCore.Qt.DotLine, '')
+        self._add_signal(drv_addr, 'StatWarning', 3,
+                         QtGui.QColor(0, 128, 0), QtCore.Qt.DotLine, '')
+        self._add_signal(drv_addr, 'StatStopcode', 3,
+                         QtGui.QColor(255, 0, 0), QtCore.Qt.DotLine, '')
         self.view_boxes[0].enableAutoRange(axis=self.view_boxes[0].YAxis)
         self.view_boxes[1].disableAutoRange(axis=self.view_boxes[1].YAxis)
         self.view_boxes[1].setYRange(-30, 70, padding=0)
@@ -488,9 +502,12 @@ class WindowMain(QtWidgets.QMainWindow):
         """Display a specific set of curves."""
         self._remove_all_signals()
         drv_addr = int(self.ui.cbDrivers.currentText())
-        self._add_signal(drv_addr, 'PosAxis', 1, QtGui.QColor(255, 0, 0), QtCore.Qt.SolidLine, '')
-        self._add_signal(drv_addr, 'MeasI', 2, QtGui.QColor(0, 255, 0), QtCore.Qt.SolidLine, '')
-        self._add_signal(drv_addr, 'MeasVm', 3, QtGui.QColor(0, 127, 255), QtCore.Qt.SolidLine, '')
+        self._add_signal(drv_addr, 'PosAxis', 1, QtGui.QColor(
+            255, 0, 0), QtCore.Qt.SolidLine, '')
+        self._add_signal(drv_addr, 'MeasI', 2, QtGui.QColor(
+            0, 255, 0), QtCore.Qt.SolidLine, '')
+        self._add_signal(drv_addr, 'MeasVm', 3, QtGui.QColor(
+            0, 127, 255), QtCore.Qt.SolidLine, '')
         # Ajust plot axis
         self.view_boxes[0].enableAutoRange(axis=self.view_boxes[0].YAxis)
         self.view_boxes[1].disableAutoRange(axis=self.view_boxes[1].YAxis)
@@ -501,8 +518,10 @@ class WindowMain(QtWidgets.QMainWindow):
         """Display a specific set of curves."""
         self._remove_all_signals()
         drv_addr = int(self.ui.cbDrivers.currentText())
-        self._add_signal(drv_addr, 'PosAxis', 1, QtGui.QColor(255, 0, 0), QtCore.Qt.SolidLine, '')
-        self._add_signal(drv_addr, 'EncTgtenc', 2, QtGui.QColor(0, 255, 0), QtCore.Qt.SolidLine, '')
+        self._add_signal(drv_addr, 'PosAxis', 1, QtGui.QColor(
+            255, 0, 0), QtCore.Qt.SolidLine, '')
+        self._add_signal(drv_addr, 'EncTgtenc', 2, QtGui.QColor(
+            0, 255, 0), QtCore.Qt.SolidLine, '')
 
     def _clear_all(self):
         """Clear all the displayed curves."""
@@ -517,34 +536,37 @@ class WindowMain(QtWidgets.QMainWindow):
             t = ci.start_time()
             if 0 < t < time_start:
                 time_start = t
-        self.view_boxes[0].setXRange(time_start, 
-                                     self.collector.get_current_time(), 
+        self.view_boxes[0].setXRange(time_start,
+                                     self.collector.get_current_time(),
                                      padding=0)
 
     def _import_signal_set(self):
-        fname= QFileDialog.getOpenFileName(self,"Import Signal Set", filter="Signal Set Files Files (*.lst);;All Files (*)")
+        fname = QFileDialog.getOpenFileName(
+            self, "Import Signal Set", filter="Signal Set Files Files (*.lst);;All Files (*)")
         if fname:
             self._remove_all_signals()
             drv_addr = int(self.ui.cbDrivers.currentText())
-            with open(fname[0],'r') as f:
-                for l in f:
-                    tokens=l.split()
-                    if len(tokens)<4:
+            with open(fname[0], 'r') as f:
+                for ll in f:
+                    tokens = ll.split()
+                    if len(tokens) < 4:
                         continue
-                    elif len(tokens)>4:
-                        line_marker=tokens[4]
+                    elif len(tokens) > 4:
+                        line_marker = tokens[4]
                     else:
-                        line_marker=''
-                    self._add_signal(drv_addr, tokens[0],int(tokens[1]), QtGui.QColor(tokens[2]),int(tokens[3]),line_marker)
-                        
-        
+                        line_marker = ''
+                    self._add_signal(drv_addr, tokens[0], int(tokens[1]), QtGui.QColor(
+                        tokens[2]), int(tokens[3]), line_marker)
+
     def _export_signal_set(self):
-        fname= QFileDialog.getSaveFileName(self,"Export Signal Set", "SignalSet.lst", filter="Signal Set Files Files (*.lst);;All Files (*)")
+        fname = QFileDialog.getSaveFileName(
+            self, "Export Signal Set", "SignalSet.lst", filter="Signal Set Files Files (*.lst);;All Files (*)")
         if fname:
-            with open(fname[0],'w') as f:
+            with open(fname[0], 'w') as f:
                 for ci in self.curve_items:
-                    f.write( ci.signal_name + " " + str(ci.y_axis) + " " + str(ci.color.name()) + " " + str(ci.pen['style']) + " " + str(ci.symbol) + "\n" )
-        
+                    f.write(ci.signal_name + " " + str(ci.y_axis) + " "
+                            + str(ci.color.name()) + " " + str(ci.pen['style']) + " " + str(ci.symbol) + "\n")
+
     def _reset_x(self):
         """
         Reset the length of the X axis to
@@ -586,7 +608,7 @@ class WindowMain(QtWidgets.QMainWindow):
         capt = "Save to csv file"
         fa = QtWidgets.QFileDialog.getSaveFileName(caption=capt,
                                                    filter="*.csv")
-        fn=str(fa[0])
+        fn = str(fa[0])
         if not fn:
             return
         if fn[-4:] != ".csv":
@@ -625,9 +647,11 @@ class WindowMain(QtWidgets.QMainWindow):
             csv_file.write(line + '\n')
 
     def _icepap_backup(self):
-        default_fname=os.path.expanduser("~/.icepapcms/{}_{}.ini".format(str(self.backup._host),datetime.datetime.today().strftime("%Y%m%d_%H%M%S")))
-        f = QFileDialog.getSaveFileName(self,"Save Backup",default_fname,"Backup Files (*.ini);;All Files (*)")
-        fname= str(f[0])
+        default_fname = os.path.expanduser("~/.icepapcms/{}_{}.ini".format(
+            str(self.backup._host), datetime.datetime.today().strftime("%Y%m%d_%H%M%S")))
+        f = QFileDialog.getSaveFileName(
+            self, "Save Backup", default_fname, "Backup Files (*.ini);;All Files (*)")
+        fname = str(f[0])
         if fname:
             self.backup.do_backup(fname)
 
@@ -747,28 +771,30 @@ class WindowMain(QtWidgets.QMainWindow):
                                          self.now,
                                          padding=0)
         self.ui.btnNow.setDisabled(now_in_range)
-        
+
         try:
             # retrieve POS and ENC affine corrections
             self.collector.poscorr_a = float(self.ui.txt_poscorr_a.text())
-            #print "POS_a correction : " + str(self.collector.poscorr_a)
+            # print "POS_a correction : " + str(self.collector.poscorr_a)
             self.collector.poscorr_b = float(self.ui.txt_poscorr_b.text())
             self.collector.enccorr_a = float(self.ui.txt_enccorr_a.text())
             self.collector.enccorr_b = float(self.ui.txt_enccorr_b.text())
-        except:
+        except ValueError:
             pass
-            
+
         # Update the curves.
         for ci in self.curve_items:
             ci.update_curve(x_min, x_max)
 
-        # Update encoder count to motor step conversion factor measurement        
+        # Update encoder count to motor step conversion factor measurement
         if self.ui.chkEctsTurn.isChecked():
-            addr=self.collector.channels[self.collector.current_channel].icepap_address
+            addr = self.collector.channels[self.collector.current_channel].icepap_address
             step_now = self.collector.icepap_system[addr].get_pos("AXIS")
-            cfgANSTEP = int(self.collector.icepap_system[addr].get_cfg("ANSTEP")["ANSTEP"])
-            cfgANTURN = int(self.collector.icepap_system[addr].get_cfg("ANTURN")["ANTURN"])
-            #print cfgANSTEP, cfgANTURN
+            cfgANSTEP = int(
+                self.collector.icepap_system[addr].get_cfg("ANSTEP")["ANSTEP"])
+            cfgANTURN = int(
+                self.collector.icepap_system[addr].get_cfg("ANTURN")["ANTURN"])
+            # print cfgANSTEP, cfgANTURN
             enc_sel = str(self.ui.cb_enc_sel.currentText())
             try:
                 enc_now = self.collector.icepap_system[addr].get_enc(enc_sel)
@@ -777,21 +803,20 @@ class WindowMain(QtWidgets.QMainWindow):
                 print(msg)
                 return
             if self.ecpmt_just_enabled:
-                #print "first"
+                # print "first"
                 self.step_ini = step_now
                 self.enc_ini = enc_now
                 self.ecpmt_just_enabled = False
                 print(self.step_ini, self.enc_ini)
-            #if self.ui.chkEctsTurn.isChecked():
-            #print "upd"
+            # if self.ui.chkEctsTurn.isChecked():
+            # print "upd"
             if (step_now - self.step_ini) != 0:
                 enc_cts_per_motor_turn = (enc_now - self.enc_ini) * 1.0 * cfgANSTEP \
                                          / ((step_now - self.step_ini) * cfgANTURN)
             else:
                 enc_cts_per_motor_turn = 0
-            #print enc_cts_per_motor_turn
+            # print enc_cts_per_motor_turn
             self.ui.txtEctsTurn.setText(str(enc_cts_per_motor_turn))
-
 
     def enableEctsPerTurnCalculation(self):
         if self.ui.chkEctsTurn.isChecked():
@@ -799,9 +824,9 @@ class WindowMain(QtWidgets.QMainWindow):
 
     def addDialogStatus(self):
         addr = int(self.ui.cbDrivers.currentText())
-        DialogStatusInfo(self, self.collector.icepap_system,addr)
+        DialogStatusInfo(self, self.collector.icepap_system, addr)
 
-    #def _change_axis_ctrl(self):
+    # def _change_axis_ctrl(self):
     #    axis = self.ui.cbAxisCtrlSelect.currentIndex()
     #    if axis<3:
     #        # Yn axis
@@ -813,9 +838,10 @@ class WindowMain(QtWidgets.QMainWindow):
 
     def _setAxisAutoscale(self):
         axis = self.ui.cbAxisCtrlSelect.currentIndex()
-        if axis<3:
+        if axis < 3:
             # Yn axis
-            self.view_boxes[axis].enableAutoRange(axis=self.view_boxes[axis].YAxis)
+            self.view_boxes[axis].enableAutoRange(
+                axis=self.view_boxes[axis].YAxis)
         else:
             # X axis
             self._reset_x()
@@ -832,26 +858,26 @@ class WindowMain(QtWidgets.QMainWindow):
     def _AxisScaleMM(self):
         self._ChgAxisScale(1.25)
 
-    def _ChgAxisOffs(self,offsfact):
+    def _ChgAxisOffs(self, offsfact):
         axis, amin, amax = self._getAxisRange()
         c = (amin+amax)/2
         d = (amax-amin)/2
         c += d*2*offsfact
-        if axis<3:
+        if axis < 3:
             # Yn axis
-            #self.view_boxes[axis].disableAutoRange(axis=self.view_boxes[axis].YAxis)
+            # self.view_boxes[axis].disableAutoRange(axis=self.view_boxes[axis].YAxis)
             self.view_boxes[axis].setYRange(c-d, c+d, padding=0)
         else:
             # X axis
             self.view_boxes[0].setXRange(c-d, c+d, padding=0)
 
-    def _ChgAxisScale(self,scalefact):
+    def _ChgAxisScale(self, scalefact):
         axis, amin, amax = self._getAxisRange()
         c = (amin+amax)/2
         d = (amax-amin)/2*scalefact
-        if axis<3:
+        if axis < 3:
             # Yn axis
-            #self.view_boxes[axis].disableAutoRange(axis=self.view_boxes[axis].YAxis)
+            # self.view_boxes[axis].disableAutoRange(axis=self.view_boxes[axis].YAxis)
             self.view_boxes[axis].setYRange(c-d, c+d, padding=0)
         else:
             # X axis
@@ -859,11 +885,10 @@ class WindowMain(QtWidgets.QMainWindow):
 
     def _getAxisRange(self):
         axis = self.ui.cbAxisCtrlSelect.currentIndex()
-        if axis<3:
+        if axis < 3:
             # Yn axis
-            [amin, amax]=self.view_boxes[axis].viewRange()[1]
+            [amin, amax] = self.view_boxes[axis].viewRange()[1]
         else:
             # X axis
-            [amin, amax]=self.view_boxes[0].viewRange()[0]
+            [amin, amax] = self.view_boxes[0].viewRange()[0]
         return axis, amin, amax
-

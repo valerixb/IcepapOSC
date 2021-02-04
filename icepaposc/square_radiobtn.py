@@ -6,48 +6,39 @@
 # Custom radio button for color chooser palette
 #
 # latest rev by valerix
-# july 1 2020
+# feb 4 2021
 #
 # -----------------------------------------------------------------------------
 
-#from PyQt4.QtGui import QColor
-#from PyQt5.QtGui import QColor
-#from PyQt4.QtCore import Qt
-#from PyQt4 import QtCore, QtGui
 from PyQt5 import QtCore, QtGui, QtWidgets
 
-#from collections import namedtuple
-#from threading import RLock
-#from pyqtgraph import PlotCurveItem
 
-
-#class Square_RadioBtn(QtGui.QRadioButton):
 class Square_RadioBtn(QtWidgets.QRadioButton):
     """Custom radio button for color chooser palette."""
 
     def paintEvent(self, event):
         # draw the widget as paintEvent normally does
-        #super(Square_RadioBtn, self).paintEvent(event)
+        # super(Square_RadioBtn, self).paintEvent(event)
 
         # create a new painter on the widget
         qp = QtGui.QPainter(self)
         # create a styleoption and init it with the button
         opt = QtGui.QStyleOptionButton()
         self.initStyleOption(opt)
-        
+
         # if there is an icon, draw it, otherwise draw a filled rect
         if not self.icon().isNull():
             # we have an icon: draw it
-            self.icon().paint(qp,self.rect())
+            self.icon().paint(qp, self.rect())
         else:
             # no icon: just fill a rect with the right color
             # retrieve color from stylesheet "color" attribute
-            thecolor=self.palette().color(QtGui.QPalette.WindowText)
-            #print(thecolor.name())
+            thecolor = self.palette().color(QtGui.QPalette.WindowText)
+            # print(thecolor.name())
             qp.fillRect(self.rect(), thecolor)
 
         # now we can know if the widget is hovered and/or checked
-        blackpen=QtGui.QPen()
+        blackpen = QtGui.QPen()
         blackpen.setWidth(4)
         blackpen.setColor(QtCore.Qt.black)
         qp.setPen(blackpen)
@@ -56,12 +47,8 @@ class Square_RadioBtn(QtWidgets.QRadioButton):
         if opt.state & (QtGui.QStyle.State_MouseOver | QtGui.QStyle.State_On):
             # ON state
             qp.drawRect(self.rect())
-            #print("ON")
+            # print("ON")
         else:
             # OFF state
-            #print("OFF")
+            # print("OFF")
             pass
-
-            
-
-

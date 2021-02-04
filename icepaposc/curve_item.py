@@ -111,12 +111,12 @@ class CurveItem:
         self.array_val = []
         self.val_min = 0
         self.val_max = 0
-        #col_item = self.colors[color_idx]
+        # col_item = self.colors[color_idx]
         self.color = linecolor
         self.pen = {'color': linecolor,
                     'width': 1,
                     'style': linestyle}
-        self.symbol=linemarker
+        self.symbol = linemarker
         self.curve = None
         self.lock = RLock()
         self.signature = ''
@@ -131,7 +131,7 @@ class CurveItem:
     def create_curve(self):
         """Creates a new plot item."""
         with self.lock:
-            #self.curve = PlotCurveItem(x=self.array_time,
+            # self.curve = PlotCurveItem(x=self.array_time,
             #                           y=self.array_val,
             #                           pen=self.pen)
             if self.symbol != '':
@@ -140,13 +140,13 @@ class CurveItem:
                                           pen=self.pen,
                                           symbol=self.symbol,
                                           symbolBrush=QtGui.QBrush(self.color),
-                                          #symbolPen=QtGui.QPen(self.color)
+                                          # symbolPen=QtGui.QPen(self.color)
                                           symbolPen=self.color)
             else:
                 self.curve = PlotDataItem(x=self.array_time,
                                           y=self.array_val,
                                           pen=self.pen)
-                                              
+
         return self.curve
 
     def update_curve(self, time_min, time_max):
