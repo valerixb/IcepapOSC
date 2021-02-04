@@ -39,6 +39,7 @@ from .ui.ui_window_main import Ui_WindowMain
 
 from .ui import resources_rc
 
+
 class WindowMain(QtWidgets.QMainWindow):
     """A dialog for plotting IcePAP signals."""
 
@@ -56,7 +57,7 @@ class WindowMain(QtWidgets.QMainWindow):
         """
         QtWidgets.QMainWindow.__init__(self, None)
 
-        ui_filename = resource_filename('icepaposc.ui', 'window_main.ui')
+        # ui_filename = resource_filename('icepaposc.ui', 'window_main.ui')
         # self.ui = self
         # uic.loadUi(ui_filename, baseinstance=self.ui)
         self.ui = Ui_WindowMain()
