@@ -1,13 +1,13 @@
 <RCC>
   <qresource prefix="icons">
-    <file>blackbg.png</file>
-    <file>greybg.png</file>
-    <file>whitebg.png</file>
-    <file>solidline.png</file>
-    <file>dottedline.png</file>
-    <file>dot.png</file>
-    <file>circle.png</file>
-    <file>square.png</file>
-    <file>cross.png</file>
+    <file>icons/blackbg.png</file>
+    <file>icons/circle.png</file>
+    <file>icons/cross.png</file>
+    <file>icons/dot.png</file>
+    <file>icons/dottedline.png</file>
+    <file>icons/greybg.png</file>
+    <file>icons/solidline.png</file>
+    <file>icons/square.png</file>
+    <file>icons/whitebg.png</file>
   </qresource>
 </RCC>

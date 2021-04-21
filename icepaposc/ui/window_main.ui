@@ -449,7 +449,7 @@
                </property>
                <property name="icon">
                 <iconset resource="resources.qrc">
-                 <normaloff>:/icons/solidline.png</normaloff>:/icons/solidline.png</iconset>
+                 <normaloff>:/icons/icons/solidline.png</normaloff>:/icons/icons/solidline.png</iconset>
                </property>
                <attribute name="buttonGroup">
                 <string notr="true">linestyle_radio_group</string>
@@ -472,7 +472,7 @@
                </property>
                <property name="icon">
                 <iconset resource="resources.qrc">
-                 <normaloff>:/icons/dottedline.png</normaloff>:/icons/dottedline.png</iconset>
+                 <normaloff>:/icons/icons/dottedline.png</normaloff>:/icons/icons/dottedline.png</iconset>
                </property>
                <attribute name="buttonGroup">
                 <string notr="true">linestyle_radio_group</string>
@@ -495,7 +495,7 @@
                </property>
                <property name="icon">
                 <iconset resource="resources.qrc">
-                 <normaloff>:/icons/dot.png</normaloff>:/icons/dot.png</iconset>
+                 <normaloff>:/icons/icons/dot.png</normaloff>:/icons/icons/dot.png</iconset>
                </property>
                <attribute name="buttonGroup">
                 <string notr="true">marker_radio_group</string>
@@ -518,7 +518,7 @@
                </property>
                <property name="icon">
                 <iconset resource="resources.qrc">
-                 <normaloff>:/icons/circle.png</normaloff>:/icons/circle.png</iconset>
+                 <normaloff>:/icons/icons/circle.png</normaloff>:/icons/icons/circle.png</iconset>
                </property>
                <attribute name="buttonGroup">
                 <string notr="true">marker_radio_group</string>
@@ -541,7 +541,7 @@
                </property>
                <property name="icon">
                 <iconset resource="resources.qrc">
-                 <normaloff>:/icons/square.png</normaloff>:/icons/square.png</iconset>
+                 <normaloff>:/icons/icons/square.png</normaloff>:/icons/icons/square.png</iconset>
                </property>
                <attribute name="buttonGroup">
                 <string notr="true">marker_radio_group</string>
@@ -564,7 +564,7 @@
                </property>
                <property name="icon">
                 <iconset resource="resources.qrc">
-                 <normaloff>:/icons/cross.png</normaloff>:/icons/cross.png</iconset>
+                 <normaloff>:/icons/icons/cross.png</normaloff>:/icons/icons/cross.png</iconset>
                </property>
                <attribute name="buttonGroup">
                 <string notr="true">marker_radio_group</string>
@@ -1538,7 +1538,7 @@
           </property>
           <property name="icon">
            <iconset resource="resources.qrc">
-            <normaloff>:/icons/whitebg.png</normaloff>:/icons/whitebg.png</iconset>
+            <normaloff>:/icons/icons/whitebg.png</normaloff>:/icons/icons/whitebg.png</iconset>
           </property>
           <property name="iconSize">
            <size>
@@ -1567,7 +1567,7 @@
           </property>
           <property name="icon">
            <iconset resource="resources.qrc">
-            <normaloff>:/icons/greybg.png</normaloff>:/icons/greybg.png</iconset>
+            <normaloff>:/icons/icons/greybg.png</normaloff>:/icons/icons/greybg.png</iconset>
           </property>
           <property name="iconSize">
            <size>
@@ -1596,7 +1596,7 @@
           </property>
           <property name="icon">
            <iconset resource="resources.qrc">
-            <normaloff>:/icons/blackbg.png</normaloff>:/icons/blackbg.png</iconset>
+            <normaloff>:/icons/icons/blackbg.png</normaloff>:/icons/icons/blackbg.png</iconset>
           </property>
           <property name="iconSize">
            <size>
@@ -1964,8 +1964,8 @@
  </resources>
  <connections/>
  <buttongroups>
-  <buttongroup name="color_radio_group"/>
   <buttongroup name="marker_radio_group"/>
   <buttongroup name="linestyle_radio_group"/>
+  <buttongroup name="color_radio_group"/>
  </buttongroups>
 </ui>
