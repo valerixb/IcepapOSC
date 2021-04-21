@@ -17,3 +17,4 @@
 # along with IcepapOCS. If not, see <http://www.gnu.org/licenses/>.
 # -----------------------------------------------------------------------------
 
+from .resources_rc import *
