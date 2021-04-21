@@ -23,7 +23,6 @@ import collections
 import time
 import datetime
 from .dialogstatusinfo import DialogStatusInfo
-from icepap.backups import IcePAPBackup
 import os
 
 from PyQt5 import QtWidgets, Qt, QtCore, uic, QtGui
@@ -82,7 +81,6 @@ class WindowMain(QtWidgets.QMainWindow):
         self.subscriptions = {}
         self.curve_items = []
         self._paused = False
-        self.backup = IcePAPBackup(host, port, timeout)
 
         # Switch to using white background and black foreground
         # pg.setConfigOption('background', '#D0D0D0')
@@ -224,7 +222,6 @@ class WindowMain(QtWidgets.QMainWindow):
         self.ui.btnResetY.clicked.connect(self._enable_auto_range_y)
         self.ui.btnPause.clicked.connect(self._pause_x_axis)
         self.ui.btnNow.clicked.connect(self._goto_now)
-        self.ui.actionBackup.triggered.connect(self._icepap_backup)
         # self.ui.btnSave.clicked.connect(self._save_to_file)
         self.ui.actionSave_to_File.triggered.connect(self._save_to_file)
         self.ui.actionSettings.triggered.connect(self._display_settings_dlg)
@@ -649,15 +646,6 @@ class WindowMain(QtWidgets.QMainWindow):
             for key in my_dict:
                 line += ",{}".format(my_dict[key][idx])
             csv_file.write(line + '\n')
-
-    def _icepap_backup(self):
-        default_fname = os.path.expanduser("~/.icepapcms/{}_{}.ini".format(
-            str(self.backup._host), datetime.datetime.today().strftime("%Y%m%d_%H%M%S")))
-        f = QFileDialog.getSaveFileName(
-            self, "Save Backup", default_fname, "Backup Files (*.ini);;All Files (*)")
-        fname = str(f[0])
-        if fname:
-            self.backup.do_backup(fname)
 
     def _auto_save(self, use_new_file=False):
         if not self.curve_items or not self._file_path:

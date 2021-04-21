@@ -1880,7 +1880,6 @@
      <string>File</string>
     </property>
     <addaction name="actionSave_to_File"/>
-    <addaction name="actionBackup"/>
     <addaction name="actionSettings"/>
     <addaction name="actionExit"/>
    </widget>
@@ -1952,11 +1951,6 @@
     <string>Ctrl+S</string>
    </property>
   </action>
-  <action name="actionBackup">
-   <property name="text">
-    <string>Backup</string>
-   </property>
-  </action>
  </widget>
  <customwidgets>
   <customwidget>
@@ -1971,7 +1965,7 @@
  <connections/>
  <buttongroups>
   <buttongroup name="color_radio_group"/>
-  <buttongroup name="linestyle_radio_group"/>
   <buttongroup name="marker_radio_group"/>
+  <buttongroup name="linestyle_radio_group"/>
  </buttongroups>
 </ui>
