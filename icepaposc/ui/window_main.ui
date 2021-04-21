@@ -14,8 +14,11 @@
    <string>Dummy Window Title</string>
   </property>
   <property name="windowIcon">
-   <iconset>
-    <normaloff>../../../../../../../../../../.designer/backup/IcepapCfg Icons/gnome-monitor.png</normaloff>../../../../../../../../../../.designer/backup/IcepapCfg Icons/gnome-monitor.png</iconset>
+   <iconset resource="resources.qrc">
+    <normaloff>:/icons/icons/oscilloscope.png</normaloff>:/icons/icons/oscilloscope.png</iconset>
+  </property>
+  <property name="windowOpacity">
+   <double>-6.000000000000000</double>
   </property>
   <property name="styleSheet">
    <string notr="true">font: 9pt;</string>

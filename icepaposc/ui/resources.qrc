@@ -1,6 +1,7 @@
 <RCC>
   <qresource prefix="icons">
     <file>icons/blackbg.png</file>
+    <file>icons/oscilloscope.png</file>
     <file>icons/circle.png</file>
     <file>icons/cross.png</file>
     <file>icons/dot.png</file>
