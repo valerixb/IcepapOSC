@@ -1956,7 +1956,7 @@
   <customwidget>
    <class>Square_RadioBtn</class>
    <extends>QRadioButton</extends>
-   <header>square_radiobtn</header>
+   <header>.square_radiobtn</header>
   </customwidget>
  </customwidgets>
  <resources>
