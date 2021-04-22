@@ -1,6 +1,4 @@
-from PyQt5 import QtGui, uic, QtWidgets
-from icepap import IcePAPController
-from PyQt5 import QtCore, Qt
+from PyQt5 import QtGui, uic
 import re
 from pkg_resources import resource_filename
 
@@ -37,54 +35,34 @@ class DialogStatusInfo(QtGui.QDialog):
             'MCPU2',
             'DRIVER']
         self.version_reg_exp = re.compile(
-            # "(%s)\s*:\s*(\d+\.\d+)" %
             "(%s)\\s*:\\s*(\\d+\\.\\d+)" %
             "|".join(self.version_keys),
             re.VERBOSE)
 
     def connectSignals(self):
         self.ui.btnUpdate.clicked.connect(self.doVstatus)
-        # self.ui.btnEsync.clicked.connect(self.doEsync)
         self.ui.btnUpdate.setDefault(False)
-        # self.ui.btnEsync.setDefault(False)
         self.ui.btnUpdate.setAutoDefault(False)
-        # self.ui.btnEsync.setAutoDefault(False)
         self.ui.txt1Command.returnPressed.connect(self.sendCommand)
-        # self.ui.txt1Command.returnPressed.connect(lambda: self.sendCommand())
-        # self.ui.txt1Command.returnPressed()
-        # QtCore.QObject.connect(self.ui.txt1Command,QtCore.SIGNAL("editingFinished()"),self.sendCommand)
         self.ui.cbAllDrivers.activated.connect(self.sendCommandToDrivers)
-        # QtCore.QObject.connect(self.ui.txt1Command,QtCore.SIGNAL("returnPressed()"),self.sendCommand)
-        # self.ui.btnCommand.clicked.connect(self.sendCommand)
 
     def doVstatus(self):
         val = ""
         try:
-            # val = self.driver.getVStatus(self.icepapAddress)
             val = self.driver.vstatus
         except Exception as e:
             print(e)
         self.ui.textBrowser.setText(val)
-
-    # def doEsync(self):
-    #    try:
-    #        self.driver.syncEncoders(self.icepapAddress)
-    #    except Exception, e:
-    #        print(e)
 
     def sendCommand(self):
         val = ""
         comm = ""
         try:
 
-            # val = self.ui.txt1Command.text()
             comm = "" + str(self.ui.txt1Command.text())
             print(comm)
-            # val = self.driver.getVStatus(self.icepapAddress)
             val = self.driver.vstatus
-            # val = self.driver.sendWriteReadCommand(comm)
             val = self.driver.send_cmd(comm)
-            # val = IcepapController().iPaps[self.icepap_driver.icepapsystem_name].
             val = ' '.join(val)
             val = comm.upper() + " " + val
             print(val)
@@ -120,7 +98,6 @@ class DialogStatusInfo(QtGui.QDialog):
             # for driver in self.driver.getDriversAlive():
             for driver in self.icepapsys.find_axes(only_alive=True):
                 try:
-                    # val = self.icepapsys[driver].ver
                     val = self.getVersionInfoDict(driver)
                     txt = txt + '%s ' % driver + str(val) + '\n'
                     self.ui.textBrowser.setText(txt)
@@ -141,9 +118,7 @@ class DialogStatusInfo(QtGui.QDialog):
             for driver in self.icepapsys.find_axes(only_alive=True):
                 try:
                     comm = ('%s:%s') % (driver, '?vstatus')
-                    # val = self.driver.sendWriteReadCommand(comm)
                     val_lines = self.icepapsys.send_cmd(comm)
-                    # val_lines = val.split('\n')
                     for ll in val_lines:
                         if sel_split[1] in ll:
                             txt = txt + '%s ' % driver + ll + '\n'
