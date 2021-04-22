@@ -23,7 +23,7 @@ import collections
 import time
 import datetime
 from .dialogstatusinfo import DialogStatusInfo
-import os
+
 
 from PyQt5 import QtWidgets, Qt, QtCore, uic, QtGui
 from PyQt5.QtWidgets import QFileDialog
@@ -79,7 +79,6 @@ class WindowMain(QtWidgets.QMainWindow):
         self._paused = False
 
         # Switch to using white background and black foreground
-        # pg.setConfigOption('background', '#D0D0D0')
         pg.setConfigOption('background', 'w')
         pg.setConfigOption('foreground', 'k')
         self.fgcolor = QtGui.QColor(0, 0, 0)
@@ -126,9 +125,7 @@ class WindowMain(QtWidgets.QMainWindow):
         # Initialize comboboxes and buttons.
         self._fill_combo_box_driver_ids(selected_driver)
         self._fill_combo_box_signals()
-        # self._select_axis_1()
         self._update_button_status()
-        # self._change_axis_ctrl()
         self.ui.red_radio.setChecked(True)
         self.ui.solidline_radio.setChecked(True)
         self.ui.nomarker_radio.setChecked(True)
@@ -149,9 +146,6 @@ class WindowMain(QtWidgets.QMainWindow):
                 print(msg)
                 QtWidgets.QMessageBox.critical(self, 'Bad Signal Syntax', msg)
                 return
-
-            # auto_save = True if sig == siglist[-1] else False
-            # self._add_signal(int(lst[0]), lst[1], int(lst[2]), auto_save)
 
         # encoder count to motor step conversion factor measurement
         self.ecpmt_just_enabled = False
@@ -181,26 +175,12 @@ class WindowMain(QtWidgets.QMainWindow):
 
     def _fill_combo_box_signals(self):
         signals = self.collector.get_available_signals()
-        # num_colors = len(CurveItem.colors)
-        # if num_colors < len(signals):
-        #    msg = 'Internal error!\nNew signals added.\nAdd ' \
-        #          'more colors and pens.'
-        #    print(msg)
-        #    QtGui.QMessageBox.warning(None, 'Available Signals', msg)
-        #    for i in range(num_colors):
-        #        self.ui.cbSignals.addItem(signals[i])
-        # else:
-        #    for sig in signals:
-        #        self.ui.cbSignals.addItem(sig)
         for sig in signals:
             self.ui.cbSignals.addItem(sig)
 
         self.ui.cbSignals.setCurrentIndex(0)
 
     def _connect_signals(self):
-        # self.ui.rbAxis1.clicked.connect(self._select_axis_1)
-        # self.ui.rbAxis2.clicked.connect(self._select_axis_2)
-        # self.ui.rbAxis3.clicked.connect(self._select_axis_3)
         self.ui.sbAxis.valueChanged.connect(self._select_axis)
         self.ui.btnAdd.clicked.connect(self._add_button_clicked)
         self.ui.btnESYNC.clicked.connect(self._ESYNC_button_clicked)
@@ -208,8 +188,6 @@ class WindowMain(QtWidgets.QMainWindow):
         self.ui.btnRemoveSel.clicked.connect(self._remove_selected_signal)
         self.ui.btnRemoveAll.clicked.connect(self._remove_all_signals)
         self.ui.btnCLoop.clicked.connect(self._signals_closed_loop)
-        # self.ui.btnExportSet.clicked.connect(self._export_signal_set)
-        # self.ui.btnImportSet.clicked.connect(self._import_signal_set)
         self.ui.btnCurrents.clicked.connect(self._signals_currents)
         self.ui.btnTarget.clicked.connect(self._signals_target)
         self.ui.btnClear.clicked.connect(self._clear_all)
@@ -218,7 +196,6 @@ class WindowMain(QtWidgets.QMainWindow):
         self.ui.btnResetY.clicked.connect(self._enable_auto_range_y)
         self.ui.btnPause.clicked.connect(self._pause_x_axis)
         self.ui.btnNow.clicked.connect(self._goto_now)
-        # self.ui.btnSave.clicked.connect(self._save_to_file)
         self.ui.actionSave_to_File.triggered.connect(self._save_to_file)
         self.ui.actionSettings.triggered.connect(self._display_settings_dlg)
         self.ui.actionExit.triggered.connect(self.close)
@@ -231,7 +208,6 @@ class WindowMain(QtWidgets.QMainWindow):
         self.ui.chkEctsTurn.stateChanged.connect(
             self.enableEctsPerTurnCalculation)
         self.ui.btnSTATUS.clicked.connect(self.addDialogStatus)
-        # self.ui.cbAxisCtrlSelect.currentIndexChanged.connect(self._change_axis_ctrl)
         self.ui.btnAxisScaleAuto.clicked.connect(self._setAxisAutoscale)
         self.ui.btnAxisOffsIncrease.clicked.connect(self._AxisOffsPP)
         self.ui.btnAxisOffsDecrease.clicked.connect(self._AxisOffsMM)
@@ -286,19 +262,15 @@ class WindowMain(QtWidgets.QMainWindow):
     def _getlinecolor(self):
         the_btn = self.ui.color_radio_group.checkedButton()
         if the_btn:
-            # print(the_btn.palette().color(QtGui.QPalette.WindowText).name())
             return the_btn.palette().color(QtGui.QPalette.WindowText)
         else:
-            # print("none selected")
             return QtGui.QColor(0, 0, 0)
 
     def _getlinemarker(self):
         the_btn = self.ui.marker_radio_group.checkedButton()
         if the_btn:
-            # print(the_btn.text())
             return str(the_btn.text())
         else:
-            # print("none selected")
             return ''
 
     def _getlinestyle(self):
@@ -335,15 +307,6 @@ class WindowMain(QtWidgets.QMainWindow):
             print(msg)
             QtWidgets.QMessageBox.critical(self, 'Add Curve', msg)
             return
-        # try:
-        #    color_idx = self.collector.get_signal_index(signal_name)
-        # except ValueError as e:
-        #    msg = 'Internal error. Failed to retrieve index ' \
-        #          'for signal {}.\n{}'.format(signal_name, e)
-        #    print(msg)
-        #    #QtGui.QMessageBox.critical(None, 'Add Curve', msg)
-        #    QtWidgets.QMessageBox.critical(self, 'Add Curve', msg)
-        #    return
         ci = CurveItem(subscription_id, driver_addr, signal_name,
                        y_axis, linecolor, linestyle, linemarker)
         self._add_curve(ci)
@@ -763,7 +726,6 @@ class WindowMain(QtWidgets.QMainWindow):
         try:
             # retrieve POS and ENC affine corrections
             self.collector.poscorr_a = float(self.ui.txt_poscorr_a.text())
-            # print "POS_a correction : " + str(self.collector.poscorr_a)
             self.collector.poscorr_b = float(self.ui.txt_poscorr_b.text())
             self.collector.enccorr_a = float(self.ui.txt_enccorr_a.text())
             self.collector.enccorr_b = float(self.ui.txt_enccorr_b.text())
@@ -782,7 +744,6 @@ class WindowMain(QtWidgets.QMainWindow):
                 self.collector.icepap_system[addr].get_cfg("ANSTEP")["ANSTEP"])
             cfgANTURN = int(
                 self.collector.icepap_system[addr].get_cfg("ANTURN")["ANTURN"])
-            # print cfgANSTEP, cfgANTURN
             enc_sel = str(self.ui.cb_enc_sel.currentText())
             try:
                 enc_now = self.collector.icepap_system[addr].get_enc(enc_sel)
@@ -791,19 +752,15 @@ class WindowMain(QtWidgets.QMainWindow):
                 print(msg)
                 return
             if self.ecpmt_just_enabled:
-                # print "first"
                 self.step_ini = step_now
                 self.enc_ini = enc_now
                 self.ecpmt_just_enabled = False
                 print(self.step_ini, self.enc_ini)
-            # if self.ui.chkEctsTurn.isChecked():
-            # print "upd"
             if (step_now - self.step_ini) != 0:
                 enc_cts_per_motor_turn = (enc_now - self.enc_ini) * 1.0 * cfgANSTEP \
                                          / ((step_now - self.step_ini) * cfgANTURN)
             else:
                 enc_cts_per_motor_turn = 0
-            # print enc_cts_per_motor_turn
             self.ui.txtEctsTurn.setText(str(enc_cts_per_motor_turn))
 
     def enableEctsPerTurnCalculation(self):
@@ -813,16 +770,6 @@ class WindowMain(QtWidgets.QMainWindow):
     def addDialogStatus(self):
         addr = int(self.ui.cbDrivers.currentText())
         DialogStatusInfo(self, self.collector.icepap_system, addr)
-
-    # def _change_axis_ctrl(self):
-    #    axis = self.ui.cbAxisCtrlSelect.currentIndex()
-    #    if axis<3:
-    #        # Yn axis
-    #        isauto = self.view_boxes[axis].getState()['autoRange'][1]
-    #    else:
-    #        # X axis
-    #        isauto = self.view_boxes[0].getState()['autoRange'][0]
-    #    self.ui.chkAxisScaleAuto.setChecked(isauto) #please note this triggers a stateChanged signal
 
     def _setAxisAutoscale(self):
         axis = self.ui.cbAxisCtrlSelect.currentIndex()
@@ -853,7 +800,6 @@ class WindowMain(QtWidgets.QMainWindow):
         c += d*2*offsfact
         if axis < 3:
             # Yn axis
-            # self.view_boxes[axis].disableAutoRange(axis=self.view_boxes[axis].YAxis)
             self.view_boxes[axis].setYRange(c-d, c+d, padding=0)
         else:
             # X axis
@@ -865,7 +811,6 @@ class WindowMain(QtWidgets.QMainWindow):
         d = (amax-amin)/2*scalefact
         if axis < 3:
             # Yn axis
-            # self.view_boxes[axis].disableAutoRange(axis=self.view_boxes[axis].YAxis)
             self.view_boxes[axis].setYRange(c-d, c+d, padding=0)
         else:
             # X axis
