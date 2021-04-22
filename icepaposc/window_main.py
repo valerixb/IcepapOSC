@@ -22,9 +22,6 @@ import numpy as np
 import collections
 import time
 import datetime
-from .dialogstatusinfo import DialogStatusInfo
-
-
 from PyQt5 import QtWidgets, Qt, QtCore, uic, QtGui
 from PyQt5.QtWidgets import QFileDialog
 from pkg_resources import resource_filename
@@ -33,6 +30,7 @@ from .dialog_settings import DialogSettings
 from .settings import Settings
 from .axis_time import AxisTime
 from .curve_item import CurveItem
+from .dialogstatusinfo import DialogStatusInfo
 
 
 class WindowMain(QtWidgets.QMainWindow):
@@ -56,7 +54,6 @@ class WindowMain(QtWidgets.QMainWindow):
         self.ui = self
         uic.loadUi(ui_filename, baseinstance=self.ui,
                    package="icepaposc.custom_widgets")
-
 
         self.setAttribute(QtCore.Qt.WA_DeleteOnClose, True)
         self.setWindowTitle('Oscilloscope py3qt5 |  ' + host)
@@ -168,7 +165,8 @@ class WindowMain(QtWidgets.QMainWindow):
             self.ui.cbDrivers.addItem(str(driver_id))
         if selected_driver is not None:
             start_index = self.ui.cbDrivers.findText(str(selected_driver))
-        # maybe the selected_driver is not available; then just take the first one
+        # maybe the selected_driver is not available;
+        # then just take the first one
         if start_index == -1:
             start_index = 0
         self.ui.cbDrivers.setCurrentIndex(start_index)
@@ -290,7 +288,8 @@ class WindowMain(QtWidgets.QMainWindow):
             raise Exception(msg)
         print("esynced")
 
-    def _add_signal(self, driver_addr, signal_name, y_axis, linecolor, linestyle, linemarker, auto_save=False):
+    def _add_signal(self, driver_addr, signal_name, y_axis, linecolor,
+                    linestyle, linemarker, auto_save=False):
         """
         Adds a new curve to the plot area.
 
@@ -502,7 +501,8 @@ class WindowMain(QtWidgets.QMainWindow):
 
     def _import_signal_set(self):
         fname = QFileDialog.getOpenFileName(
-            self, "Import Signal Set", filter="Signal Set Files Files (*.lst);;All Files (*)")
+            self, "Import Signal Set",
+            filter="Signal Set Files Files (*.lst);;All Files (*)")
         if fname:
             self._remove_all_signals()
             drv_addr = int(self.ui.cbDrivers.currentText())
@@ -515,17 +515,23 @@ class WindowMain(QtWidgets.QMainWindow):
                         line_marker = tokens[4]
                     else:
                         line_marker = ''
-                    self._add_signal(drv_addr, tokens[0], int(tokens[1]), QtGui.QColor(
-                        tokens[2]), int(tokens[3]), line_marker)
+                    self._add_signal(drv_addr, tokens[0], int(tokens[1]),
+                                     QtGui.QColor(tokens[2]),
+                                     int(tokens[3]), line_marker)
 
     def _export_signal_set(self):
         fname = QFileDialog.getSaveFileName(
-            self, "Export Signal Set", "SignalSet.lst", filter="Signal Set Files Files (*.lst);;All Files (*)")
+            self, "Export Signal Set", "SignalSet.lst",
+            filter="Signal Set Files Files (*.lst);;All Files (*)")
         if fname:
             with open(fname[0], 'w') as f:
                 for ci in self.curve_items:
-                    f.write(ci.signal_name + " " + str(ci.y_axis) + " "
-                            + str(ci.color.name()) + " " + str(ci.pen['style']) + " " + str(ci.symbol) + "\n")
+                    line = '{} {} {} {} {}\n'.format(ci.signal_name,
+                                                     ci.y_axis,
+                                                     ci.color.name(),
+                                                     ci.pen['style'],
+                                                     ci.symbol)
+                    f.write(line)
 
     def _reset_x(self):
         """
@@ -738,7 +744,8 @@ class WindowMain(QtWidgets.QMainWindow):
 
         # Update encoder count to motor step conversion factor measurement
         if self.ui.chkEctsTurn.isChecked():
-            addr = self.collector.channels[self.collector.current_channel].icepap_address
+            addr = self.collector.channels[
+                self.collector.current_channel].icepap_address
             step_now = self.collector.icepap_system[addr].get_pos("AXIS")
             cfgANSTEP = int(
                 self.collector.icepap_system[addr].get_cfg("ANSTEP")["ANSTEP"])
@@ -757,8 +764,9 @@ class WindowMain(QtWidgets.QMainWindow):
                 self.ecpmt_just_enabled = False
                 print(self.step_ini, self.enc_ini)
             if (step_now - self.step_ini) != 0:
-                enc_cts_per_motor_turn = (enc_now - self.enc_ini) * 1.0 * cfgANSTEP \
-                                         / ((step_now - self.step_ini) * cfgANTURN)
+                enc_cts_per_motor_turn = \
+                    (enc_now - self.enc_ini) * 1.0 * cfgANSTEP \
+                    / ((step_now - self.step_ini) * cfgANTURN)
             else:
                 enc_cts_per_motor_turn = 0
             self.ui.txtEctsTurn.setText(str(enc_cts_per_motor_turn))
