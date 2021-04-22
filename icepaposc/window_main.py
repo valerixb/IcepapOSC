@@ -181,7 +181,7 @@ class WindowMain(QtWidgets.QMainWindow):
     def _connect_signals(self):
         self.ui.sbAxis.valueChanged.connect(self._select_axis)
         self.ui.btnAdd.clicked.connect(self._add_button_clicked)
-        self.ui.btnESYNC.clicked.connect(self._ESYNC_button_clicked)
+        self.ui.btnESYNC.clicked.connect(self._esync_button_clicked)
         self.ui.btnShift.clicked.connect(self._shift_button_clicked)
         self.ui.btnRemoveSel.clicked.connect(self._remove_selected_signal)
         self.ui.btnRemoveAll.clicked.connect(self._remove_all_signals)
@@ -204,16 +204,16 @@ class WindowMain(QtWidgets.QMainWindow):
         self.ui.actionTarget.triggered.connect(self._signals_target)
         self.view_boxes[0].sigResized.connect(self._update_views)
         self.ui.chkEctsTurn.stateChanged.connect(
-            self.enableEctsPerTurnCalculation)
-        self.ui.btnSTATUS.clicked.connect(self.addDialogStatus)
-        self.ui.btnAxisScaleAuto.clicked.connect(self._setAxisAutoscale)
-        self.ui.btnAxisOffsIncrease.clicked.connect(self._AxisOffsPP)
-        self.ui.btnAxisOffsDecrease.clicked.connect(self._AxisOffsMM)
-        self.ui.btnAxisScaleIncrease.clicked.connect(self._AxisScalePP)
-        self.ui.btnAxisScaleDecrease.clicked.connect(self._AxisScaleMM)
-        self.ui.btnWhitebg.clicked.connect(self._DoWhiteBackground)
-        self.ui.btnGreybg.clicked.connect(self._DoGreyBackground)
-        self.ui.btnBlackbg.clicked.connect(self._DoBlackBackground)
+            self.enable_ects_per_turn_calculation)
+        self.ui.btnSTATUS.clicked.connect(self.add_dialog_status)
+        self.ui.btnAxisScaleAuto.clicked.connect(self._set_axis_autoscale)
+        self.ui.btnAxisOffsIncrease.clicked.connect(self._axis_offs_pp)
+        self.ui.btnAxisOffsDecrease.clicked.connect(self._axis_offs_mm)
+        self.ui.btnAxisScaleIncrease.clicked.connect(self._axis_scale_pp)
+        self.ui.btnAxisScaleDecrease.clicked.connect(self._axis_scale_mm)
+        self.ui.btnWhitebg.clicked.connect(self._do_white_background)
+        self.ui.btnGreybg.clicked.connect(self._do_grey_background)
+        self.ui.btnBlackbg.clicked.connect(self._do_black_background)
 
     def closeEvent(self, event):
         """Overloads (QMainWindow) QWidget.closeEvent()."""
@@ -251,27 +251,27 @@ class WindowMain(QtWidgets.QMainWindow):
         addr = int(self.ui.cbDrivers.currentText())
         my_signal_name = str(self.ui.cbSignals.currentText())
         my_axis = self.ui.sbAxis.value()
-        my_linecolor = self._getlinecolor()
-        my_linestyle = self._getlinestyle()
-        my_linemarker = self._getlinemarker()
+        my_linecolor = self._get_line_color()
+        my_linestyle = self._get_line_style()
+        my_linemarker = self._get_line_marker()
         self._add_signal(addr, my_signal_name, my_axis,
                          my_linecolor, my_linestyle, my_linemarker)
 
-    def _getlinecolor(self):
+    def _get_line_color(self):
         the_btn = self.ui.color_radio_group.checkedButton()
         if the_btn:
             return the_btn.palette().color(QtGui.QPalette.WindowText)
         else:
             return QtGui.QColor(0, 0, 0)
 
-    def _getlinemarker(self):
+    def _get_line_marker(self):
         the_btn = self.ui.marker_radio_group.checkedButton()
         if the_btn:
             return str(the_btn.text())
         else:
             return ''
 
-    def _getlinestyle(self):
+    def _get_line_style(self):
         if self.ui.solidline_radio.isChecked():
             return QtCore.Qt.SolidLine
         elif self.ui.dottedline_radio.isChecked():
@@ -279,7 +279,7 @@ class WindowMain(QtWidgets.QMainWindow):
         else:
             return QtCore.Qt.SolidLine
 
-    def _ESYNC_button_clicked(self):
+    def _esync_button_clicked(self):
         addr = int(self.ui.cbDrivers.currentText())
         try:
             self.collector.icepap_system[addr].esync()
@@ -408,21 +408,21 @@ class WindowMain(QtWidgets.QMainWindow):
         """
         self.view_boxes[ci.y_axis - 1].removeItem(ci.curve)
 
-    def _DoWhiteBackground(self):
+    def _do_white_background(self):
         self.plot_widget.setBackground(QtGui.QColor(255, 255, 255))
         for i in range(3):
             self.axes[i].setPen(QtGui.QColor(0, 0, 0))
         self._axisTime.setPen(QtGui.QColor(0, 0, 0))
         self.fgcolor = QtGui.QColor(0, 0, 0)
 
-    def _DoGreyBackground(self):
+    def _do_grey_background(self):
         self.plot_widget.setBackground(QtGui.QColor(230, 230, 230))
         for i in range(3):
             self.axes[i].setPen(QtGui.QColor(0, 0, 0))
         self._axisTime.setPen(QtGui.QColor(0, 0, 0))
         self.fgcolor = QtGui.QColor(0, 0, 0)
 
-    def _DoBlackBackground(self):
+    def _do_black_background(self):
         self.plot_widget.setBackground(QtGui.QColor(0, 0, 0))
         for i in range(3):
             self.axes[i].setPen(QtGui.QColor(255, 255, 255))
@@ -771,15 +771,15 @@ class WindowMain(QtWidgets.QMainWindow):
                 enc_cts_per_motor_turn = 0
             self.ui.txtEctsTurn.setText(str(enc_cts_per_motor_turn))
 
-    def enableEctsPerTurnCalculation(self):
+    def enable_ects_per_turn_calculation(self):
         if self.ui.chkEctsTurn.isChecked():
             self.ecpmt_just_enabled = True
 
-    def addDialogStatus(self):
+    def add_dialog_status(self):
         addr = int(self.ui.cbDrivers.currentText())
         DialogStatusInfo(self, self.collector.icepap_system, addr)
 
-    def _setAxisAutoscale(self):
+    def _set_axis_autoscale(self):
         axis = self.ui.cbAxisCtrlSelect.currentIndex()
         if axis < 3:
             # Yn axis
@@ -789,20 +789,20 @@ class WindowMain(QtWidgets.QMainWindow):
             # X axis
             self._reset_x()
 
-    def _AxisOffsPP(self):
-        self._ChgAxisOffs(+0.1)
+    def _axis_offs_pp(self):
+        self._chg_axis_offs(+0.1)
 
-    def _AxisOffsMM(self):
-        self._ChgAxisOffs(-0.1)
+    def _axis_offs_mm(self):
+        self._chg_axis_offs(-0.1)
 
-    def _AxisScalePP(self):
-        self._ChgAxisScale(1/1.25)
+    def _axis_scale_pp(self):
+        self._chg_axis_scale(1 / 1.25)
 
-    def _AxisScaleMM(self):
-        self._ChgAxisScale(1.25)
+    def _axis_scale_mm(self):
+        self._chg_axis_scale(1.25)
 
-    def _ChgAxisOffs(self, offsfact):
-        axis, amin, amax = self._getAxisRange()
+    def _chg_axis_offs(self, offsfact):
+        axis, amin, amax = self._get_axis_range()
         c = (amin+amax)/2
         d = (amax-amin)/2
         c += d*2*offsfact
@@ -813,8 +813,8 @@ class WindowMain(QtWidgets.QMainWindow):
             # X axis
             self.view_boxes[0].setXRange(c-d, c+d, padding=0)
 
-    def _ChgAxisScale(self, scalefact):
-        axis, amin, amax = self._getAxisRange()
+    def _chg_axis_scale(self, scalefact):
+        axis, amin, amax = self._get_axis_range()
         c = (amin+amax)/2
         d = (amax-amin)/2*scalefact
         if axis < 3:
@@ -824,7 +824,7 @@ class WindowMain(QtWidgets.QMainWindow):
             # X axis
             self.view_boxes[0].setXRange(c-d, c+d, padding=0)
 
-    def _getAxisRange(self):
+    def _get_axis_range(self):
         axis = self.ui.cbAxisCtrlSelect.currentIndex()
         if axis < 3:
             # Yn axis
