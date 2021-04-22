@@ -1,19 +1,21 @@
-from PyQt5 import QtGui, QtWidgets
-from .ui.ui_dialogstatusinfo import Ui_DialogStatusInfo
+from PyQt5 import QtGui, uic, QtWidgets
 from icepap import IcePAPController
 from PyQt5 import QtCore, Qt
 import re
+from pkg_resources import resource_filename
 
 
 class DialogStatusInfo(QtGui.QDialog):
 
     def __init__(self, parent, icepapsys, addr):
         QtGui.QDialog.__init__(self, parent)
-        self.ui = Ui_DialogStatusInfo()
+        ui_filename = resource_filename('icepaposc.ui', 'dialogstatusinfo.ui')
+        self.ui = self
+        uic.loadUi(ui_filename, baseinstance=self.ui)
+
         self.icepapsys = icepapsys
         self.driver = icepapsys[addr]
         self.icepapAddress = icepapsys[addr].addr
-        self.ui.setupUi(self)
         self.setWindowTitle('Status Info  |  ' + self.driver._ctrl._comm.host
                             + '  |  ' + str(self.icepapAddress) + ' ' + self.driver.name)
         self.show()
