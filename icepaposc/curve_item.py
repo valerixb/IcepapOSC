@@ -26,74 +26,6 @@ from pyqtgraph import PlotCurveItem, PlotDataItem
 class CurveItem:
     """Represents a curve to be plotted in a diagram."""
 
-#    SignalAppearance = namedtuple('SignalAppearance',
-#                                  ['pen_color', 'pen_width', 'pen_style'])
-#
-#    colors = [
-#        SignalAppearance(QtGui.QColor(255, 255, 0), 1,
-#                         QtCore.Qt.SolidLine),
-#        SignalAppearance(QtGui.QColor(255, 0, 0), 1,
-#                         QtCore.Qt.SolidLine),
-#        SignalAppearance(QtGui.QColor(0, 255, 0), 1,
-#                         QtCore.Qt.SolidLine),
-#        SignalAppearance(QtGui.QColor(255, 255, 255), 1,
-#                         QtCore.Qt.SolidLine),
-#        SignalAppearance(QtGui.QColor(51, 153, 255), 1,
-#                         QtCore.Qt.SolidLine),
-#        SignalAppearance(QtGui.QColor(0, 255, 255), 1,
-#                         QtCore.Qt.SolidLine),
-#        SignalAppearance(QtGui.QColor(255, 0, 255), 1,
-#                         QtCore.Qt.SolidLine),
-#        SignalAppearance(QtGui.QColor(204, 153, 102), 1,
-#                         QtCore.Qt.SolidLine),
-#        SignalAppearance(QtGui.QColor(0, 0, 255), 1,
-#                         QtCore.Qt.SolidLine),
-#        SignalAppearance(QtGui.QColor(0, 255, 0), 1,
-#                         QtCore.Qt.SolidLine),
-#        SignalAppearance(QtGui.QColor(255, 204, 0), 1,
-#                         QtCore.Qt.SolidLine),
-#        SignalAppearance(QtGui.QColor(153, 255, 153), 2,
-#                         QtCore.Qt.DotLine),
-#        SignalAppearance(QtGui.QColor(255, 170, 0), 2,
-#                         QtCore.Qt.DashLine),
-#        SignalAppearance(QtGui.QColor(255, 0, 0), 2,
-#                         QtCore.Qt.DashLine),
-#        SignalAppearance(QtGui.QColor(0, 255, 255), 1,
-#                         QtCore.Qt.DotLine),
-#        SignalAppearance(QtGui.QColor(255, 170, 255), 1,
-#                         QtCore.Qt.DashLine),
-#        SignalAppearance(QtGui.QColor(127, 255, 127), 1,
-#                         QtCore.Qt.DashLine),
-#        SignalAppearance(QtGui.QColor(255, 255, 127), 1,
-#                         QtCore.Qt.DashLine),
-#        SignalAppearance(QtGui.QColor(255, 0, 0), 2,
-#                         QtCore.Qt.DotLine),
-#        SignalAppearance(QtGui.QColor(255, 0, 0), 1,
-#                         QtCore.Qt.DashLine),
-#        SignalAppearance(QtGui.QColor(0, 255, 0), 2,
-#                         QtCore.Qt.DotLine),
-#        SignalAppearance(QtGui.QColor(255, 255, 255), 2,
-#                         QtCore.Qt.SolidLine),
-#        SignalAppearance(QtGui.QColor(51, 153, 255), 1,
-#                         QtCore.Qt.DashLine),
-#        SignalAppearance(QtGui.QColor(255, 0, 255), 1,
-#                         QtCore.Qt.DashLine),
-#        SignalAppearance(QtGui.QColor(255, 153, 204), 1,
-#                         QtCore.Qt.DashLine),
-#        SignalAppearance(QtGui.QColor(204, 153, 102), 1,
-#                         QtCore.Qt.DashLine),
-#        SignalAppearance(QtGui.QColor(255, 204, 0), 1,
-#                         QtCore.Qt.DashLine),
-#        SignalAppearance(QtGui.QColor(255, 0, 255), 1,
-#                         QtCore.Qt.DashLine),
-#        SignalAppearance(QtGui.QColor(255, 153, 204), 1,
-#                         QtCore.Qt.DashLine),
-#        SignalAppearance(QtGui.QColor(204, 153, 102), 1,
-#                         QtCore.Qt.DashLine),
-#        SignalAppearance(QtGui.QColor(255, 204, 0), 1,
-#                         QtCore.Qt.DashLine)
-#    ]
-
     def __init__(self, subscription_id, driver_addr, sig_name, y_axis,
                  linecolor, linestyle, linemarker):
         """
@@ -111,7 +43,6 @@ class CurveItem:
         self.array_val = []
         self.val_min = 0
         self.val_max = 0
-        # col_item = self.colors[color_idx]
         self.color = linecolor
         self.pen = {'color': linecolor,
                     'width': 1,
@@ -131,16 +62,12 @@ class CurveItem:
     def create_curve(self):
         """Creates a new plot item."""
         with self.lock:
-            # self.curve = PlotCurveItem(x=self.array_time,
-            #                           y=self.array_val,
-            #                           pen=self.pen)
             if self.symbol != '':
                 self.curve = PlotDataItem(x=self.array_time,
                                           y=self.array_val,
                                           pen=self.pen,
                                           symbol=self.symbol,
                                           symbolBrush=QtGui.QBrush(self.color),
-                                          # symbolPen=QtGui.QPen(self.color)
                                           symbolPen=self.color)
             else:
                 self.curve = PlotDataItem(x=self.array_time,

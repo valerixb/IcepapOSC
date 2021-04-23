@@ -91,7 +91,6 @@ class Collector:
         self.poscorr_b = 0
         self.enccorr_a = 1
         self.enccorr_b = 0
-        # self.sig_list = self.sig_getters.keys()
         self.sig_list = list(self.sig_getters.keys())
 
         try:

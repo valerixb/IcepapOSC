@@ -36,7 +36,6 @@ class AxisTime(AxisItem):
         for x in values:
             try:
                 if spacing >= 1:
-                    # strings.append(time.strftime("%H:%M:%S", time.gmtime(x)))
                     strings.append(time.strftime("%H:%M:%S", time.localtime(x)))
                 else:
                     # Generate date from timesamp
