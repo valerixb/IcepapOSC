@@ -34,10 +34,9 @@ class DialogStatusInfo(QtGui.QDialog):
             'MCPU0',
             'MCPU2',
             'DRIVER']
-        self.version_reg_exp = re.compile(
-            "(%s)\\s*:\\s*(\\d+\\.\\d+)" %
-            "|".join(self.version_keys),
-            re.VERBOSE)
+        reg_exp = "({})\\s*:\\s*(\\d+\\.\\d+)".format(
+            "|".join(self.version_keys))
+        self.version_reg_exp = re.compile(reg_exp, re.VERBOSE)
 
     def connectSignals(self):
         self.ui.btnUpdate.clicked.connect(self.doVstatus)
@@ -71,7 +70,7 @@ class DialogStatusInfo(QtGui.QDialog):
         self.ui.textBrowser.setText(comm + "\n" + val)
 
     def sendCommandToDrivers(self):
-        sel = '%s' % self.ui.cbAllDrivers.currentText()
+        sel = self.ui.cbAllDrivers.currentText()
         sel_split = sel.split(' ')
         txt = ''
         if sel == '?positions':
@@ -89,8 +88,9 @@ class DialogStatusInfo(QtGui.QDialog):
                     val5 = val5['TGTENC']
                     if val0 == '':
                         val0 = 'noname'
-                    txt = txt + '%s ' % driver + '%s ' % val0 + '%s ' % val1 + \
-                        '%s ' % val2 + '%s ' % val3 + '%s ' % val4 + '%s ' % val5 + '\n'
+                    txt = '{} {} {} {} {} {} {} {}\n'.format(txt, driver,
+                                                             val0, val1, val2,
+                                                             val3, val4, val5)
                     self.ui.textBrowser.setText(txt)
                 except Exception as e:
                     print(e)
@@ -99,7 +99,7 @@ class DialogStatusInfo(QtGui.QDialog):
             for driver in self.icepapsys.find_axes(only_alive=True):
                 try:
                     val = self.getVersionInfoDict(driver)
-                    txt = txt + '%s ' % driver + str(val) + '\n'
+                    txt = '{} {} {}\n'.format(txt, driver, (val))
                     self.ui.textBrowser.setText(txt)
                 except Exception as e:
                     print(e)
@@ -108,7 +108,7 @@ class DialogStatusInfo(QtGui.QDialog):
             for contr in self.getRacksAlive():
                 try:
                     val = self.getVersionInfoDict(contr)
-                    txt = txt + '%s ' % contr + str(val) + '\n'
+                    txt = '{} {} {}\n'.format(txt, contr, val)
                     self.ui.textBrowser.setText(txt)
                 except Exception as e:
                     print(e)
@@ -117,11 +117,11 @@ class DialogStatusInfo(QtGui.QDialog):
             # for driver in self.driver.getDriversAlive():
             for driver in self.icepapsys.find_axes(only_alive=True):
                 try:
-                    comm = ('%s:%s') % (driver, '?vstatus')
+                    comm = '{}:{}'.format(driver, '?vstatus')
                     val_lines = self.icepapsys.send_cmd(comm)
                     for ll in val_lines:
                         if sel_split[1] in ll:
-                            txt = txt + '%s ' % driver + ll + '\n'
+                            txt = '{} {} {}\n'.format(txt, driver, ll)
                     self.ui.textBrowser.setText(txt)
                 except Exception as e:
                     print(e)
@@ -131,12 +131,12 @@ class DialogStatusInfo(QtGui.QDialog):
             contr_comm = sel.replace('m ', '')
             for contr in self.getRacksAlive():
                 try:
-                    comm = ('%s:%s') % (contr, contr_comm)
+                    comm = '{}:{}'.format(contr, contr_comm)
                     # val = self.driver.sendWriteReadCommand(comm)
                     val = self.icepapsys.send_cmd(comm)
                     val = ' '.join(val)
                     val = comm.upper() + " " + val
-                    txt = txt + '%s ' % contr + str(val) + '\n'
+                    txt = '{} {} {}\n'.format(txt, contr, val)
                     self.ui.textBrowser.setText(txt)
                 except Exception as e:
                     print(e)
@@ -144,19 +144,19 @@ class DialogStatusInfo(QtGui.QDialog):
         else:
             for driver in self.icepapsys.find_axes(only_alive=True):
                 try:
-                    comm = ('%s:%s') % (
-                        driver, self.ui.cbAllDrivers.currentText())
+                    comm = '{}:{}'.format(driver,
+                                          self.ui.cbAllDrivers.currentText())
                     val = self.icepapsys.send_cmd(comm)
                     val = ' '.join(val)
                     val = comm.upper() + " " + val
-                    txt = txt + '%s ' % driver + str(val) + '\n'
+                    txt = '{} {} {}\n'.format(txt, driver, val)
                     self.ui.textBrowser.setText(txt)
                 except Exception as e:
                     print(e)
             self.ui.textBrowser.setText(txt)
 
     def getVersionInfoDict(self, addr):
-        command = "%d:?VER INFO" % (addr)
+        command = "{}:?VER INFO".format(addr)
         ans = self.icepapsys.send_cmd(command)
         info = self.version_reg_exp.findall(str(ans))
         return dict(info)
