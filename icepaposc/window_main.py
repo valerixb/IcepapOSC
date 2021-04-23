@@ -56,7 +56,7 @@ class WindowMain(QtWidgets.QMainWindow):
                    package="icepaposc.custom_widgets")
 
         self.setAttribute(QtCore.Qt.WA_DeleteOnClose, True)
-        self.setWindowTitle('Oscilloscope py3qt5 |  ' + host)
+        self.setWindowTitle('Oscilloscope | {}'.format(host))
         self.settings = Settings()
 
         try:
