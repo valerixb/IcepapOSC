@@ -86,7 +86,8 @@ class Collector:
         self.channels = {}
         self.channel_id = 0
         self.current_channel = 0
-        # affine corrections for POS and ENC signals (to show them in different units)
+        # affine corrections for POS and ENC signals (to show them in different
+        # units)
         self.poscorr_a = 1
         self.poscorr_b = 0
         self.enccorr_a = 1

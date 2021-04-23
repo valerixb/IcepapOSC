@@ -14,14 +14,25 @@ class DialogStatusInfo(QtGui.QDialog):
         self.icepapsys = icepapsys
         self.driver = icepapsys[addr]
         self.icepapAddress = icepapsys[addr].addr
-        self.setWindowTitle('Status Info  |  ' + self.driver._ctrl._comm.host
-                            + '  |  ' + str(self.icepapAddress) + ' ' + self.driver.name)
+        host = self.icepapsys._comm.host
+        windows_name = 'Status Info  |  {}  |  {} {}'.format(host, addr,
+                                                             self.driver.name)
+        self.setWindowTitle(windows_name)
         self.show()
         self.connectSignals()
         self.doVstatus()
-        self.allDriversCommands = ['?cfg extdisable', '?ver info', '?power',
-                                   '?positions', '?warning', '?alarm', '?isg ?ssierrtoggles',
-                                   '#isg ssiwarningrst', 'm ?ver info', 'm ?rdispol', '?vstatus DISABLE', '?vstatus STOPCODE'
+        self.allDriversCommands = ['?cfg extdisable',
+                                   '?ver info',
+                                   '?power',
+                                   '?positions',
+                                   '?warning',
+                                   '?alarm',
+                                   '?isg ?ssierrtoggles',
+                                   '#isg ssiwarningrst',
+                                   'm ?ver info',
+                                   'm ?rdispol',
+                                   '?vstatus DISABLE',
+                                   '?vstatus STOPCODE'
                                    ]
         for cmd in self.allDriversCommands:
             self.ui.cbAllDrivers.addItem(cmd)
