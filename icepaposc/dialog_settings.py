@@ -66,6 +66,9 @@ class DialogSettings(QtWidgets.QDialog):
         self.ui.sbAutoSaveInterval.valueChanged.connect(self._as_intvl_changed)
         self.ui.btnOpenFolderDlg.clicked.connect(self._launch_folder_dialog)
         self.ui.leDataFolder.textChanged.connect(self._set_apply_state)
+        self.ui.btnOpenSignalFolderDlg.clicked.connect(
+            self._signal_set_folder_dialog)
+        self.ui.leSignalSetFolder.textChanged.connect(self._set_apply_state)
         self.apply_button.clicked.connect(self._apply)
         self.close_button.clicked.connect(self.close)
 
@@ -82,14 +85,16 @@ class DialogSettings(QtWidgets.QDialog):
 
     def _set_apply_state(self):
         eq = self.ui.sbSampleRate.value() == self.settings.sample_rate and \
-           self.ui.sbDumpRate.value() == self.settings.dump_rate and \
-           self.ui.sbLenAxisX.value() == self.settings.default_x_axis_len and \
-           self.ui.cbUseAutoSave.isChecked() == \
-           self.settings.use_auto_save and \
-           self.ui.cbAppend.isChecked() == self.settings.use_append and \
-           self.ui.sbAutoSaveInterval.value() == \
-           self.settings.as_interval and \
-           self.ui.leDataFolder.text() == self.settings.as_folder
+             self.ui.sbDumpRate.value() == self.settings.dump_rate and \
+             self.ui.sbLenAxisX.value() == self.settings.default_x_axis_len and \
+             self.ui.cbUseAutoSave.isChecked() == \
+             self.settings.use_auto_save and \
+             self.ui.cbAppend.isChecked() == self.settings.use_append and \
+             self.ui.sbAutoSaveInterval.value() == \
+             self.settings.saving_interval and \
+             self.ui.leDataFolder.text() == self.settings.saving_folder and\
+             self.ui.leSignalSetFolder.text() == \
+             self.settings.signals_set_folder
         self.apply_button.setDisabled(eq)
 
     def _update_gui_rate(self):
@@ -110,8 +115,18 @@ class DialogSettings(QtWidgets.QDialog):
     def _as_intvl_changed(self):
         self._set_apply_state()
 
+    def _signal_set_folder_dialog(self):
+        folder_name = QtWidgets.QFileDialog.getExistingDirectory(
+            caption='Select signals set directory',
+            directory=self.settings.signals_set_folder)
+        if folder_name:
+            self.ui.leSignalSetFolder.setText(folder_name)
+            self._set_apply_state()
+
     def _launch_folder_dialog(self):
-        folder_name = QtWidgets.QFileDialog.getExistingDirectory()
+        folder_name = QtWidgets.QFileDialog.getExistingDirectory(
+            caption='Select saving data directory',
+            directory=self.settings.saving_folder)
         if folder_name:
             self.ui.leDataFolder.setText(folder_name)
             self._set_apply_state()
@@ -119,6 +134,11 @@ class DialogSettings(QtWidgets.QDialog):
     def _apply(self):
         auto_save_folder = self.ui.leDataFolder.text()
         if not self._is_valid_folder(auto_save_folder):
+            self.ui.leDataFolder.setText(self.settings.saving_folder)
+            return
+        signal_set_folder = self.ui.leSignalSetFolder.text()
+        if not self._is_valid_folder(signal_set_folder):
+            self.ui.leSignalSetFolder.setText(self.settings.signals_set_folder)
             return
         self.settings.sample_rate = self.ui.sbSampleRate.value()
         self.settings.dump_rate = self.ui.sbDumpRate.value()
