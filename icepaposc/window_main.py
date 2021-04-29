@@ -30,7 +30,6 @@ from .dialog_settings import DialogSettings
 from .settings import Settings
 from .axis_time import AxisTime
 from .curve_item import CurveItem
-from .dialogstatusinfo import DialogStatusInfo
 
 
 class WindowMain(QtWidgets.QMainWindow):
@@ -205,7 +204,6 @@ class WindowMain(QtWidgets.QMainWindow):
         self.view_boxes[0].sigResized.connect(self._update_views)
         self.ui.chkEctsTurn.stateChanged.connect(
             self.enable_ects_per_turn_calculation)
-        self.ui.btnSTATUS.clicked.connect(self.add_dialog_status)
         self.ui.btnAxisScaleAuto.clicked.connect(self._set_axis_autoscale)
         self.ui.btnAxisOffsIncrease.clicked.connect(self._axis_offs_pp)
         self.ui.btnAxisOffsDecrease.clicked.connect(self._axis_offs_mm)
@@ -774,10 +772,6 @@ class WindowMain(QtWidgets.QMainWindow):
     def enable_ects_per_turn_calculation(self):
         if self.ui.chkEctsTurn.isChecked():
             self.ecpmt_just_enabled = True
-
-    def add_dialog_status(self):
-        addr = int(self.ui.cbDrivers.currentText())
-        DialogStatusInfo(self, self.collector.icepap_system, addr)
 
     def _set_axis_autoscale(self):
         axis = self.ui.cbAxisCtrlSelect.currentIndex()
