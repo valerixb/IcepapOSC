@@ -180,7 +180,6 @@ class WindowMain(QtWidgets.QMainWindow):
     def _connect_signals(self):
         self.ui.sbAxis.valueChanged.connect(self._select_axis)
         self.ui.btnAdd.clicked.connect(self._add_button_clicked)
-        self.ui.btnESYNC.clicked.connect(self._esync_button_clicked)
         self.ui.btnShift.clicked.connect(self._shift_button_clicked)
         self.ui.btnRemoveSel.clicked.connect(self._remove_selected_signal)
         self.ui.btnRemoveAll.clicked.connect(self._remove_all_signals)
@@ -276,15 +275,6 @@ class WindowMain(QtWidgets.QMainWindow):
             return QtCore.Qt.DotLine
         else:
             return QtCore.Qt.SolidLine
-
-    def _esync_button_clicked(self):
-        addr = int(self.ui.cbDrivers.currentText())
-        try:
-            self.collector.icepap_system[addr].esync()
-        except Exception as e:
-            msg = 'ESYNC problem.\n{}'.format(e)
-            raise Exception(msg)
-        print("esynced")
 
     def _add_signal(self, driver_addr, signal_name, y_axis, linecolor,
                     linestyle, linemarker, auto_save=False):
