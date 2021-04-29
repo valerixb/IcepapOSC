@@ -658,7 +658,7 @@ class WindowMain(QtWidgets.QMainWindow):
                     not self._file_path or self._settings_updated:
                 self._set_new_file_path()
             self._save_time = time.time()
-            self._save_ticker.start(60000 * self.settings.as_interval)
+            self._save_ticker.start(60000 * self.settings.saving_interval)
         else:
             self._save_time = None
             self._file_path = None
@@ -667,7 +667,7 @@ class WindowMain(QtWidgets.QMainWindow):
         self._idx = 0
         time_str = time.strftime("%Y%m%d_%H%M%S", time.localtime())
         file_name = "IcepapOSC_{}.csv".format(time_str)
-        self._file_path = self.settings.as_folder + '/' + file_name
+        self._file_path = self.settings.saving_folder + '/' + file_name
 
     def _get_write_mode(self):
         do_append = self.settings.use_append
