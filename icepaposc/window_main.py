@@ -16,6 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with IcepapOCS. If not, see <http://www.gnu.org/licenses/>.
 # -----------------------------------------------------------------------------
+import os.path
 
 import pyqtgraph as pg
 import numpy as np
@@ -490,7 +491,8 @@ class WindowMain(QtWidgets.QMainWindow):
     def _import_signal_set(self):
         fname = QFileDialog.getOpenFileName(
             self, "Import Signal Set",
-            filter="Signal Set Files Files (*.lst);;All Files (*)")
+            filter="Signal Set Files Files (*.lst);;All Files (*)",
+            directory=self.settings.signals_set_folder)
         if fname:
             self._remove_all_signals()
             drv_addr = int(self.ui.cbDrivers.currentText())
@@ -508,9 +510,12 @@ class WindowMain(QtWidgets.QMainWindow):
                                      int(tokens[3]), line_marker)
 
     def _export_signal_set(self):
+        file_name = os.path.join(self.settings.signals_set_folder,
+                                 'SignalSet.lst')
         fname = QFileDialog.getSaveFileName(
-            self, "Export Signal Set", "SignalSet.lst",
-            filter="Signal Set Files Files (*.lst);;All Files (*)")
+            self, "Export Signal Set", file_name,
+            filter="Signal Set Files Files (*.lst);;All Files (*)",
+            )
         if fname:
             with open(fname[0], 'w') as f:
                 for ci in self.curve_items:
