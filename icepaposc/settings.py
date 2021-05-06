@@ -111,4 +111,3 @@ class Settings:
 
         with open(self.conf_file, 'w') as f:
             conf.write(f)
-
