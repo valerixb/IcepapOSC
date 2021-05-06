@@ -398,25 +398,28 @@ class WindowMain(QtWidgets.QMainWindow):
         self.view_boxes[ci.y_axis - 1].removeItem(ci.curve)
 
     def _do_white_background(self):
-        self.plot_widget.setBackground(QtGui.QColor(255, 255, 255))
-        for i in range(3):
-            self.axes[i].setPen(QtGui.QColor(0, 0, 0))
-        self._axisTime.setPen(QtGui.QColor(0, 0, 0))
-        self.fgcolor = QtGui.QColor(0, 0, 0)
+        color_axes = QtGui.QColor(0, 0, 0)
+        color_plot = QtGui.QColor(255, 255, 255)
+        self._set_plot_colors(color_axes, color_plot)
 
     def _do_grey_background(self):
-        self.plot_widget.setBackground(QtGui.QColor(230, 230, 230))
-        for i in range(3):
-            self.axes[i].setPen(QtGui.QColor(0, 0, 0))
-        self._axisTime.setPen(QtGui.QColor(0, 0, 0))
-        self.fgcolor = QtGui.QColor(0, 0, 0)
+        color_axes = QtGui.QColor(0, 0, 0)
+        color_plot = QtGui.QColor(230, 230, 230)
+        self._set_plot_colors(color_axes, color_plot)
 
     def _do_black_background(self):
-        self.plot_widget.setBackground(QtGui.QColor(0, 0, 0))
+        color_axes = QtGui.QColor(255, 255, 255)
+        color_plot = QtGui.QColor(0, 0, 0)
+        self._set_plot_colors(color_axes, color_plot)
+
+    def _set_plot_colors(self, color_axes, color_plot):
+        self.plot_widget.setBackground(color_plot)
         for i in range(3):
-            self.axes[i].setPen(QtGui.QColor(255, 255, 255))
-        self._axisTime.setPen(QtGui.QColor(255, 255, 255))
-        self.fgcolor = QtGui.QColor(255, 255, 255)
+            self.axes[i].setPen(color_axes)
+            self.axes[i].setTextPen(color_axes)
+        self._axisTime.setPen(color_axes)
+        self._axisTime.setTextPen(color_axes)
+        self.fgcolor = color_axes
 
     def _signals_closed_loop(self):
         """Display a specific set of curves."""

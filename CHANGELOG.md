@@ -18,7 +18,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Fixed
 - Load dynamically the UI files
 - Add protection on the export signals settings
-
+- Show axes labels on black background configuration
 
 ## [0.6.4]
 
